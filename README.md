@@ -28,6 +28,7 @@ The program can be installed on an HP Prime Calculator using a USB connection to
 14. To confirm everything is working, select the **Sight Reduction** program, press **Run**, select **EPHEMERIDES** and press **Enter**. Fill out the form and press **Enter**. The requested ephemerides should be displayed on the screen. Check them against an Almanac.
 
 When all is done, your Connectivity Kit screen should look like this:
+
 ![Connectivity Kit screen shot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/connectivity.png)
 
 After this setup, sight reduction can be preformed by choosing the **SIGHT** option of the **Sight Reduction** program.
