@@ -372,9 +372,8 @@ BEGIN
   Function.Xmax:=180;
   Function.Ymin:=-90;
   Function.Ymax:=90;
-  LOCAL i:=1;
-  STARTAPP("Function");
-
+  LOCAL i:=1;  
+  
   // This doesn't work with a loop
   // for some reason
   IF a_nm(1)<>0 THEN CHECK(1); END;
@@ -386,17 +385,9 @@ BEGIN
   IF a_nm(7)<>0 THEN CHECK(7); END;
   IF a_nm(8)<>0 THEN CHECK(8); END;
   IF a_nm(9)<>0 THEN CHECK(9); END;
-  IF a_nm(10)<>0 THEN CHECK(0); END;
+  IF a_nm(10)<>0 THEN CHECK(0); END;  
   
-  STARTVIEW(1,1);
-  
-  // Draw dot(s) for assumed position(s)  
-  ARC(6,-73,45,10,0,360,3);  
-  FOR i FROM 1 TO 10 DO
-    IF a_nm(i)<>0 THEN
-      ARC(6,DRlong_deg(i),DRlat_deg(i),10);
-    END;
-  END;
+  STARTVIEW(1,1);  
   
 END;
 
