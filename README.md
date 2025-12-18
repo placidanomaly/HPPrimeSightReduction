@@ -36,8 +36,9 @@ All the steps to perform a sight reduction, from capturing sextant observations 
 3. Select an observation register for this observation, let's say **1** for this first one, and hit the **OK** soft key. (The program can store up to 10 different observations, each resulting in a line of sight, and they are accessed by that number.)
 4. On the 2nd screen:
    * **Body**: select the body that was observed, let's say the **Sun** for this one
+   * **Date**: the date of the observation in HP Prime date format (YYYY.MMDD) (for ephemeris calculations)
    * **UTC**: enter the UTC time of the observation in the calculator time format (HH°MM'SS") using the Shift-(a b/c) key combination (for ephemeris and local hour angle (LHA) calculations)   
-   * **HS**: enter the observed height from the sextant in the HS field in degrees and arc minutes and seconds format (DD°MM"SS') using the Shift-(a b/c) key (most sextants show fractional minutes in decimal which can be converted to seconds by simply multiplying the decimal minute by 6, e.g. 13°32.4' on the sextant must be entered as 13°32'24").
+   * **HS**: enter the observed height from the sextant in degrees, arc minutes and arc seconds format (DD°MM'SS") using the Shift-(a b/c) key. Sextants show fractional minutes in decimals which can be converted to seconds by simply multiplying the decimal part of the minutes by 6, e.g. 13°32.4' on the sextant must be entered as 13°32'24".
 5. On the 3rd screen, enter the observation conditions:
    * **IC**: the index correction in minutes, negative for "on-scale" correction adn positive for "off-scale"
    * **HE**: eye height from the horizon in feet (for dip correction)
@@ -45,7 +46,6 @@ All the steps to perform a sight reduction, from capturing sextant observations 
    * **Temp**: the air temperature in degrees C (for refraction correction)
    * **Pressure**: the atmospheric pressure at sea level in millibars (for refraction correction)
 6. On the 3rd screen, enter body-specific data and the assumed position
-   * **Date**: the date of the observation in HP Prime date format (YYYY.MMDD) (for ephemeris calculations)
    * **Limb**: for the sun, whether the observation was made on the lower or upper limb -- other bodies will have body-specific parameters to enter here (for semi-diameter correction)
    * **DR Lat**: the latitude of the assumed or DR position at the time of the observation in DMS format (DD°MM'SS")
    * **DR Lon**: the longitude of the assumed or DR position at the time of the observation in DMS format (DD°MM'SS")
@@ -56,11 +56,7 @@ All the steps to perform a sight reduction, from capturing sextant observations 
 
 
 # Remaining Work
-The ephemeris calculations are usually accurate to within less than 1' of the values in the Almanac for the period 1900-2100, but errors up to 2' are sometimes seen. This is probably sufficiently accurate for most practical cases of celestial navigation but perfect precision would be better. The differences are still being investigated because the same program in Javascript from Umland's web site produces the exact same numbers as the Almanac. The possibility of a discrepancy in the code is one theory. Another is that this difference with the calculator is due to the lower number of significant digits in the calculator vs. a regular computer, but that has yet to be proven.
-
-Move date field from 3rd to 1st screen in SIGHT program
-
-Add delta T values for a few more decades
+The ephemeris calculations are usually accurate to within less than 1' of the values in the Almanac for the period 1900-2100, but errors up to 2' are sometimes seen. This is probably sufficiently accurate for most practical cases of celestial navigation but perfect precision would be better. The differences are still being investigated because the same program in Javascript from Umland's web site produces the exact same numbers as the Almanac. The possibility of a discrepancy in the code is one theory. Another is that it would be due to the lower number of significant digits in the calculator vs. a regular computer, but that has yet to be proven.
 
 # Contact
 This program was developed by [Charles Vaillancourt](mailto:charles.vaillancourt@gmail.com).

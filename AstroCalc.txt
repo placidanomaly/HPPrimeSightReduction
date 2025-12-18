@@ -275,22 +275,31 @@ LOCAL TimeMeasures_()
 BEGIN
   LOCAL A_, B_;
   LOCAL year_temp_, month_temp_;
-  LOCAL deltaT1975:={
-         45.48,46.46,47.52,48.53,49.59,50.54,
-         51.38,52.17,52.96,53.79,54.34,
-         54.87,55.32,55.82,56.3,56.86,
-         57.57,58.31,59.12,59.99,60.78,
-         61.63,62.3,62.97,63.47,63.83,
-         64.09,64.3,64.47,64.57,64.69,
-         64.85,65.15,65.46,65.78,
-         66.07,67.1,68,68,69,69,70,
-         70,70.5,71,71.5,72,72.5,73,
-         73.5,74,74.5,75,75.5,76,
-         76.5,77,77.5,78,78.5,79,
-         79.5,80,80.5,81,81.5};
+  LOCAL deltaT1900:={
+	-2.7,-1.7,-0.7,0.3,1.3,2.2,3.1,4,4.9,5.8,
+	6.7,7.6,8.6,9.6,10.7,11.7,12.9,14.1,15.3,16.5,
+	17.8,19.1,20.2,21.2,22.1,22.8,23.4,23.9,24.1,24.3,
+	24.3,24.3,24.2,24.1,24,23.9,23.9,23.9,23.9,24,
+	24.2,24.5,24.8,25.3,25.8,26.3,26.9,27.5,28.1,28.6,
+	29.1,29.6,30.1,30.5,31,31.3,31.8,32.2,32.7,33.1,
+	33.5,33.9,34.4,34.9,35.4,35.9,36.5,37.2,38,38.8,
+	39.7,40.7,41.7,42.7,43.8,44.9,45.9,46.9,47.9,48.9,
+	50,51.1,52.1,53.1,54,54.7,55.4,56.1,56.6,57.1,
+	57.6,58.1,58.6,59.2,59.8,60.5,61.3,62,62.7,63.3,
+	63.8,64.1,64.3,64.5,64.6,64.7,64.8,65.2,65.5,65.8,
+	66.1,66.3,66.6,67,67.3,67.6,68.1,68.6,68.9,69.1,
+	69.3,69.3,69.1,69.1,70,71.4,72,72.5,73.1,73.7,
+	74.3,74.9,75.5,76.2,76.8,77.5,78.1,78.8,79.5,80.2,
+	80.9,81.6,82.3,83.1,83.8,84.6,85.3,86.1,86.9,87.7,
+	88.5,89.3,90.2,91,91.9,92.7,93.6,94.5,95.4,96.3,
+	97.2,98.1,99.1,100,101,102,103,104,105,106,
+	107,108.1,109.1,110.2,111.3,112.4,113.5,114.6,115.8,116.9,
+	118.1,119.2,120.4,121.6,122.8,124,125.2,126.4,127.7,128.9,
+	130.2,131.5,132.8,134.1,135.4,136.7,138.1,139.4,140.8,142.2,
+	143.6};
 
-  IF year_ <=2040 AND year_ >=1975 THEN
-    deltaT_:=deltaT1975(year_-1975+1);
+  IF year_ <=2100 AND year_ >=1900 THEN
+    deltaT_:=deltaT1900(year_-1900+1);
   END;
 
   dayfraction_ := (hour_ + minute_/60 + second_/3600)/24;
@@ -1075,7 +1084,7 @@ BEGIN
   // Nutation in longitude
   lambdastar2_ := lambdastar2_ + dtr_ * delta_psi_;
   
-  // These formulas depend upon Aberration_() having been called previously
+  Aberration_();
   dlambdastar_ := (e_ * kappa_ * COS(pi0_ - lambdastar2_) - kappa_ * COS(dtr_ * Lsun_true_ - lambdastar2_)) / COS(betastar2_);
   dbetastar_ := -kappa_ * SIN(betastar2_) * (SIN(dtr_ * Lsun_true_ - lambdastar2_) - e_ * SIN(pi0_ - lambdastar2_));
   lambdastar2_ := lambdastar2_ + dlambdastar_;
@@ -1099,7 +1108,7 @@ END;
 
 //Calculations for planets
 
-//NOTE: TimeMeasures(), Nutation_(), Aberration_() 
+//NOTE: TimeMeasures(), Nutation_()
 //and either SunQuick_() or SunComplete_()
 //must have been called before calling this function.
 LOCAL Planet_(planetId,centroid,showProgress)
@@ -1201,6 +1210,7 @@ BEGIN
   END;
 
   //Aberration
+  Aberration_();
   LOCAL dlambda := (e_*kappa_*COS(pi0_-lambda)-kappa_*COS(dtr_*Lsun_true_-lambda))/COS(beta);
   LOCAL dbeta := -kappa_*SIN(beta)*(SIN(dtr_*Lsun_true_-lambda)-e_*SIN(pi0_-lambda));
   lambda:=lambda+dlambda;
