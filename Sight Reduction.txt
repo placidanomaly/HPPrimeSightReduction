@@ -374,6 +374,8 @@ BEGIN
   Function.Ymax:=90;
   LOCAL i:=1;  
   
+  STARTAPP("Function");
+  
   // This doesn't work with a loop
   // for some reason
   IF a_nm(1)<>0 THEN CHECK(1); END;
@@ -847,6 +849,19 @@ BEGIN
   date_default:=Date;
   temp_default:=20;
   press_default:=1010;
+
+  STARTAPP("Function");
+  F1:=""; UNCHECK(1);
+  F2:=""; UNCHECK(2);
+  F3:=""; UNCHECK(3);
+  F4:=""; UNCHECK(4);
+  F5:=""; UNCHECK(5);
+  F6:=""; UNCHECK(6);
+  F7:=""; UNCHECK(7);
+  F8:=""; UNCHECK(8);
+  F9:=""; UNCHECK(9);
+  F0:=""; UNCHECK(0);
+  STARTVIEW(-1,1);
 
   RETURN {};
 END; 
