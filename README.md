@@ -1,5 +1,5 @@
 # Ephemeris and Sight Reduction for the HP Prime Calculator
-This repository contains a set of programs to perform astronomical calculations of the ephemerides of the usual bodys used in celestial naviation, and the sight reduction of sextant observations to Lines of Position (LOPs) which relies on those ephemerides. The LOPs are represented in a graph from which a fix can readily be deduced.
+This repository contains a set of programs to perform astronomical calculations of the ephemerides of the usual bodys used in celestial naviation, and the sight reduction of sextant observations to Lines of Position (LOPs) which relies on those ephemerides. The LOPs are represented in a graph from which a fix can readily be deduced. The program also provides support for running fixes through a function that allows the translation of lines of position by a certain distance on a given bearing.
 
 The astronomical calculatons are derived from the incredible work of Henning Umland which he has been kind enough to share [on his web site](https://celnav.de/).
 
@@ -35,20 +35,20 @@ All the steps to perform a sight reduction, from capturing sextant observations 
 2. Enter a new observation by selecting **SIGHT** and pressing **Enter**
 3. Select an observation register for this observation, let's say **1** for this first one, and hit the **OK** soft key. (The program can store up to 10 different observations, each resulting in a line of sight, and they are accessed by that number.)
 4. On the 2nd screen:
-   * Body: select the body that was observed, let's say the **Sun** for this one
-   * UTC: enter the UTC time of the observation in the calculator time format (HH°MM'SS") using the Shift-(a b/c) key combination (for ephemeris and local hour angle (LHA) calculations)   
-   * HS: enter the observed height from the sextant in the HS field in degrees and arc minutes and seconds format (DD°MM"SS') using the Shift-(a b/c) key (most sextants show fractional minutes in decimal which can be converted to seconds by simply multiplying the decimal minute by 6, e.g. 13°32.4' on the sextant must be entered as 13°32'24").
+   * **Body**: select the body that was observed, let's say the **Sun** for this one
+   * **UTC**: enter the UTC time of the observation in the calculator time format (HH°MM'SS") using the Shift-(a b/c) key combination (for ephemeris and local hour angle (LHA) calculations)   
+   * **HS**: enter the observed height from the sextant in the HS field in degrees and arc minutes and seconds format (DD°MM"SS') using the Shift-(a b/c) key (most sextants show fractional minutes in decimal which can be converted to seconds by simply multiplying the decimal minute by 6, e.g. 13°32.4' on the sextant must be entered as 13°32'24").
 5. On the 3rd screen, enter the observation conditions:
-   * IC: the index correction in minutes, negative for "on-scale" correction adn positive for "off-scale"
-   * HE: eye height from the horizon in feet (for dip correction)
-   * Dip short: distance in nautical miles (nm) from observer where the horizon stops (e.g. the other side of a large lake), or zero if a true horizon is used as reference for the observation
-   * Temp: the air temperature in degrees C (for refraction correction)
-   * Pressure: the atmospheric pressure at sea level in millibars (for refraction correction)
+   * **IC**: the index correction in minutes, negative for "on-scale" correction adn positive for "off-scale"
+   * **HE**: eye height from the horizon in feet (for dip correction)
+   * **Dip short**: distance in nautical miles (nm) from observer where the horizon stops (e.g. the other side of a large lake), or zero if a true horizon is used as reference for the observation
+   * **Temp**: the air temperature in degrees C (for refraction correction)
+   * **Pressure**: the atmospheric pressure at sea level in millibars (for refraction correction)
 6. On the 3rd screen, enter body-specific data and the assumed position
-   * Date: the date of the observation in HP Prime date format (YYYY.MMDD) (for ephemeris calculations)
-   * Limb: for the sun, whether the observation was made on the lower or upper limb -- other bodies will have body-specific parameters to enter here (for semi-diameter correction)
-   * DR Lat: the latitude of the assumed or DR position at the time of the observation in DMS format (DD°MM'SS")
-   * DR Lon: the longitude of the assumed or DR position at the time of the observation in DMS format (DD°MM'SS")
+   * **Date**: the date of the observation in HP Prime date format (YYYY.MMDD) (for ephemeris calculations)
+   * **Limb**: for the sun, whether the observation was made on the lower or upper limb -- other bodies will have body-specific parameters to enter here (for semi-diameter correction)
+   * **DR Lat**: the latitude of the assumed or DR position at the time of the observation in DMS format (DD°MM'SS")
+   * **DR Lon**: the longitude of the assumed or DR position at the time of the observation in DMS format (DD°MM'SS")
 7. The calculator will present the values for Ho (observed height), GHA (Greenwhich Hour Angle) of the body, dec (declination) of the body, LHA (Local Hour Angle) of the body, and Hc (calculated height) of the body. Click **OK**
 8. The calculator will then present the parameters of the line of position: LOP register, a (distance from LOP) either TOWARD or AWAY from the body, Zn (azimuth) to the body, and the assumed position latitude and longitude. These parameters enable plotting of the line of position.
 9. Lastly, the calculator presents the equation for the line of position which can be used to plot it in a program. That equation is stored in the F register of the Function app of the calculator corresponding to the LOP register selected, e.g. LOP 1 will be stored in F1.
