@@ -31,7 +31,7 @@ When all is done, your Connectivity Kit screen should look like this:
 ![Connectivity Kit screen shot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/connectivity.png)
 
 After this setup, sight reduction can be preformed by choosing the **SIGHT** option of the **Sight Reduction** program.
-
+ 
 # Performing a Sight Reduction
 All the steps to perform a sight reduction, from capturing sextant observations to plotting lines of position and identifying a fix are done within the **Sight Reduction** program. The other programs support ephemeris calculations which were too big to fit within a single program. Those programs need to be present for **Sight Reduction** to work, but they do not need to be invoked by the user under normal usage scenarios. 
 
