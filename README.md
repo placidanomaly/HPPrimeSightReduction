@@ -56,17 +56,17 @@ All the steps to perform a sight reduction, from capturing sextant observations 
 
 ![Basic observation data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input2.png)
 
-7. On the 3rd screen, enter the observation conditions:
-   * **IC**: the index correction in minutes, negative for "on-scale" correction adn positive for "off-scale"
+7. On the 3rd screen, enter the observation conditions which will result in altitude corrections:
+   * **IC**: the index correction of the sextant in minutes, negative values for "on-scale" correction and positive for "off-scale"
    * **HE**: eye height from the horizon in feet (for dip correction)
-   * **Dip short**: distance in nautical miles (nm) from observer where the horizon stops (e.g. the other side of a large lake), or zero if a true horizon is used as reference for the observation
+   * **Dip short**: distance in nautical miles (nm) from observer where the horizon ends (e.g. the other side of a large lake), or zero if a true horizon is used as reference for the observation
    * **Temp**: the air temperature in degrees C (for refraction correction)
    * **Pressure**: the atmospheric pressure at sea level in millibars (for refraction correction)
 
 ![Observation correction data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input3.png)
 
 8. On the 3rd screen, enter body-specific data and the assumed position
-   * **Limb**: for the sun, whether the observation was made on the lower or upper limb -- other bodies will have body-specific parameters to enter here (for semi-diameter correction)
+   * **Limb**: for the sun, whether the observation was made on the lower or upper limb (for semi-diameter correction). Other bodies will have body-specific parameters to enter here, for example the observed limb for a moon sight and the star name for a star sight
    * **DR Lat**: the latitude of the assumed or DR position at the time of the observation in DMS format (DD°MM'SS")
    * **DR Lon**: the longitude of the assumed or DR position at the time of the observation in DMS format (DD°MM'SS")
 
@@ -76,15 +76,15 @@ All the steps to perform a sight reduction, from capturing sextant observations 
 
 ![Calculation results](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output1.png)
 
-11. The calculator will then present the parameters of the line of position: LOP register, a (distance from LOP) either TOWARD or AWAY from the body, Zn (azimuth) to the body, and the assumed position latitude and longitude. These parameters enable plotting of the line of position.
+11. The calculator will then present the parameters of the line of position: LOP register, distance *a* from LOP either TOWARD or AWAY from the body, azimuth *Zn* to the body, and the assumed position latitude and longitude. These parameters enable plotting of the line of position.
 
 ![LOP parameters](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output2.png)
 
-12. Lastly, the calculator presents the equation for the line of position which can be used to plot it in a program. That equation is stored in the F register of the Function app of the calculator corresponding to the LOP register selected, e.g. LOP 1 will be stored in F1.
+12. Lastly, the calculator presents the equation for the line of position in a longitude (x) and latitude (y) cartesian plane which can be used to plot it in a program. That equation is stored in the F register of the Function app of the calculator corresponding to the LOP register selected, e.g. LOP 1 will be stored in F1, which means they van be plotted using the calculator's Function app.
 
 ![LOP Equation](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output3.png)
 
-14. Once you've entered 2 or more sights in different LOP registers, you can view the LOPs on a graph: run the **Sight Reduction** program and select PLOT LOPs. A line of position will be plotted for each LOP defined in the **SIGHT** program. The calculator functions can then be used to calculate the intersection of LOPs, etc., and the cursor can be used to find the centroid of the "cocked hat" to make a fix.
+14. Once you've entered 2 or more sights in different LOP registers, you can view the LOPs on a graph: run the **Sight Reduction** program and select **PLOT LOPs**. A line of position will be plotted for each LOP defined in the **SIGHT** program. The calculator functions can then be used to calculate the intersection of LOPs, etc., and the cursor can be used to find the centroid of the "cocked hat" to make a fix.
 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
 
