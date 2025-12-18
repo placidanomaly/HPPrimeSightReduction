@@ -10,7 +10,12 @@ The sight reduction formulas used in this program were derived from many sources
 For an excellent textbook on celestial navigation and the process of sight reduction, refer to *Celestial Navigation: A Complete Home Study Course* by David Burch and Tobias Burch.
 
 # Installing the Program
-The program can be installed on an HP Prime Calculator using a USB connection to a computer or in the HP Prime Virtual Calculator program. This is the procedure to install it on a calculator:
+The program can be installed on the calculator or on the [virtual calculator program](https://www.hpcalc.org/details/8939) from the *.txt* source files in the main directory of this repository or from the binaries in the */bin* directory. 
+When all is done, your Connectivity Kit screen should look like this:
+
+![Connectivity Kit screen shot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/connectivity.png)
+
+## Installing from the Source Files
 
 1. Download and install the [HP Connectivity Kit](https://updates.moravia-consulting.com/)
 2. Launch the HP Connectivity Kit program
@@ -27,9 +32,15 @@ The program can be installed on an HP Prime Calculator using a USB connection to
 13. Select the **Sight Reduction** program, press **Run**, select **RESET_SIGHTS** and press **Enter**. This will initialize all the necessary variables for the program to work.
 14. To confirm everything is working, select the **Sight Reduction** program, press **Run**, select **EPHEMERIDES** and press **Enter**. Fill out the form and press **Enter**. The requested ephemerides should be displayed on the screen. Check them against an Almanac.
 
-When all is done, your Connectivity Kit screen should look like this:
+## Installing from the Binaries
 
-![Connectivity Kit screen shot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/connectivity.png)
+To install from the binaries, the *.hpprgm* files must be loaded into the Connectivity kit:
+
+1. Download and install the [HP Connectivity Kit](https://updates.moravia-consulting.com/)
+2. Launch the HP Connectivity Kit program
+3. Connect an HP Prime Calculator to the computer with a USB cable and confirm that the Connectivity Kit sees the calculator
+4. Drag all the *.hpprgm* files in the */bin* directory of the repository into the **Content** section of the HP Connectivity Kit program
+5. Drag all the files in the **Content** window of the HP Connectivity Kit program onto the **Programs** section label of the calculator
 
 After this setup, sight reduction can be preformed by choosing the **SIGHT** option of the **Sight Reduction** program.
  
