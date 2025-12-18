@@ -43,7 +43,7 @@ All the steps to perform a sight reduction, from capturing sextant observations 
 
 3. Enter a new observation: select **SIGHT** and press the **Enter** soft key.
 
-4. Select an observation register for this observation, let's say **1** for this first one, and hit the **OK** soft key. (The program can store up to 10 different observations, each resulting in a line of sight, and they are accessed by that number.)
+4. Select an observation register for this observation, let's say **1** for this first one, and hit the **OK** soft key. (The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by that number.)
 
 ![Observation register selection](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input1.png)
 
