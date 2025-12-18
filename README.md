@@ -1,9 +1,11 @@
 # Ephemeris and Sight Reduction for the HP Prime Calculator
-This repository contains a set of programs to perform astronomical calculations for the ephemerides of the usual bodys used in celestial naviation and the sight reduction of sextant observations to Lines of Position (LOPs). The LOPs are represented in a graph from which a fix can readily be deducted.
+This repository contains a set of programs to perform astronomical calculations of the ephemerides of the usual bodys used in celestial naviation, and the sight reduction of sextant observations to Lines of Position (LOPs) which relies on those ephemerides. The LOPs are represented in a graph from which a fix can readily be deduced.
 
-The astronomical calculatons are derived from the incredible work of Henning Umland which can be seen [on his web site](https://celnav.de/).
+The astronomical calculatons are derived from the incredible work of Henning Umland which he has been kind enough to share [on his web site](https://celnav.de/).
 
-The sight reduction calculations were derived from many sources but were initially prompted by my reading of the book * *Celestial Navigation: A Complete Home Study Course* * by David Burch and Tobias Burch.
+The sight reduction formulas used in this program were derived from many sources that are usually listed in the source code comments.
+
+For an excellent textbook on celestial navigation and the process of sight reduction, refer to * *Celestial Navigation: A Complete Home Study Course* * by David Burch and Tobias Burch.
 
 # Installing the Program
 The program can be installed on an HP Prime Calculator using a USB connection to a computer or in the HP Prime Virtual Calculator program. This is the procedure to install it on a calculator:
