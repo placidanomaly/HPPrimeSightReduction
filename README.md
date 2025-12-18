@@ -91,7 +91,7 @@ All the steps to perform a sight reduction, from capturing sextant observations 
 
 ![LOP parameters](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output2.png)
 
-12. Lastly, the calculator presents the equation for the line of position in a longitude (x) and latitude (y) cartesian plane which can be used to plot it in a program. That equation is stored in the F register of the Function app of the calculator corresponding to the LOP register selected, e.g. LOP 1 will be stored in F1, which means they van be plotted using the calculator's Function app.
+12. Lastly, the calculator presents the equation for the line of position in a longitude (x) and latitude (y) cartesian plane which can be used to plot it in a program. That equation is stored in the F register of the Function app of the calculator corresponding to the LOP register selected, e.g. LOP 1 will be stored in F1, which means they can be plotted using the calculator's Function app.
 
 ![LOP Equation](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output3.png)
 
