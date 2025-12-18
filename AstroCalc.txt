@@ -1,0 +1,1284 @@
+// Global variables (part 1)
+LOCAL year_, month_, day_, hour_;
+LOCAL minute_, second_, deltaT_;
+LOCAL dayfraction_, JD0h_, JD_;
+
+// Global variables (part 2)
+LOCAL T_, T2_, T3_, T4_;
+LOCAL T5_, JDE_, TE_, TE2_;
+
+// Global variables (part 3)
+LOCAL TE3_, TE4_, TE5_, Tau_;
+LOCAL Tau2_, Tau3_, Tau4_, Tau5_;
+
+// Global variables (part 4)
+LOCAL delta_psi_, delta_eps_, eps0_, eps_;
+LOCAL GHAAtrue_, SidTm_, SidTa_, EoE_;
+
+// Global variables (part 5)
+LOCAL Lsun_mean_, Lsun_true_, SunDec_, Dsun_;
+LOCAL GHAsun_, SDsun_, HPsun_, EOT_;
+LOCAL RAsun_, SHAsun_, lambda_;
+
+// Global variables (part 6)
+
+LOCAL dtr_:=Pi/180;
+LOCAL oldHA;
+EXPORT rtd_:=180/Pi;
+
+// Moon variables
+LOCAL GHAmoon_,DECmoon_,HPmoon_,SDmoon_,LDist_,PhaseMoon_;
+
+// Star variables
+LOCAL starname_,RAstar_,GHAstar_,GHAstarDD_,DECstar_,DECstarDD_;
+
+// Planet names (use list index to call Planet_(index))
+EXPORT planets_:={"Venus","Mars","Jupiter","Saturn"};
+LOCAL SDplanets_:={8.41,4.68,98.44,82.73};
+
+LOCAL RAplanet_ :={0,0,0,0};
+LOCAL DECplanet_:={0,0,0,0};
+LOCAL GHAplanet_:={0,0,0,0};
+LOCAL SDplanet_ :={0,0,0,0};
+LOCAL HPplanet_ :={0,0,0,0};
+LOCAL kplanet_  :={0,0,0,0};
+
+// Star catalog - each entry is {name, RA_hours, DEC_deg, dRA_arcsec, dDEC_arcsec, parallax_arcsec}
+EXPORT navstar_ := {
+    {"Acamar", 2.9710266670, -40.3047138890, -0.3910, 1.9400, 0.0280},
+    {"Achernar", 1.6285700000, -57.2367166670, 1.1730, -3.4700, 0.0230},
+    {"Acrux", 12.4432975000, -63.0990500000, -0.5240, -1.2100, 0.0000},
+    {"Adhara", 6.9770966670, -28.9720833330, 0.0310, 0.2800, 0.0000},
+    {"Aldebaran", 4.5986769440, 16.5092750000, 0.4390, -18.9700, 0.0480},
+    {"Alioth", 12.9004855560, 55.9598527780, 1.3280, -0.5800, 0.0090},
+    {"Alkaid", 13.7923427780, 49.3133194440, -1.2490, -1.0900, 0.0350},
+    {"Al Na'ir", 22.1372222220, -46.9609972220, 1.2590, -15.1000, 0.0510},
+    {"Alnilam", 5.6035580560, -1.2019500000, 0.0060, -0.2400, 0.0000},
+    {"Alphard", 9.4597908330, -8.6586527780, -0.0930, 3.2800, 0.0170},
+    {"Alphecca", 15.5781322220, 26.7147055560, 0.9060, -8.8600, 0.0430},
+    {"Alpheratz", 0.1397958330, 29.0904388890, 1.0390, -16.3300, 0.0240},
+    {"Altair", 19.8463894440, 8.8683416670, 3.6290, 38.6300, 0.1981},
+    {"Ankaa", 0.4380638890, -42.3060583330, 1.8330, -39.5700, 0.0350},
+    {"Antares", 16.4901219440, -26.4319861110, -0.0710, -2.0300, 0.0190},
+    {"Arcturus", 14.2610213890, 19.1824194440, -7.7140, -199.8400, 0.0900},
+    {"Atria", 16.8110747220, -69.0277277780, 0.2600, -3.4000, 0.0240},
+    {"Avior", 8.3752313890, -59.5095861110, -0.3460, 1.4400, 0.0000},
+    {"Bellatrix", 5.4188491670, 6.3496500000, -0.0590, -1.3900, 0.0260},
+    {"Betelgeuse", 5.9195297220, 7.4070416670, 0.1730, 0.8700, 0.0050},
+    {"Canopus", 6.3991997220, -52.6956944440, 0.2450, 2.0700, 0.0180},
+    {"Capella", 5.2781536110, 45.9980277780, 0.7280, -42.4700, 0.0730},
+    {"Deneb", 20.6905325000, 45.2803638890, 0.0270, 0.2300, 0.0000},
+    {"Denebola", 11.8176611110, 14.5720416670, -3.4220, -11.4100, 0.0760},
+    {"Diphda", 0.7264922220, -17.9866166670, 1.6370, 3.2500, 0.0570},
+    {"Dubhe", 11.0621294440, 61.7508944440, -1.6750, -6.6500, 0.0310},
+    {"Elnath", 5.4381975000, 28.6074083330, 0.1690, -17.5100, 0.0180},
+    {"Eltanin", 17.9434352780, 51.4889472220, -0.0810, -1.9400, 0.0170},
+    {"Enif", 21.7364344440, 9.8749777780, 0.2070, -0.0600, 0.0060},
+    {"Fomalhaut", 22.9608486110, -29.6222500000, 2.5510, -16.4700, 0.1440},
+    {"Gacrux", 12.5194247220, -57.1131944440, 0.2850, -26.2300, 0.0000},
+    {"Gienah", 12.2634350000, -17.5419361110, -1.1240, 2.3300, 0.0000},
+    {"Hadar", 14.0637244440, -60.3729972220, -0.4260, -1.9300, 0.0160},
+    {"Hamal", 2.1195563890, 23.4624055560, 1.3830, -14.8300, 0.0430},
+    {"Kaus Aust.", 18.4028686110, -34.3846472220, -0.3090, -12.4100, 0.0150},
+    {"Kochab", 14.8450961110, 74.1554944440, -0.7630, 1.2200, 0.0310},
+    {"Markab", 23.0793494440, 15.2052500000, 0.4360, -4.2500, 0.0300},
+    {"Menkar", 3.0379925000, 4.0897027780, -0.0630, -7.8000, 0.0090},
+    {"Menkent", 14.1113752780, -36.3700083330, -4.2930, -51.9000, 0.0590},
+    {"Miaplacidus", 9.2199880560, -69.7172083330, -3.1080, 10.7800, 0.0380},
+    {"Mirfak", 3.4053791670, 49.8612055560, 0.2460, -2.4600, 0.0290},
+    {"Nunki", 18.9210900000, -26.2967305560, 0.0990, -5.4200, 0.0000},
+    {"Peacock", 20.4274588890, -56.7351055560, 0.0820, -8.9100, 0.0000},
+    {"Polaris", 2.5301955560, 89.2640888890, 19.8770, -1.5200, 0.0070},
+    {"Pollux", 7.7552627780, 28.0261833330, -4.7400, -4.5900, 0.0930},
+    {"Procyon", 7.6550313890, 5.2250166670, -4.7550, -102.2900, 0.2880},
+    {"Rasalhague", 17.5822433330, 12.5600388890, 0.8220, -22.6400, 0.0560},
+    {"Regulus", 10.1395319440, 11.9671916670, -1.6930, 0.6400, 0.0390},
+    {"Rigel", 5.2422966670, -8.2016611110, 0.0030, -0.1300, 0.0130},
+    {"Rigil Kent.", 14.6599680560, -60.8354000000, -49.8260, 69.9300, 0.7516},
+    {"Sabik", 17.1729669440, -15.7249194400, 0.2600, 9.5000, 0.0520},
+    {"Schedar", 0.6751250000, 56.5373500000, 0.6360, -3.1900, 0.0160},
+    {"Shaula", 17.5601483330, -37.1038111110, -0.0110, -2.9200, 0.0000},
+    {"Sirius", 6.7524641670, -16.7161083330, -3.8470, -120.5300, 0.3751},
+    {"Spica", 13.4198852780, -11.1613083330, -0.2780, -2.8300, 0.0210},
+    {"Suhail", 9.1332711110, -43.4326055560, -0.1720, 1.2700, 0.0150},
+    {"Vega", 18.6156477780, 38.7836583330, 1.7260, 28.6100, 0.1230},
+    {"Zubenelgenubi", 14.8479758330, -16.0417833330, -0.7340, -6.6800, 0.0490}
+  };
+
+//Aberration
+LOCAL kappa_,pi0_,e_;
+
+// Helicentric coordinates of the earth
+LOCAL Le_, Be_, Re_;
+
+// ATAN2 function returning angle in radians
+LOCAL ATAN2_(y, x)
+BEGIN
+  RETURN ARG(x + i*y);
+END;
+
+LOCAL tand_(x)
+BEGIN
+  RETURN TAN(x*Pi/180);
+END;
+
+LOCAL sind_(x)
+BEGIN
+  RETURN SIN(x*Pi/180);
+END;
+
+LOCAL cosd_(x)
+BEGIN
+  RETURN COS(x*Pi/180);
+END;
+
+CONVERT_DATETIME(date,time)
+BEGIN
+  LOCAL time_:=HMS→(time);
+  year_:=IP(date);
+  month_:=IP(FP(date)*100);
+  day_:=IP(FP(date*100)*100);
+  hour_:=IP(time_);
+  minute_:=IP(FP(time_)*60);
+  second_:=IP(FP(time_*60)*60);
+END;
+
+LOCAL →DMD(D)
+BEGIN
+  LOCAL d;
+
+  d:=HMS→(D);
+
+  RETURN STRING(IP(d))+"°"
+     +STRING(FP(ABS(d))*60,1,1)
+     +"'";
+END;
+
+
+//Returns a list containing Sun GHA, Declination, and true GHA Aries
+//Inputs: date: yyyy.mmdd
+//        time: hh°mm'ss"
+EXPORT SunEphemeris(date,time,showProgress)
+BEGIN
+
+  CONVERT_DATETIME(date,time);
+
+  TimeMeasures_();
+  Nutation_();
+  Aries_();
+  SunComplete_(showProgress);
+
+  RETURN {GHAsun_,SunDec_,GHAAtrue_,SDsun_};
+END;
+
+EXPORT SunEphemeris(date,time)
+BEGIN
+  SunEphemeris(date,time,0);
+END;
+
+//Aberration  - J.Meeus chapt.23
+LOCAL Aberration_()
+BEGIN
+  kappa_ := dtr_*20.49552/3600;
+  pi0_ := dtr_*(102.93735+1.71946*TE_+0.00046*TE2_);
+  e_ := 0.016708634-0.000042037*TE_-0.0000001267*TE2_;
+END;
+
+//Returns GHA Aries using nutation formulas
+//Inputs: date: yyyy.mmdd
+//        time: hh°mm'ss"
+EXPORT GHAAries(date,time)
+BEGIN
+
+  CONVERT_DATETIME(date,time);
+
+  TimeMeasures_();
+  Nutation_();
+  Aries_();
+
+  RETURN GHAAtrue_;
+END;
+
+//Returns a list containing Moon GHA, Declination, 
+//Horizontal Parallax and Semi-Diameter
+//Inputs: date: yyyy.mmdd
+//        time: hh°mm'ss"
+EXPORT MoonEphemeris(date,time)
+BEGIN
+
+  CONVERT_DATETIME(date,time);
+  
+  TimeMeasures_();
+  Nutation_();
+  Aries_();
+  Moon_();
+
+  RETURN {GHAmoon_,DECmoon_,HPmoon_,SDmoon_};
+END;
+
+//Returns a list containing Star GHA,
+//Declination, and Right Ascension
+//Inputs: date: yyyy.mmdd
+//        time: hh°mm'ss"
+EXPORT StarEphemeris(star,date,time)
+BEGIN
+
+  CONVERT_DATETIME(date,time);
+
+  starname_:=star;
+  
+  TimeMeasures_();
+  Nutation_();
+  SunComplete_();
+  Aries_();
+  Star_();
+
+  RETURN {GHAstar_, DECstar_, RAstar_};
+END;
+
+//Returns a list containing planet
+//GHA, Declination, 
+//Horizontal Parallax,
+//Semi-Diameter, and Right Ascension
+//Inputs: planetId: index of planets_
+//        date: yyyy.mmdd
+//        time: hh°mm'ss"
+//        centroid: 1 to return the position 
+//                  of the centroid of the
+//                  illuminated disc instead
+//                  of the centroid of the planet
+//                  (for Mars or Venus only)
+
+EXPORT PlanetEphemeris(planetId,date,time,centroid,showProgress)
+BEGIN
+
+  CONVERT_DATETIME(date,time);
+  
+  TimeMeasures_();
+  Nutation_();
+  SunComplete_(showProgress);
+  Aries_();
+  Planet_(planetId,centroid,showProgress);
+
+  RETURN {GHAplanet_(planetId), DECplanet_(planetId), 
+          HPplanet_(planetId),SDplanet_(planetId),
+          RAplanet_(planetId)};
+END;
+
+EXPORT PlanetEphemeris(planetId,date,time)
+BEGIN
+  PlanetEphemeris(planetId,date,time,0,0);
+END;
+
+// Time Measures calculation
+LOCAL TimeMeasures_()
+BEGIN
+  LOCAL A_, B_;
+  LOCAL year_temp_, month_temp_;
+  LOCAL deltaT1975:={
+         45.48,46.46,47.52,48.53,49.59,50.54,
+         51.38,52.17,52.96,53.79,54.34,
+         54.87,55.32,55.82,56.3,56.86,
+         57.57,58.31,59.12,59.99,60.78,
+         61.63,62.3,62.97,63.47,63.83,
+         64.09,64.3,64.47,64.57,64.69,
+         64.85,65.15,65.46,65.78,
+         66.07,67.1,68,68,69,69,70,
+         70,70.5,71,71.5,72,72.5,73,
+         73.5,74,74.5,75,75.5,76,
+         76.5,77,77.5,78,78.5,79,
+         79.5,80,80.5,81,81.5};
+
+  IF year_ <=2040 AND year_ >=1975 THEN
+    deltaT_:=deltaT1975(year_-1975+1);
+  END;
+
+  dayfraction_ := (hour_ + minute_/60 + second_/3600)/24;
+
+  year_temp_ := year_;
+  month_temp_ := month_;
+  
+  // Julian day calculation
+  IF month_temp_ <= 2 THEN
+    year_temp_ := year_temp_ - 1;
+    month_temp_ := month_temp_ + 12;
+  END;
+  
+  A_ := IP(year_temp_ / 100);
+  B_ := 2 - A_ + IP(A_ / 4);
+  JD0h_ := IP(365.25 * (year_temp_ + 4716)) + IP(30.6001 * (month_temp_ + 1)) + day_ + B_ - 1524.5;
+  JD_ := JD0h_ + dayfraction_;
+  
+  // Julian centuries (GMT) since 2000 January 0.5
+  T_ := (JD_ - 2451545) / 36525;
+  T2_ := T_ * T_;
+  T3_ := T_ * T2_;
+  T4_ := T_ * T3_;
+  T5_ := T_ * T4_;
+  
+  // Julian ephemeris day (TDT)
+  JDE_ := JD_ + deltaT_ / 86400;
+  
+  // Julian centuries (TDT) from 2000 January 0.5
+  TE_ := (JDE_ - 2451545) / 36525;
+  TE2_ := TE_ * TE_;
+  TE3_ := TE_ * TE2_;
+  TE4_ := TE_ * TE3_;
+  TE5_ := TE_ * TE4_;
+  
+  // Julian millenniums (TDT) from 2000 January 0.5
+  Tau_ := 0.1 * TE_;
+  Tau2_ := Tau_ * Tau_;
+  Tau3_ := Tau_ * Tau2_;
+  Tau4_ := Tau_ * Tau3_;
+  Tau5_ := Tau_ * Tau4_;
+END;
+
+// Nutation calculation
+LOCAL Nutation_()
+BEGIN
+  LOCAL Mm_, M_, F_, D_, omega_;
+  LOCAL fMm_, fM_, fF_, fD_;
+  LOCAL f_omega_, dp_, de_;
+  LOCAL x_, f_;
+  LOCAL nut_;
+  
+  oldHA:=HAngle;
+  HAngle:=0; 
+  
+  // Mean anomaly of the moon
+  Mm_ := 134.962981389 + 198.867398056*TE_ + 477000*TE_ MOD 360 + 0.008697222222*TE2_ + TE3_/56250;
+  
+  // Mean anomaly of the sun
+  M_ := 357.527723333 + 359.05034*TE_ + 35640*TE_ MOD 360 - 0.0001602777778*TE2_ - TE3_/300000;
+  
+  // Mean distance of the moon from the ascending node
+  F_ := 93.271910277 + 82.017538055*TE_ + 483120*TE_ MOD 360 - 0.0036825*TE2_ + TE3_/327272.7273;
+  
+  // Mean elongation of the moon
+  D_ := 297.850363055 + 307.11148*TE_ + 444960*TE_ MOD 360 - 0.001914166667*TE2_ + TE3_/189473.6842;
+  
+  // Longitude of the ascending node of the moon
+  omega_ := 125.044522222 - 134.136260833*TE_ - 1800*TE_ MOD 360 + 0.002070833333*TE2_ + TE3_/450000;
+  
+  // Nutation periodic terms (106 terms)
+  nut_ := {
+    {0,0,0,0,1,-171996,-174.2,92025,8.9},
+    {0,0,2,-2,2,-13187,-1.6,5736,-3.1},
+    {0,0,2,0,2,-2274,-0.2,977,-0.5},
+    {0,0,0,0,2,2062,0.2,-895,0.5},
+    {0,-1,0,0,0,-1426,3.4,54,-0.1},
+    {1,0,0,0,0,712,0.1,-7,0.0},
+    {0,1,2,-2,2,-517,1.2,224,-0.6},
+    {0,0,2,0,1,-386,-0.4,200,0.0},
+    {1,0,2,0,2,-301,0.0,129,-0.1},
+    {0,-1,2,-2,2,217,-0.5,-95,0.3},
+    {-1,0,0,2,0,158,0.0,-1,0.0},
+    {0,0,2,-2,1,129,0.1,-70,0.0},
+    {-1,0,2,0,2,123,0.0,-53,0.0},
+    {1,0,0,0,1,63,0.1,-33,0.0},
+    {0,0,0,2,0,63,0.0,-2,0.0},
+    {-1,0,2,2,2,-59,0.0,26,0.0},
+    {-1,0,0,0,1,-58,-0.1,32,0.0},
+    {1,0,2,0,1,-51,0.0,27,0.0},
+    {-2,0,0,2,0,-48,0.0,1,0.0},
+    {-2,0,2,0,1,46,0.0,-24,0.0},
+    {0,0,2,2,2,-38,0.0,16,0.0},
+    {2,0,2,0,2,-31,0.0,13,0.0},
+    {2,0,0,0,0,29,0.0,-1,0.0},
+    {1,0,2,-2,2,29,0.0,-12,0.0},
+    {0,0,2,0,0,26,0.0,-1,0.0},
+    {0,0,2,-2,0,-22,0.0,0,0.0},
+    {-1,0,2,0,1,21,0.0,-10,0.0},
+    {0,2,0,0,0,17,-0.1,0,0.0},
+    {0,2,2,-2,2,-16,0.1,7,0.0},
+    {-1,0,0,2,1,16,0.0,-8,0.0},
+    {0,1,0,0,1,-15,0.0,9,0.0},
+    {1,0,0,-2,1,-13,0.0,7,0.0},
+    {0,-1,0,0,1,-12,0.0,6,0.0},
+    {2,0,-2,0,0,11,0.0,0,0.0},
+    {-1,0,2,2,1,-10,0.0,5,0.0},
+    {1,0,2,2,2,-8,0.0,3,0.0},
+    {0,-1,2,0,2,-7,0.0,3,0.0},
+    {0,0,2,2,1,-7,0.0,3,0.0},
+    {1,1,0,-2,0,-7,0.0,0,0.0},
+    {0,1,2,0,2,7,0.0,-3,0.0},
+    {-2,0,0,2,1,-6,0.0,3,0.0},
+    {0,0,0,2,1,-6,0.0,3,0.0},
+    {2,0,2,-2,2,6,0.0,-3,0.0},
+    {1,0,0,2,0,6,0.0,0,0.0},
+    {1,0,2,-2,1,6,0.0,-3,0.0},
+    {0,0,0,-2,1,-5,0.0,3,0.0},
+    {0,-1,2,-2,1,-5,0.0,3,0.0},
+    {2,0,2,0,1,-5,0.0,3,0.0},
+    {1,-1,0,0,0,5,0.0,0,0.0},
+    {1,0,0,-1,0,-4,0.0,0,0.0},
+    {0,0,0,1,0,-4,0.0,0,0.0},
+    {0,1,0,-2,0,-4,0.0,0,0.0},
+    {1,0,-2,0,0,4,0.0,0,0.0},
+    {2,0,0,-2,1,4,0.0,-2,0.0},
+    {0,1,2,-2,1,4,0.0,-2,0.0},
+    {1,1,0,0,0,-3,0.0,0,0.0},
+    {1,-1,0,-1,0,-3,0.0,0,0.0},
+    {-1,-1,2,2,2,-3,0.0,1,0.0},
+    {0,-1,2,2,2,-3,0.0,1,0.0},
+    {1,-1,2,0,2,-3,0.0,1,0.0},
+    {3,0,2,0,2,-3,0.0,1,0.0},
+    {-2,0,2,0,2,-3,0.0,1,0.0},
+    {1,0,2,0,0,3,0.0,0,0.0},
+    {-1,0,2,4,2,-2,0.0,1,0.0},
+    {1,0,0,0,2,-2,0.0,1,0.0},
+    {-1,0,2,-2,1,-2,0.0,1,0.0},
+    {0,-2,2,-2,1,-2,0.0,1,0.0},
+    {-2,0,0,0,1,-2,0.0,1,0.0},
+    {2,0,0,0,1,2,0.0,-1,0.0},
+    {3,0,0,0,0,2,0.0,0,0.0},
+    {1,1,2,0,2,2,0.0,-1,0.0},
+    {0,0,2,1,2,2,0.0,-1,0.0},
+    {1,0,0,2,1,-1,0.0,0,0.0},
+    {1,0,2,2,1,-1,0.0,1,0.0},
+    {1,1,0,-2,1,-1,0.0,0,0.0},
+    {0,1,0,2,0,-1,0.0,0,0.0},
+    {0,1,2,-2,0,-1,0.0,0,0.0},
+    {0,1,-2,2,0,-1,0.0,0,0.0},
+    {1,0,-2,2,0,-1,0.0,0,0.0},
+    {1,0,-2,-2,0,-1,0.0,0,0.0},
+    {1,0,2,-2,0,-1,0.0,0,0.0},
+    {1,0,0,-4,0,-1,0.0,0,0.0},
+    {2,0,0,-4,0,-1,0.0,0,0.0},
+    {0,0,2,4,2,-1,0.0,0,0.0},
+    {0,0,2,-1,2,-1,0.0,0,0.0},
+    {-2,0,2,4,2,-1,0.0,1,0.0},
+    {2,0,2,2,2,-1,0.0,0,0.0},
+    {0,-1,2,0,1,-1,0.0,0,0.0},
+    {0,0,-2,0,1,-1,0.0,0,0.0},
+    {0,0,4,-2,2,1,0.0,0,0.0},
+    {0,1,0,0,2,1,0.0,0,0.0},
+    {1,1,2,-2,2,1,0.0,-1,0.0},
+    {3,0,2,-2,2,1,0.0,0,0.0},
+    {-2,0,2,2,2,1,0.0,-1,0.0},
+    {-1,0,0,0,2,1,0.0,-1,0.0},
+    {0,0,-2,2,1,1,0.0,0,0.0},
+    {0,1,2,0,1,1,0.0,0,0.0},
+    {-1,0,4,0,2,1,0.0,0,0.0},
+    {2,1,0,-2,0,1,0.0,0,0.0},
+    {2,0,0,2,0,1,0.0,0,0.0},
+    {2,0,2,-2,1,1,0.0,-1,0.0},
+    {2,0,-2,0,1,1,0.0,0,0.0},
+    {1,-1,0,-2,0,1,0.0,0,0.0},
+    {-1,0,0,1,1,1,0.0,0,0.0},
+    {-1,-1,0,2,1,1,0.0,0,0.0},
+    {0,1,0,1,0,1,0.0,0,0.0}
+  };
+  
+  dp_ := 0;
+  de_ := 0;
+  
+  FOR x_ FROM 1 TO 106 DO
+    fMm_ := nut_(x_,1);
+    fM_ := nut_(x_,2);
+    fF_ := nut_(x_,3);
+    fD_ := nut_(x_,4);
+    f_omega_ := nut_(x_,5);
+    
+    dp_ := dp_ + (nut_(x_,6) + TE_*nut_(x_,7)) * SIN((fD_*D_ + fM_*M_ + fMm_*Mm_ + fF_*F_ + f_omega_*omega_) * PI/180);
+    de_ := de_ + (nut_(x_,8) + TE_*nut_(x_,9)) * COS((fD_*D_ + fM_*M_ + fMm_*Mm_ + fF_*F_ + f_omega_*omega_) * PI/180);
+  END;
+  
+  // Nutation in longitude
+  delta_psi_ := dp_ / 36000000;
+  
+  // Nutation in obliquity
+  delta_eps_ := de_ / 36000000;
+  
+  // Mean obliquity of the ecliptic
+  eps0_ := (84381.448 - 46.815*TE_ - 0.00059*TE2_ + 0.001813*TE3_) / 3600;
+  
+  // True obliquity of the ecliptic
+  eps_ := eps0_ + delta_eps_;
+  
+  HAngle:=oldHA;
+END;
+
+// GHA Aries calculation
+LOCAL Aries_()
+BEGIN
+  LOCAL GHAAmean_;
+  
+  oldHA:=HAngle;
+  HAngle:=0;
+
+  // Mean GHA Aries
+  GHAAmean_ := (280.46061837 + 360.98564736629*(JD_ - 2451545) + 0.000387933*T2_ - T3_/38710000) MOD 360;
+  
+  // True GHA Aries
+  GHAAtrue_ := (GHAAmean_ + delta_psi_ * cosd_(eps_)) MOD 360;
+
+  HAngle:=oldHA;
+
+END;
+
+LOCAL SunQuick_()
+BEGIN
+  LOCAL L0_, L1_, L2_, L3_, L4_;
+  LOCAL L5_, B0_, B1_, R0_;
+  LOCAL R1_, R2_, R3_, R4_;
+  LOCAL beta_;
+  LOCAL Lsun_prime_;
+  
+  oldHA:=HAngle;
+  HAngle:=0;
+  
+  // Periodic terms for the sun - Longitude L0
+  L0_:=175347046;
+  L0_:=L0_+3341656*COS(4.6692568+6283.0758500*Tau_);
+  L0_:=L0_+34894*COS(4.62610+12566.15170*Tau_);
+  L0_:=L0_+3497*COS(2.7441+5753.3849*Tau_);
+  L0_:=L0_+3418*COS(2.8289+3.5231*Tau_);
+  L0_:=L0_+3136*COS(3.6277+77713.7715*Tau_);
+  L0_:=L0_+2676*COS(4.4181+7860.4194*Tau_);
+  L0_:=L0_+2343*COS(6.1352+3930.2097*Tau_);
+  L0_:=L0_+1324*COS(0.7425+11506.7698*Tau_);
+  L0_:=L0_+1273*COS(2.0371+529.6910*Tau_);
+  
+  L0_:=L0_+1199*COS(1.1096+1577.3435*Tau_);
+  L0_:=L0_+990*COS(5.233+5884.927*Tau_);
+  L0_:=L0_+902*COS(2.045+26.298*Tau_);
+  L0_:=L0_+857*COS(3.508+398.149*Tau_);
+  L0_:=L0_+780*COS(1.179+5223.694*Tau_);
+  L0_:=L0_+753*COS(2.533+5507.553*Tau_);
+  L0_:=L0_+505*COS(4.583+18849.228*Tau_);
+  L0_:=L0_+492*COS(4.205+775.523*Tau_);
+  L0_:=L0_+357*COS(2.920+0.067*Tau_);
+  L0_:=L0_+317*COS(5.849+11790.629*Tau_);
+  
+  L0_:=L0_+284*COS(1.899+796.298*Tau_);
+  L0_:=L0_+271*COS(0.315+10977.079*Tau_);
+  L0_:=L0_+243*COS(0.345+5486.778*Tau_);
+  L0_:=L0_+206*COS(4.806+2544.314*Tau_);
+  L0_:=L0_+205*COS(1.869+5573.143*Tau_);
+  L0_:=L0_+202*COS(2.458+6069.777*Tau_);
+  L0_:=L0_+156*COS(0.833+213.299*Tau_);
+  L0_:=L0_+132*COS(3.411+2942.463*Tau_);
+  L0_:=L0_+126*COS(1.083+20.775*Tau_);
+  L0_:=L0_+115*COS(0.645+0.980*Tau_);
+  
+  L0_:=L0_+103*COS(0.636+4694.003*Tau_);
+  L0_:=L0_+102*COS(0.976+15720.839*Tau_);
+  L0_:=L0_+102*COS(4.267+7.114*Tau_);
+  L0_:=L0_+99*COS(6.21+2146.17*Tau_);
+  L0_:=L0_+98*COS(0.68+155.42*Tau_);
+  L0_:=L0_+86*COS(5.98+161000.69*Tau_);
+  L0_:=L0_+85*COS(1.30+6275.96*Tau_);
+  L0_:=L0_+85*COS(3.67+71430.70*Tau_);
+  L0_:=L0_+80*COS(1.81+17260.15*Tau_);
+  L0_:=L0_+79*COS(3.04+12036.46*Tau_);
+  
+  L0_:=L0_+75*COS(1.76+5088.63*Tau_);
+  L0_:=L0_+74*COS(3.50+3154.69*Tau_);
+  L0_:=L0_+74*COS(4.68+801.82*Tau_);
+  L0_:=L0_+70*COS(0.83+9437.76*Tau_);
+  L0_:=L0_+62*COS(3.98+8827.39*Tau_);
+  L0_:=L0_+61*COS(1.82+7084.90*Tau_);
+  L0_:=L0_+57*COS(2.78+6286.60*Tau_);
+  L0_:=L0_+56*COS(4.39+14143.50*Tau_);
+  L0_:=L0_+56*COS(3.47+6279.55*Tau_);
+  L0_:=L0_+52*COS(0.19+12139.55*Tau_);
+  
+  L0_:=L0_+52*COS(1.33+1748.02*Tau_);
+  L0_:=L0_+51*COS(0.28+5856.48*Tau_);
+  L0_:=L0_+49*COS(0.49+1194.45*Tau_);
+  L0_:=L0_+41*COS(5.37+8429.24*Tau_);
+  L0_:=L0_+41*COS(2.40+19651.05*Tau_);
+  L0_:=L0_+39*COS(6.17+10447.39*Tau_);
+  L0_:=L0_+37*COS(6.04+10213.29*Tau_);
+  L0_:=L0_+37*COS(2.57+1059.38*Tau_);
+  L0_:=L0_+36*COS(1.71+2352.87*Tau_);
+  L0_:=L0_+36*COS(1.78+6812.77*Tau_);
+  
+  L0_:=L0_+33*COS(0.59+17789.85*Tau_);
+  L0_:=L0_+30*COS(0.44+83996.85*Tau_);
+  L0_:=L0_+30*COS(2.74+1349.87*Tau_);
+  L0_:=L0_+25*COS(3.16+4690.48*Tau_);
+  
+  // L1 terms
+  L1_:=628331966747;
+  L1_:=L1_+206059*COS(2.678235+6283.075850*Tau_);
+  L1_:=L1_+4303*COS(2.6351+12566.1517*Tau_);
+  L1_:=L1_+425*COS(1.590+3.523*Tau_);
+  L1_:=L1_+119*COS(5.796+26.298*Tau_);
+  L1_:=L1_+109*COS(2.966+1577.344*Tau_);
+  L1_:=L1_+93*COS(2.59+18849.23*Tau_);
+  L1_:=L1_+72*COS(1.14+529.69*Tau_);
+  L1_:=L1_+68*COS(1.87+398.15*Tau_);
+  L1_:=L1_+67*COS(4.41+5507.55*Tau_);
+  
+  L1_:=L1_+59*COS(2.89+5223.69*Tau_);
+  L1_:=L1_+56*COS(2.17+155.42*Tau_);
+  L1_:=L1_+45*COS(0.40+796.30*Tau_);
+  L1_:=L1_+36*COS(0.47+775.52*Tau_);
+  L1_:=L1_+29*COS(2.65+7.11*Tau_);
+  L1_:=L1_+21*COS(5.34+0.98*Tau_);
+  L1_:=L1_+19*COS(1.85+5486.78*Tau_);
+  L1_:=L1_+19*COS(4.97+213.30*Tau_);
+  L1_:=L1_+17*COS(2.99+6275.96*Tau_);
+  L1_:=L1_+16*COS(0.03+2544.31*Tau_);
+  
+  L1_:=L1_+16*COS(1.43+2146.17*Tau_);
+  L1_:=L1_+15*COS(1.21+10977.08*Tau_);
+  L1_:=L1_+12*COS(2.83+1748.02*Tau_);
+  L1_:=L1_+12*COS(3.26+5088.63*Tau_);
+  L1_:=L1_+12*COS(5.27+1194.45*Tau_);
+  L1_:=L1_+12*COS(2.08+4694.00*Tau_);
+  L1_:=L1_+11*COS(0.77+553.57*Tau_);
+  L1_:=L1_+10*COS(1.30+6286.60*Tau_);
+  L1_:=L1_+10*COS(4.24+1349.87*Tau_);
+  L1_:=L1_+9*COS(2.70+242.73*Tau_);
+  
+  L1_:=L1_+9*COS(5.64+951.72*Tau_);
+  L1_:=L1_+8*COS(5.30+2352.87*Tau_);
+  L1_:=L1_+6*COS(2.65+9437.76*Tau_);
+  L1_:=L1_+6*COS(4.67+4690.48*Tau_);
+  
+  // L2 terms
+  L2_:=52919;
+  L2_:=L2_+8720*COS(1.0721+6283.0758*Tau_);
+  L2_:=L2_+309*COS(0.867+12566.152*Tau_);
+  L2_:=L2_+27*COS(0.05+3.52*Tau_);
+  L2_:=L2_+16*COS(5.19+26.30*Tau_);
+  L2_:=L2_+16*COS(3.68+155.42*Tau_);
+  L2_:=L2_+10*COS(0.76+18849.23*Tau_);
+  L2_:=L2_+9*COS(2.06+77713.77*Tau_);
+  L2_:=L2_+7*COS(0.83+775.52*Tau_);
+  L2_:=L2_+5*COS(4.66+1577.34*Tau_);
+  
+  L2_:=L2_+4*COS(1.03+7.11*Tau_);
+  L2_:=L2_+4*COS(3.44+5573.14*Tau_);
+  L2_:=L2_+3*COS(5.14+796.30*Tau_);
+  L2_:=L2_+3*COS(6.05+5507.55*Tau_);
+  L2_:=L2_+3*COS(1.19+242.73*Tau_);
+  L2_:=L2_+3*COS(6.12+529.69*Tau_);
+  L2_:=L2_+3*COS(0.31+398.15*Tau_);
+  L2_:=L2_+3*COS(2.28+553.57*Tau_);
+  L2_:=L2_+2*COS(4.38+5223.69*Tau_);
+  L2_:=L2_+2*COS(3.75+0.98*Tau_);
+  
+  // L3 terms
+  L3_:=289*COS(5.844+6283.076*Tau_);
+  L3_:=L3_+35;
+  L3_:=L3_+17*COS(5.49+12566.15*Tau_);
+  L3_:=L3_+3*COS(5.20+155.42*Tau_);
+  L3_:=L3_+1*COS(4.72+3.52*Tau_);
+  L3_:=L3_+1*COS(5.30+18849.23*Tau_);
+  L3_:=L3_+1*COS(5.97+242.73*Tau_);
+  
+  // L4 terms
+  L4_:=114*COS(PI);
+  L4_:=L4_+8*COS(4.13+6283.08*Tau_);
+  L4_:=L4_+1*COS(3.84+12566.15*Tau_);
+  
+  // L5 term
+  L5_:=1*COS(PI);
+  
+  // Mean longitude of the sun
+  Lsun_mean_:=(280.4664567+360007.6982779*Tau_+0.03032028*Tau2_+Tau3_/49931-Tau4_/15299-Tau5_/1988000) MOD 360;
+  
+  // Heliocentric longitude
+  Le_:=L0_+L1_*Tau_+L2_*Tau2_+L3_*Tau3_+L4_*Tau4_+L5_*Tau5_;
+  Le_:=(Le_/1E8/dtr_) MOD 360;
+  
+  
+  // Geocentric longitude
+  Lsun_true_:=(Le_+180-0.000025) MOD 360;
+  
+  // Latitude B0 terms
+  B0_:=280*COS(3.199+84334.662*Tau_);
+  B0_:=B0_+102*COS(5.422+5507.553*Tau_);
+  B0_:=B0_+80*COS(3.88+5223.69*Tau_);
+  B0_:=B0_+44*COS(3.70+2352.87*Tau_);
+  B0_:=B0_+32*COS(4.00+1577.34*Tau_);
+  
+  // B1 terms
+  B1_:=9*COS(3.90+5507.55*Tau_);
+  B1_:=B1_+6*COS(1.73+5223.69*Tau_);
+  
+  // Heliocentric latitude
+  Be_:=rtd_*(B0_+B1_*Tau_)/1E8;  
+  
+  // Geocentric latitude
+  beta_:=-Be_ MOD 360;
+  
+  // Corrections
+  Lsun_prime_:=(Le_+180-1.397*TE_-0.00031*TE2_) MOD 360;
+  beta_:=beta_+0.000011*(cosd_(Lsun_prime_)-sind_(Lsun_prime_));
+  
+  // Distance earth-sun R0 terms
+  R0_:=100013989;
+  R0_:=R0_+1670700*COS(3.0984635+6283.0758500*Tau_);
+  R0_:=R0_+13956*COS(3.05525+12566.15170*Tau_);
+  R0_:=R0_+3084*COS(5.1985+77713.7715*Tau_);
+  R0_:=R0_+1628*COS(1.1739+5753.3849*Tau_);
+  R0_:=R0_+1576*COS(2.8469+7860.4194*Tau_);
+  R0_:=R0_+925*COS(5.453+11506.770*Tau_);
+  R0_:=R0_+542*COS(4.564+3930.210*Tau_);
+  R0_:=R0_+472*COS(3.661+5884.927*Tau_);
+  R0_:=R0_+346*COS(0.964+5507.553*Tau_);
+  
+  R0_:=R0_+329*COS(5.900+5223.694*Tau_);
+  R0_:=R0_+307*COS(0.299+5573.143*Tau_);
+  R0_:=R0_+243*COS(4.273+11790.629*Tau_);
+  R0_:=R0_+212*COS(5.847+1577.344*Tau_);
+  R0_:=R0_+186*COS(5.022+10977.079*Tau_);
+  R0_:=R0_+175*COS(3.012+18849.228*Tau_);
+  R0_:=R0_+110*COS(5.055+5486.778*Tau_);
+  R0_:=R0_+98*COS(0.89+6069.78*Tau_);
+  R0_:=R0_+86*COS(5.69+15720.84*Tau_);
+  R0_:=R0_+86*COS(1.27+161000.69*Tau_);
+  
+  R0_:=R0_+65*COS(0.27+17260.15*Tau_);
+  R0_:=R0_+63*COS(0.92+529.69*Tau_);
+  R0_:=R0_+57*COS(2.01+83996.85*Tau_);
+  R0_:=R0_+56*COS(5.24+71430.70*Tau_);
+  R0_:=R0_+49*COS(3.25+2544.31*Tau_);
+  R0_:=R0_+47*COS(2.58+775.52*Tau_);
+  R0_:=R0_+45*COS(5.54+9437.76*Tau_);
+  R0_:=R0_+43*COS(6.01+6275.96*Tau_);
+  R0_:=R0_+39*COS(5.36+4694.00*Tau_);
+  R0_:=R0_+38*COS(2.39+8827.39*Tau_);
+  
+  R0_:=R0_+37*COS(0.83+19651.05*Tau_);
+  R0_:=R0_+37*COS(4.90+12139.55*Tau_);
+  R0_:=R0_+36*COS(1.67+12036.46*Tau_);
+  R0_:=R0_+35*COS(1.84+2942.46*Tau_);
+  R0_:=R0_+33*COS(0.24+7084.90*Tau_);
+  R0_:=R0_+32*COS(0.18+5088.63*Tau_);
+  R0_:=R0_+32*COS(1.78+398.15*Tau_);
+  R0_:=R0_+28*COS(1.21+6286.60*Tau_);
+  R0_:=R0_+28*COS(1.90+6279.55*Tau_);
+  R0_:=R0_+26*COS(4.59+10447.39*Tau_);
+  
+  // R1 terms
+  R1_:=103019*COS(1.107490+6283.075850*Tau_);
+  R1_:=R1_+1721*COS(1.0644+12566.1517*Tau_);
+  R1_:=R1_+702*COS(PI);
+  R1_:=R1_+32*COS(1.02+18849.23*Tau_);
+  R1_:=R1_+31*COS(2.84+5507.55*Tau_);
+  R1_:=R1_+25*COS(1.32+5223.69*Tau_);
+  R1_:=R1_+18*COS(1.42+1577.34*Tau_);
+  R1_:=R1_+10*COS(5.91+10977.08*Tau_);
+  R1_:=R1_+9*COS(1.42+6275.96*Tau_);
+  R1_:=R1_+9*COS(0.27+5486.78*Tau_);
+  
+  // R2 terms
+  R2_:=4359*COS(5.7846+6283.0758*Tau_);
+  R2_:=R2_+124*COS(5.579+12566.152*Tau_);
+  R2_:=R2_+12*COS(PI);
+  R2_:=R2_+9*COS(3.63+77713.77*Tau_);
+  R2_:=R2_+6*COS(1.87+5573.14*Tau_);
+  R2_:=R2_+3*COS(5.47+18849.23*Tau_);
+  
+  // R3 terms
+  R3_:=145*COS(4.273+6283.076*Tau_);
+  R3_:=R3_+7*COS(3.92+12566.15*Tau_);
+  
+  // R4 term
+  R4_:=4*COS(2.56+6283.08*Tau_);
+  
+  // Distance
+  Re_:=(R0_+R1_*Tau_+R2_*Tau2_+R3_*Tau3_+R4_*Tau4_)/1E8;  
+  
+  // Apparent longitude of the sun
+  lambda_:=(Lsun_true_+delta_psi_-0.005691611/Re_) MOD 360;
+  
+  // Right ascension of the sun, apparent
+  RAsun_:=(ATAN2_(sind_(lambda_)*cosd_(eps_)-tand_(beta_)*sind_(eps_),cosd_(lambda_))/dtr_) MOD 360;
+  
+  // Sidereal hour angle of the sun, apparent
+  SHAsun_:=360-RAsun_;
+  
+  // Declination of the sun, apparent
+  SunDec_:=ASIN(sind_(beta_)*cosd_(eps_)+cosd_(beta_)*sind_(eps_)*sind_(lambda_))/dtr_;
+  
+  // GHA of the sun
+  GHAsun_:=(GHAAtrue_-RAsun_) MOD 360;
+  
+  // Semidiameter of the sun
+  SDsun_:=959.63/Re_;
+  
+  // Horizontal parallax of the sun
+  HPsun_:=8.794/Re_;
+  
+  // Equation of time
+  EOT_:=4*GHAsun_+720-1440*dayfraction_;
+  IF EOT_>20 THEN EOT_:=EOT_-1440; END;
+  IF EOT_<-20 THEN EOT_:=EOT_+1440; END;
+  
+  HAngle:=oldHA;
+END;
+
+//Calculations for the Sun
+LOCAL SunComplete_(showProgress)
+BEGIN
+   oldHA:=HAngle;
+   HAngle:=0;
+   
+   //Mean longitude of the Sun
+   LOCAL Lsun_mean := (280.4664567+360007.6982779*Tau_+0.03032028*Tau2_+Tau3_/49931-Tau4_/15299-Tau5_/1988000) MOD 360;
+
+   //Heliocentric longitude of the Earth
+   //NOTE: using EXPR to call planetary
+   //calculation programs in order to minimize
+   //hard dependencies between programs
+   IF showProgress THEN PRINT("  Heliocentric longitude"); END;
+   Le_ := EXPR("Learth(Tau_)");
+
+   //Correction Longitude FK5
+   LOCAL Lsun_prime := (Le_+180-1.397*TE_-0.00031*TE2_) MOD 360;
+
+   //Geocentric longitude of the Sun
+   Lsun_true_ := (Le_+180-0.09033/3600) MOD 360;
+
+   //Heliocentric latitude of Earth
+   IF showProgress THEN PRINT("  Heliocentric latitude"); END;
+   Be_ := EXPR("Bearth(Tau_)");
+
+   //Geocentric latitude of the Sun
+   LOCAL beta := (-Be_) MOD 360;
+
+   //Correction Latitude FK5
+   beta := beta+0.03916*(cosd_(Lsun_prime)-sind_(Lsun_prime))/3600;
+
+   //Distance Earth-Sun
+   IF showProgress THEN PRINT("  Distance Earth-Sun"); END;
+   Re_ := EXPR("Rearth(Tau_)");
+   LOCAL dES := 149597870.691*Re_;
+
+   //Apparent longitude of the Sun
+   lambda_ := (Lsun_true_+delta_psi_-0.005691611/Re_) MOD 360;
+
+   //Right ascension of the Sun, apparent
+   RAsun_ := rtd_*(ATAN2_(sind_(lambda_)*cosd_(eps_)-tand_(beta)*sind_(eps_),cosd_(lambda_)) MOD (2*PI));
+   
+   //Declination of the Sun, apparent
+   LOCAL DECsun := rtd_*asin(sind_(beta)*cosd_(eps_)+cosd_(beta)*sind_(eps_)*sind_(lambda_));
+   LOCAL DECsunDD := DECsun;
+   SunDec_ := DECsun;
+
+   //GHA of the Sun
+   GHAsun_ := (GHAAtrue_-RAsun_) MOD 360;
+   LOCAL GHAsunDD := GHAsun_;
+
+   //Semidiameter of the Sun
+   SDsun_ := 959.63/Re_;
+
+   //Horizontal parallax of the Sun
+   HPsun_ := 8.794/Re_;
+
+   //Equation of time
+   //EOT := 4*(Lsun_mean-0.0057183-0.0008-RAsun_+delta_psi_*cosd_(eps_));
+   EOT_ := 4*GHAsun_+720-1440*dayfraction_;
+   IF EOT_>20 THEN EOT_:=EOT_-1440; END;
+   IF EOT_<-20 THEN EOT_:=EOT_+1440; END;
+   
+   HAngle:=oldHA;
+END;
+
+LOCAL SunComplete_()
+BEGIN
+  SunComplete_(0);
+END;
+
+
+// Calculation of ephemerides for the moon
+LOCAL Moon_()
+BEGIN
+  LOCAL fD_, fMms_, fMmm_, fF_, coeffs_, coeffc_;
+  LOCAL fD2_, fMms2_, fMmm2_, fF2_, coeffs2_;
+  LOCAL sumL_, sumr_, sumB_, x_, f_, i_,k_;
+  LOCAL Lmoon_mean_, D_, Msun_mean_,F_,A1_,A2_,A3_;
+  LOCAL lambdaMm_,betaM_,dEM_,RAmoon_,SHAmoon_,Dmoon_;
+  LOCAL lambdaMapp_,fE_,fE2_,Mmoon_mean_;
+  
+  oldHA:=HAngle;
+  HAngle:=0; 
+
+  // Mean longitude of the moon
+  Lmoon_mean_ := (218.3164591+481267.88134236*TE_-0.0013268*TE2_+TE3_/538841-TE4_/65194000) MOD 360;
+  
+  // Mean elongation of the moon
+  D_ := (297.8502042+445267.1115168*TE_-0.00163*TE2_+TE3_/545868-TE4_/113065000) MOD 360;
+  
+  // Mean anomaly of the sun
+  Msun_mean_ := (357.5291092+35999.0502909*TE_-0.0001536*TE2_+TE3_/24490000) MOD 360;
+  
+  // Mean anomaly of the moon
+  Mmoon_mean_ := (134.9634114+477198.8676313*TE_+0.008997*TE2_+TE3_/69699-TE4_/14712000) MOD 360;
+  
+  // Mean distance of the moon from her ascending node
+  F_ := (93.2720993+483202.0175273*TE_-0.0034029*TE2_-TE3_/3526000+TE4_/863310000) MOD 360;
+  
+  // Corrections
+  A1_ := 119.75+131.849*TE_;
+  A1_ := 360*(A1_/360 - FLOOR(A1_/360));
+  A2_ := 53.09+479264.29*TE_;
+  A2_ := 360*(A2_/360 - FLOOR(A2_/360));
+  A3_ := 313.45+481266.484*TE_;
+  A3_ := 360*(A3_/360 - FLOOR(A3_/360));
+  
+  fE_ := 1-0.002516*TE_-0.0000074*TE2_;
+  fE2_ := fE_*fE_;
+  
+  // Periodic terms for the moon
+  // Longitude and distance
+  fD_ := {0,2,2,0,0,0,2,2,2,2,0,1,0,2,0,0,4,0,4,2,2,1,1,2,2,4,2,0,2,2,1,2,0,0,2,2,2,4,0,3,2,4,0,2,2,2,4,0,4,1,2,0,1,3,4,2,0,1,2,2};
+  fMms_ := {0,0,0,0,1,0,0,-1,0,-1,1,0,1,0,0,0,0,0,0,1,1,0,1,-1,0,0,0,1,0,-1,0,-2,2,0,-2,0,0,-1,0,0,1,-1,2,2,1,-1,0,0,-1,0,1,0,1,0,0,-1,2,1,0,0};
+  fMmm_ := {1,-1,0,2,0,0,-2,-1,1,0,-1,0,1,0,1,1,-1,3,-2,-1,0,-1,0,1,2,0,-3,-2,-1,-2,1,0,2,0,-1,1,0,-1,2,-1,1,-2,-1,-1,-2,0,1,4,0,-2,0,2,1,-2,-3,2,1,1,3,-1};
+  fF_ := {0,0,0,0,0,2,0,0,0,0,0,0,0,-2,2,-2,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,-2,2,0,2,0,0,0,0,0,0,-2,0,0,0,0,0,-2,0,0,0,0,0,0,0,-2};
+  coeffs_ := {6288774,1274027,658314,213618,-185116,-114332,58793,57066,53322,45758,-40923,-34720,-30383,15327,-12528,10980,10675,10034,8548,-7888,-6766,-5163,4987,4036,3994,3861,3665,-2689,-2602,2390,-2348,2236,-2120,-2069,2048,-1773,-1595,1215,-1110,-892,-810,759,-713,-700,691,596,549,537,520,-487,-399,-381,351,-340,330,327,-323,299,294,0};
+  coeffc_ := {-20905355,-3699111,-2955968,-569925,48888,-3149,246158,-152138,-170733,-204586,-129620,108743,104755,10321,0,79661,-34782,-23210,-21636,24208,30824,-8379,-16675,-12831,-10445,-11650,14403,-7003,0,10056,6322,-9884,5751,0,-4950,4130,0,-3958,0,3258,2616,-1897,-2117,2354,0,0,-1423,-1117,-1571,-1739,0,-4421,0,0,0,0,1165,0,0,8752};
+  
+  // Latitude
+  fD2_ := {0,0,0,2,2,2,2,0,2,0,2,2,2,2,2,2,2,0,4,0,0,0,1,0,0,0,1,0,4,4,0,4,2,2,2,2,0,2,2,2,2,4,2,2,0,2,1,1,0,2,1,2,0,4,4,1,4,1,4,2};
+  fMms2_ := {0,0,0,0,0,0,0,0,0,0,-1,0,0,1,-1,-1,-1,1,0,1,0,1,0,1,1,1,0,0,0,0,0,0,0,0,-1,0,0,0,0,1,1,0,-1,-2,0,1,1,1,1,1,0,-1,1,0,-1,0,0,0,-1,-2};
+  fMmm2_ := {0,1,1,0,-1,-1,0,2,1,2,0,-2,1,0,0,0,-1,-1,-1,0,0,-1,0,-1,1,0,0,3,0,-1,1,-2,0,2,1,-2,3,2,-3,-1,0,0,1,0,1,1,0,0,-2,-1,1,-2,2,-2,-1,1,1,-1,0,0};
+  fF2_ := {1,1,-1,-1,1,-1,1,1,-1,-1,-1,-1,1,-1,1,1,-1,-1,-1,1,3,1,1,1,-1,-1,-1,1,-1,1,-3,1,-3,-1,-1,1,-1,1,-1,1,1,1,1,-1,3,-1,-1,1,-1,-1,1,-1,1,-1,-1,-1,-1,-1,-1,1};
+  coeffs2_ := {5128122,280602,277693,173237,55413,46271,32573,17198,9266,8822,8216,4324,4200,-3359,2463,2211,2065,-1870,1828,-1794,-1749,-1565,-1491,-1475,-1410,-1344,-1335,1107,1021,833,777,671,607,596,491,-451,439,422,421,-366,-351,331,315,302,-283,-229,223,223,-220,-220,-185,181,-177,176,166,-164,132,-119,115,107};
+  
+  sumL_ := 0;
+  sumr_ := 0;
+  sumB_ := 0;
+  
+  HAngle:=1;
+  FOR x_ FROM 1 TO 60 DO
+    f_ := 1;
+    IF ABS(fMms_(x_))==1 THEN f_ := fE_; END;
+    IF ABS(fMms_(x_))==2 THEN f_ := fE2_; END;
+    sumL_ := sumL_ + f_*(coeffs_(x_)*sin(fD_(x_)*D_+fMms_(x_)*Msun_mean_+fMmm_(x_)*Mmoon_mean_+fF_(x_)*F_));
+    sumr_ := sumr_ + f_*(coeffc_(x_)*cos(fD_(x_)*D_+fMms_(x_)*Msun_mean_+fMmm_(x_)*Mmoon_mean_+fF_(x_)*F_));
+    f_ := 1;
+    IF ABS(fMms2_(x_))==1 THEN f_ := fE_; END;
+    IF ABS(fMms2_(x_))==2 THEN f_ := fE2_; END;
+    sumB_ := sumB_ + f_*(coeffs2_(x_)*sin(fD2_(x_)*D_+fMms2_(x_)*Msun_mean_+fMmm2_(x_)*Mmoon_mean_+fF2_(x_)*F_));
+  END;
+
+  // Corrections
+  sumL_ := sumL_+3958*sin(A1_)+1962*sin(Lmoon_mean_-F_)+318*sin(A2_);
+  sumB_ := sumB_-2235*sin(Lmoon_mean_)+382*sin(A3_)+175*sin(A1_-F_)
+           +175*sin(A1_+F_)+127*sin(Lmoon_mean_-Mmoon_mean_)
+           -115*sin(Lmoon_mean_+Mmoon_mean_);
+
+  // Longitude of the moon
+  lambdaMm_ := (Lmoon_mean_+sumL_/1000000) MOD 360;
+  
+  // Latitude of the moon
+  betaM_ := sumB_/1000000;
+  
+  // Distance earth-moon
+  dEM_ := 385000.56+sumr_/1000;
+  
+  // Apparent longitude of the moon
+  lambdaMapp_ := lambdaMm_+delta_psi_;
+  
+  // Right ascension of the moon, apparent
+  RAmoon_ := (ATAN2_((sin(lambdaMapp_)*cos(eps_)-tan(betaM_)*sin(eps_)),cos(lambdaMapp_))) MOD 360;
+  
+  // Sidereal hour angle of the moon, apparent
+  SHAmoon_ := 360-RAmoon_;
+  
+  // Declination of the moon
+  DECmoon_ := ASIN(sin(betaM_)*cos(eps_)+cos(betaM_)*sin(eps_)*sin(lambdaMapp_));
+  Dmoon_ := DECmoon_;
+  
+  // GHA of the moon
+  GHAmoon_ := (GHAAtrue_-RAmoon_) MOD 360;
+  
+  // Horizontal parallax of the moon in arcseconds
+  HPmoon_ := 3600*ASIN(6378.14/dEM_);
+  
+  // Semidiameter of the moon in arcseconds
+  SDmoon_ := 3600*ASIN(1738/dEM_);
+  
+  // Geocentric angular distance between moon and sun
+  LDist_ := ACOS(sin(Dmoon_)*sin(Dsun_)+cos(Dmoon_)*cos(Dsun_)*cos(RAmoon_-RAsun_));
+  
+  // Phase of the moon
+  i_ := lambdaMapp_-lambda_;
+  k_ := 100*(1-cos(i_))/2;
+  PhaseMoon_ := ROUND(10*k_,0)/10;
+  
+  HAngle:=oldHA;
+END;
+
+
+LOCAL Star_()
+BEGIN
+  LOCAL RAstar0_, DECstar0_, dRAstar_, dDECstar_, par_;
+  LOCAL Vstar_, argD_, dDECRA_, dDECstar1_, DECstarGC_, dRAstar1_, parscale_;
+  LOCAL RAstar1_, DECstar1_, eps0_2000_, lambdastar1_, betastar1_;
+  LOCAL eta_, PI0_, p0_, A1_, B1_, C1_, lambdastar2_, betastar2_;
+  LOCAL par_lambda_, par_beta_, dlambdastar_, dbetastar_;
+  LOCAL RAstar2_, DECstar2_;
+
+  oldHA:=HAngle;
+  HAngle:=0;
+
+  // Extracting star info using 1-based indexing
+  RAstar0_ := 15 * navstar_(starname_,2);
+  DECstar0_ := navstar_(starname_,3);
+  dRAstar_ := 15 * navstar_(starname_,4) / 3600;
+  dDECstar_ := navstar_(starname_,5) / 3600;
+  par_ := navstar_(starname_,6) / 3600;
+
+  // NOTE: Stars close to sun - like alpha Centauri - need special attention.
+  Vstar_ := 0;
+  IF starname_ == 50 THEN Vstar_ := -22.2; END;  // a-Centauri
+  IF starname_ == 13 THEN Vstar_ := -26.3; END;  // Altair
+  IF starname_ == 44 THEN Vstar_ := -17.0; END;  // Polaris
+  IF starname_ == 54 THEN Vstar_ := -7.6; END;   // Sirius
+
+  argD_ := tand_(DECstar0_) * cosd_(TE_ * dRAstar_);
+  dDECRA_ := (ATAN(argD_) * rtd_ - DECstar0_);  // Great Circle navigation correction
+  dDECstar1_ := TE_ * dDECstar_ + dDECRA_;
+  DECstarGC_ := DECstar0_ + dDECstar1_;
+  dRAstar1_ := TE_ * dRAstar_ * cosd_(DECstar0_) / cosd_(DECstarGC_);  // real distances RA*cos(DEC)
+  parscale_ := -TE_ * Vstar_ * par_ * 0.367;  // Relative Velocity correction
+  dDECstar1_ := dDECstar1_ * (1 + parscale_);
+  dRAstar1_ := dRAstar1_ * (1 + parscale_);
+  
+  // Equatorial coordinates at Julian Date T (mean equinox and equator 2000.0)
+  RAstar1_ := RAstar0_ + dRAstar1_;
+  DECstar1_ := DECstar0_ + dDECstar1_;
+  
+  // Mean obliquity of ecliptic at 2000.0 in degrees
+  eps0_2000_ := 23.439291111;
+  
+  // Transformation to ecliptic coordinates in radians (mean equinox and equator 2000.0)
+  lambdastar1_ := ATAN2_((sind_(RAstar1_) * cosd_(eps0_2000_) + tand_(DECstar1_) * sind_(eps0_2000_)), cosd_(RAstar1_));
+  betastar1_ := ASIN(sind_(DECstar1_) * cosd_(eps0_2000_) - cosd_(DECstar1_) * sind_(eps0_2000_) * sind_(RAstar1_));
+  
+  // Precession
+  eta_ := (47.0029 * TE_ - 0.03302 * TE2_ + 0.00006 * TE3_) * dtr_ / 3600;
+  PI0_ := (174.876384 - 869.8089 * TE_ / 3600 + 0.03536 * TE2_ / 3600) * dtr_;
+  p0_ := (5029.0966 * TE_ + 1.11113 * TE2_ - 0.000006 * TE3_) * dtr_ / 3600;
+  A1_ := COS(eta_) * COS(betastar1_) * SIN(PI0_ - lambdastar1_) - SIN(eta_) * SIN(betastar1_);
+  B1_ := COS(betastar1_) * COS(PI0_ - lambdastar1_);
+  C1_ := COS(eta_) * SIN(betastar1_) + SIN(eta_) * COS(betastar1_) * SIN(PI0_ - lambdastar1_);
+  lambdastar2_ := p0_ + PI0_ - ATAN2_(A1_, B1_);
+  betastar2_ := ASIN(C1_);
+  
+  // Annual parallax
+  par_lambda_ := dtr_ * par_ * SIN(dtr_ * Lsun_true_ - lambdastar2_) / COS(betastar2_);
+  par_beta_ := -dtr_ * par_ * SIN(betastar2_) * COS(dtr_ * Lsun_true_ - lambdastar2_);
+  lambdastar2_ := lambdastar2_ + par_lambda_;
+  betastar2_ := betastar2_ + par_beta_;
+  
+  // Nutation in longitude
+  lambdastar2_ := lambdastar2_ + dtr_ * delta_psi_;
+  
+  // These formulas depend upon Aberration_() having been called previously
+  dlambdastar_ := (e_ * kappa_ * COS(pi0_ - lambdastar2_) - kappa_ * COS(dtr_ * Lsun_true_ - lambdastar2_)) / COS(betastar2_);
+  dbetastar_ := -kappa_ * SIN(betastar2_) * (SIN(dtr_ * Lsun_true_ - lambdastar2_) - e_ * SIN(pi0_ - lambdastar2_));
+  lambdastar2_ := lambdastar2_ + dlambdastar_;
+  betastar2_ := betastar2_ + dbetastar_;
+  
+  // Transformation back to equatorial coordinates in radians
+  RAstar2_ := ATAN2_((SIN(lambdastar2_) * cosd_(eps_) - TAN(betastar2_) * sind_(eps_)), COS(lambdastar2_));
+  DECstar2_ := ASIN(SIN(betastar2_) * cosd_(eps_) + COS(betastar2_) * sind_(eps_) * SIN(lambdastar2_));
+  
+  // Output results to global variables
+  RAstar_ := (rtd_ * RAstar2_) MOD 360;
+  GHAstar_ := (GHAAtrue_ - RAstar_) MOD 360;
+  GHAstarDD_ := GHAstar_;
+  DECstar_ := rtd_ * DECstar2_;
+  DECstarDD_ := DECstar_;
+  
+  HAngle:=oldHA;
+END;
+
+
+
+//Calculations for planets
+
+//NOTE: TimeMeasures(), Nutation_(), Aberration_() 
+//and either SunQuick_() or SunComplete_()
+//must have been called before calling this function.
+LOCAL Planet_(planetId,centroid,showProgress)
+BEGIN
+
+  LOCAL planetName:=LOWER(planets_(planetId));
+  IF showProgress THEN PRINT(planets_(planetId)+":"); END;
+  
+  oldHA:=HAngle;
+  HAngle:=0;
+
+  //Heliocentric coordinates
+  IF showProgress THEN PRINT("  Heliocentric longitude"); END;
+  LOCAL L := EXPR("L"+planetName+"(Tau_)");
+  IF showProgress THEN PRINT("  Heliocentric latitude"); END;
+  LOCAL B := EXPR("B"+planetName+"(Tau_)");
+  IF showProgress THEN PRINT("  Distance Sun-"+planetName); END;
+  LOCAL R := EXPR("R"+planetName+"(Tau_)");
+
+  // Heliocentric earth coordinates
+  LOCAL qx:=Re_*cosd_(Be_)*cosd_(Le_);
+  LOCAL qy:=Re_*cosd_(Be_)*sind_(Le_);
+  LOCAL qz:=Re_*sind_(Be_);
+  
+  //Geocentric rectangular coordinates of planet
+  LOCAL x := R*cosd_(B)*cosd_(L)-qx;
+  LOCAL y := R*cosd_(B)*sind_(L)-qy;
+  LOCAL z := R*sind_(B)-qz;
+  
+  //Geocentric coordinates of planet
+  LOCAL lambda := ATAN2_(y,x);
+  LOCAL beta := ATAN(z/SQRT(x^2+y^2));
+
+  //Distance from earth / light time
+  LOCAL d := SQRT(x^2+y^2+z^2);
+  LOCAL lt := 0.0057755183*d;
+
+  //Time correction
+  LOCAL Tau_corr := (JDE_-lt-2451545)/365250;
+
+  //Coordinates corrected for light time
+  IF showProgress THEN PRINT("  Corrected heliocentric longitude"); END;
+  L := EXPR("L"+planetName+"(Tau_corr)");
+  IF showProgress THEN PRINT("  Corrected heliocentric latitude"); END;
+  B := EXPR("B"+planetName+"(Tau_corr)");
+  IF showProgress THEN PRINT("  Corrected distance Sun-"+planetName); END;
+  R := EXPR("R"+planetName+"(Tau_corr)");
+  
+  x := R*cosd_(B)*cosd_(L)-Re_*cosd_(Be_)*cosd_(Le_);
+  y := R*cosd_(B)*sind_(L)-Re_*cosd_(Be_)*sind_(Le_);
+  z := R*sind_(B)-Re_*sind_(Be_);
+  lambda := ATAN2_(y,x);
+  beta := atan(z/sqrt(x^2+y^2));
+
+  //Illumination of the planet's disk
+  kplanet_(planetId) := (1+((R-Re_*cosd_(B)*cosd_(L-Le_))/d))/2;
+
+  // Additional centroid correction 
+  // computation for partial
+  // disc illumination for Mars and Venus
+  // Based on http://navlist.net/imgx/PHASE-CORRECTION-FOR-VENUS.pdf  
+  IF planetId<=2 AND centroid THEN
+    // A few vectors to simplify calculations
+    // Earth-Venus vector
+    LOCAL p:=[x,y,z];
+    LOCAL unitp:=p/ABS(p);  
+  
+    // Sun-Earth vector
+    LOCAL q:=[qx,qy,qz];
+  
+    // Sun-Venus vector
+    LOCAL r:=p+q;
+    LOCAL unitr:=r/ABS(r);
+
+    // Disc illumination as a function of
+    // our vectors (similar to earlier formula 
+    // for k but not identical -- which is the best?)
+    LOCAL kk:=((ABS(p)+ABS(r))^2-ABS(q)^2)/(4*ABS(p)*ABS(r));
+    
+    // Unit vector of centroid position correction
+    // From Eq. 19 in the paper
+    LOCAL c:=DOT(unitr,unitp)*unitp-unitr;
+    c:=c/ABS(c);
+    
+    // Actual observed semi-diameter in radians 
+    // calculated from the 1AU semi-diameter
+    // in arcseconds constant (in SDplanets_)
+    LOCAL sdobs:=SDplanets_(planetId)/d*PI/(180*3600);
+
+    // Centroid position correction
+    p:=p+c*8*sdobs*(1-kk)/(3*PI);
+  
+    x:=p[1];
+    y:=p[2];
+    z:=p[3];
+  
+    beta := atan(z/sqrt(x^2+y^2));
+    lambda := ATAN2_(y,x);      
+  END;
+
+  //Aberration
+  LOCAL dlambda := (e_*kappa_*COS(pi0_-lambda)-kappa_*COS(dtr_*Lsun_true_-lambda))/COS(beta);
+  LOCAL dbeta := -kappa_*SIN(beta)*(SIN(dtr_*Lsun_true_-lambda)-e_*SIN(pi0_-lambda));
+  lambda:=lambda+dlambda;
+  beta:=beta+dbeta;
+
+  //FK5 - J.Meeus chapt.32
+  LOCAL lambda_prime := lambda-dtr_*1.397*TE_-dtr_*0.00031*TE2_;
+  dlambda := -0.09033*dtr_/3600+0.03916*dtr_/3600*(COS(lambda_prime)+SIN(lambda_prime))*TAN(beta);
+  dbeta := 0.03916*dtr_/3600*(COS(lambda_prime)-SIN(lambda_prime));
+  lambda:=lambda+dlambda;
+  beta:=beta+dbeta;
+
+  //Nutation in longitude
+  lambda:=lambda+dtr_*delta_psi_;
+
+  //Right ascension, apparent
+  RAplanet_(planetId):=rtd_*(ATAN2_((SIN(lambda)*cosd_(eps_)-TAN(beta)*sind_(eps_)),COS(lambda)) MOD (2*PI));
+
+  //Declination, apparent
+  DECplanet_(planetId):=rtd_*ASIN(SIN(beta)*cosd_(eps_)+COS(beta)*sind_(eps_)*SIN(lambda));
+
+  //GHA
+  GHAplanet_(planetId):= (GHAAtrue_-RAplanet_(planetId)) MOD 360;
+
+  //Semidiameter (equatorial)
+  SDplanet_(planetId):= SDplanets_(planetId)/d;
+
+  //Horizontal parallax
+  HPplanet_(planetId) := 8.794/d;  
+
+  HAngle:=oldHA;
+END;
+
+LOCAL Planet_(planetId)
+BEGIN
+  Planet_(planetId,0,0);
+END;
+
+EXPORT Test()
+BEGIN
+  CONVERT_DATETIME(1978.1025,18°51′58″);
+
+  starname_:=13;
+  
+  TimeMeasures_();
+  Nutation_();
+  Aberration_();
+  Aries_();  
+  SunComplete_(1);
+  Moon_();
+  Star_();
+  
+  LOCAL i,a,b,c,d;
+  FOR i FROM 1 TO 4 DO
+    Planet_(i,0,1);
+    
+    MSGBOX(planets_(i)+CHAR(10)+
+           "GHA:"+→DMD(GHAplanet_(i))+CHAR(10)
+          +"dec:"+→DMD(DECplanet_(i))+CHAR(10)
+          +"SD:"+SDplanet_(i)+CHAR(10)
+          +"HP:"+HPplanet_(i));
+  END;
+  
+  MSGBOX("Star:"+navstar_(starname_,1)+CHAR(10)
+        +"Star GHA:"+→DMD(GHAstar_)+CHAR(10)
+        +"Star dec:"+→DMD(DECstar_)+CHAR(10));
+
+  MSGBOX("Moon GHA:"+→DMD(GHAmoon_)+CHAR(10)
+        +"Moon dec:"+→DMD(DECmoon_)+CHAR(10)
+        +"Moon HP :"+HPmoon_+CHAR(10)
+        +"Moon SD :"+SDmoon_+CHAR(10)
+    +"Phase   :"+PhaseMoon_);
+  MSGBOX("True obliquity: "+eps_+CHAR(10)
+        +"Mean obliquity: "+eps0_+CHAR(10)    
+    +"True GHA Aries: " + →DMD(GHAAtrue_)+CHAR(10)
+    +"Delta Psi:" + ROUND(3600000*delta_psi_)/1000);
+  MSGBOX( "JD:"+JD_+CHAR(10)
+         +"Sun Dec: " + →DMD(SunDec_) + CHAR(10)
+         +"Sun GHA: " + →DMD(GHAsun_));
+           
+END;

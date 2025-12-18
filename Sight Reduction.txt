@@ -1,0 +1,917 @@
+// Observation and calculated values
+LOCAL sightType;
+LOCAL dip_min, HE_ft, IC_min;
+LOCAL horShort_nm, HS_deg, HO_deg;
+LOCAL temp_C,press_mb;
+LOCAL HA_deg; 
+
+LOCAL DRlat_deg, DRlong_deg;
+LOCAL altCorr_min, obs_UTC;
+LOCAL dec_deg, decBefore_utc,decAfter_utc;
+LOCAL GHABefore_UTC, GHA_deg;
+LOCAL LHA_deg, Hc_deg, Z_deg;
+LOCAL Zn_deg, a_nm;
+LOCAL limbSign, limb, refr;
+LOCAL semiD, paralX; 
+LOCAL obsDate;
+LOCAL rfDist_nm,rfBrg_deg;
+LOCAL starId,SHA_deg;
+
+// Default values for subsequent sights
+LOCAL IC_default, DRlat_default, DRlon_default,HE_default;
+LOCAL date_default,temp_default,press_default;
+
+//Moon sight variables
+LOCAL GHATimeCorr_deg, GHAvcorr_min, decdcorr_min, HPcorr_min;
+LOCAL tableGHA_deg,tableDec_deg;
+
+// Utility variables
+LOCAL maxLOP:=9;
+LOCAL current;
+LOCAL nl:=CHAR(10);
+LOCAL progressFlag:=1;
+
+EXPORT SIGHT()
+BEGIN
+  HAngle:=1;
+  
+  IF NOT INPUT_HS_AND_BODY() THEN RETURN "Canceled."; END;
+
+  IF DRlat_deg(current)=0 THEN DRlat_deg(current):=DRlat_default; END;
+  IF DRlong_deg(current)=0 THEN DRlong_deg(current):=DRlon_default; END;
+  IF obsDate(current)=0 THEN obsDate(current):=date_default; END;
+  
+  LOCAL c;
+  
+  CASE 
+    IF sightType(current)=1 THEN c:=SUN_SIGHT(); END;
+    IF sightType(current)=2 THEN c:=MOON_SIGHT(); END;
+    IF sightType(current)=3 THEN c:=STAR_SIGHT(); END;
+    IF sightType(current)=4 THEN c:=PLANET_SIGHT(); END;
+    IF sightType(current)=5 THEN c:=SUN_SIGHT_WITH_TABLES(); END;
+    IF sightType(current)=6 THEN c:=MOON_SIGHT_WITH_TABLES(); END;
+    IF sightType(current)=7 THEN
+      c:=PRE_CALCULATED_SIGHT();
+    // As the name implies, this is a pre-calculated
+    // sight so no need to continue with the HC
+    // and LOP calculations.
+    IF NOT c THEN RETURN "Canceled."; ELSE RETURN; END;
+  END;
+  END;
+  
+  IF NOT c THEN RETURN "Canceled."; END;
+  
+  IF NOT HC_CALC(current) THEN RETURN "Canceled."; END;
+
+  IF NOT VIEW_LOP_PARAMETERS(current) THEN RETURN "Canceled."; END;
+  
+  LOP_EQUATION(current);
+
+END;
+
+LOCAL SUN_SIGHT()
+BEGIN
+  HAngle:=1;
+  
+  LOCAL c:=INPUT({obsDate(current),
+            {limbSign(current),{"Lower","Upper"}},
+            DRlat_deg(current),
+            DRlong_deg(current)},
+    "LOP "+STRING(current)+" Observation Data",
+    {"Date:","Limb:","DR Lat:","DR Lon:"},
+    {"Date of observation (YYYY.MMDD)",
+     "Observed Limb",
+     "DR latitude at "+obs_UTC(current)+" (°) (+=N -=S)'",
+     "DR longitude "+obs_UTC(current)+" (°) (+=E -=W)"});
+  
+  IF NOT c THEN RETURN c; END;
+  
+  DRlat_default:=DRlat_deg(current);
+  DRlon_default:=DRlong_deg(current);
+  date_default:=obsDate(current);
+  
+  HO_CALC_SUN(current);
+  
+  IF progressFlag THEN
+    PRINT();
+    PRINT("Calculating heliocentric Earth ephemeris...");
+  END;
+  
+  LOCAL sunData:=SunEphemeris(obsDate(current),obs_UTC(current),progressFlag);
+  
+  dec_deg(current):=sunData(2);
+  GHA_deg(current):=sunData(1);
+  
+  RETURN c;  
+END;
+
+LOCAL MOON_SIGHT()
+BEGIN
+  LOCAL c;
+  
+  HAngle:=1;
+  
+  c:=INPUT({obsDate(current),
+         DRlat_deg(current),
+         DRlong_deg(current),
+         {limbSign(current),
+          {"Lower","Upper"}}},
+    "LOP "+STRING(current)+" Moon Sight Data",
+    {"Date:","DR Lat:","DR Lon:",
+     "Limb:"},
+    {"Date of observation (YYYY.MMDD)",
+     "DR Latitude (N=+ S=-)",
+     "DR Longitude (N=+ S=-)",
+     "Observed limb"});
+  IF NOT c THEN RETURN c; END;
+
+  DRlat_default:=DRlat_deg(current);
+  DRlon_default:=DRlong_deg(current);
+  date_default:=obsDate(current);
+  
+  // Set limb sign so we add a semi-diameter correction
+  // for lower limb and remove it for upper
+  limb(current):=-1*((limbSign(current)-1)*2-1);
+  
+  IF progressFlag THEN
+    PRINT();
+    PRINT("Calculating Moon ephemeris...");    
+  END;
+  
+  LOCAL r:=MoonEphemeris(obsDate(current),obs_UTC(current));
+
+  GHA_deg(current):=r(1);
+  dec_deg(current):=r(2);
+
+  // True altitude
+  HO_deg(current):=HA_deg(current)-REFRACTION(current)/60;
+  
+  // Corrected altitude including semi-diameter
+  // correction and parallax correction
+  HO_deg(current):=HO_deg(current)
+    +limb(current)*r(4)/3600
+    +r(3)/3600*COS(HO_deg(current));
+  
+  RETURN c;
+END;
+
+ 
+LOCAL PLANET_SIGHT()
+BEGIN
+  HAngle:=1;
+ 
+  // Calculate altitude correction.
+  // NOTE: the planet ephemeris function
+  // returns the position of
+  // the centroid of the illuminated disc for Venus
+  // and Mars, so the Additional Correction in the
+  // Almanac for Mars and Venus MUST NOT be applied.
+  
+  altCorr_min(current):=-1*REFRACTION(current);
+  
+  HO_deg(current):=HA_deg(current)+altCorr_min(current)/60;
+
+  LOCAL c:=INPUT(
+        {DRlat_deg(current),
+         DRlong_deg(current),
+         obsDate(current),
+         {starId(current),planets_}},
+    "LOP "+STRING(current)+" Observation Time",
+    {"DR Lat:","DR Lon:","Date:","Planet:"},
+    {"DR Latitude (N=+ S=-)",
+     "DR Longitude (N=+ S=-)",
+     "Date (YYYY.MMDD)",
+     "Planet Observed"});
+  
+  IF NOT c THEN RETURN c; END;
+
+  DRlat_default:=DRlat_deg(current);
+  DRlon_default:=DRlong_deg(current);
+  date_default:=obsDate(current);
+  
+  IF progressFlag THEN
+    PRINT();
+    PRINT("Calculating planet ephemeris...");
+  END;  
+  
+  LOCAL r:=PlanetEphemeris(
+             starId(current),
+             obsDate(current),
+             obs_UTC(current),
+       1,
+       progressFlag);
+  
+  dec_deg(current):=r(2);
+  SHA_deg(current):=360-r(5);
+  GHA_deg(current):=r(1);
+
+  RETURN c;
+END;
+
+LOCAL STAR_SIGHT()
+BEGIN
+  LOCAL c;
+  
+  HAngle:=1;
+  
+  altCorr_min(current):=-1*REFRACTION(current);
+  HO_deg(current):=HA_deg(current)+altCorr_min(current)/60;
+
+  c:=INPUT({DRlat_deg(current),
+         DRlong_deg(current),
+         obsDate(current),
+         {starId(current),CAS("col(navstar_,1)")}},
+    "LOP "+STRING(current)+" Observation Time",
+    {"DR Lat:","DR Lon:","Date:","Star:"},
+    {"DR Latitude (N=+ S=-)",
+     "DR Longitude (N=+ S=-)",
+     "Date (YYYY.MMDD)",
+     "Observed star"});
+  IF NOT c THEN RETURN c; END;
+
+  DRlat_default:=DRlat_deg(current);
+  DRlon_default:=DRlong_deg(current);
+  date_default:=obsDate(current);
+  
+  IF progressFlag THEN
+    PRINT();
+    PRINT("Calculating star ephemeris...");
+  END;
+  
+  LOCAL r:=StarEphemeris(starId(current),
+           obsDate(current),
+       obs_UTC(current));
+       
+  dec_deg(current):=r(2);
+  SHA_deg(current):=360-r(3);
+  GHA_deg(current):=r(1);
+
+  RETURN c;
+END;
+
+LOCAL SUN_SIGHT_WITH_TABLES()
+BEGIN
+  LOCAL hr,hrp1,nl,fn,f,xx,c;
+ 
+  c:=INPUT({obsDate(current),         
+        {limbSign(current),
+          {"Lower","Upper"}}},
+    "LOP "+STRING(current)+" Observation Time",
+    {"Date:","Limb:"},
+    {"Date (YYYY.MMDD)",     
+     "Observed Limb"});
+  IF NOT c THEN RETURN c; END;
+  
+  date_default:=obsDate(current);
+  
+  HO_CALC_SUN(current);
+
+  hr:=" at "+STRING(IP(obs_UTC(current)))+":00:";
+  hrp1:=" at "+STRING(IP(obs_UTC(current)+1))+":00:";
+ 
+  c:=INPUT({decBefore_utc(current),
+         decAfter_utc(current),
+         GHABefore_UTC(current),
+         DRlat_deg(current),
+         DRlong_deg(current)},
+         "LOP "+STRING(current)+" Altitude Computation",
+        {"Dec."+hr,"Dec."+hrp1,
+         "GHA"+hr,"DR Lat:","DR Lon:"},
+        {"Tabled declination at "+hr+" (+=N -=S)",
+         "Tabled declination at "+hrp1+" (+=N -=S)",
+         "Tabled GHA at "+hr+" (°)",
+         "DR latitude at "+obs_UTC(current)+" (°) (+=N -=S)'",
+         "DR longitude "+obs_UTC(current)+" (°) (+=E -=W)"});
+  IF NOT c THEN RETURN c; END;
+  
+  DRlat_default:=DRlat_deg(current);
+  DRlon_default:=DRlong_deg(current);
+  
+  // Interpolate declination from tables
+  dec_deg(current):=decBefore_utc(current)
+      +(decAfter_utc(current)
+        -decBefore_utc(current))
+        *(FP(obs_UTC(current)));
+
+  // Adjust GHA from whole hour table time
+  // to observation time
+  GHA_deg(current):=GHABefore_UTC(current)
+                  +15*FP(obs_UTC(current));
+
+  RETURN c;
+END;
+
+LOCAL MOON_SIGHT_WITH_TABLES()
+BEGIN
+  LOCAL c;
+  
+  c:=INPUT({DRlat_deg(current),
+         DRlong_deg(current),
+         tableGHA_deg(current),
+         tableDec_deg(current),
+         {limbSign(current),
+          {"Lower","Upper"}}},
+    "LOP "+STRING(current)+" Moon Sight Data",
+    {"DR Lat:","DR Lon:",
+     "GHA:",
+     "Declination:",
+     "Limb:"},
+    {"DR Latitude (N=+ S=-)",
+     "DR Longitude (N=+ S=-)",
+     "GHA from Almanac (°)",
+     "Declination from Almanac (°)",
+     "Observed limb"});
+  IF NOT c THEN RETURN c; END;
+
+  DRlat_default:=DRlat_deg(current);
+  DRlon_default:=DRlong_deg(current);
+  
+  c:=INPUT({GHATimeCorr_deg(current), 
+         GHAvcorr_min(current), 
+         decdcorr_min(current),
+         altCorr_min(current),
+         HPcorr_min(current)},
+    "LOP "+STRING(current)+" Moon Sight Corrections",
+    {"GHA time correction:", 
+     "GHA v correction:", 
+     "Dec d correction:",
+     "Alt correction:",
+     "HP correction:"},
+    {"From Increments & Corrections table (')",
+     "From Increments & Corrections table (')",
+     "From Increments & Corrections table (')",
+     "Altitude correction for HA="+→DMD(HA_deg(current))+"(')",
+     "Horizontal parallax correction (')"});
+  IF NOT c THEN RETURN c; END;
+  
+  GHA_deg(current):=tableGHA_deg(current)
+         +GHATimeCorr_deg(current)
+         +GHAvcorr_min(current)/60;
+
+  dec_deg(current):=tableDec_deg(current)
+         +decdcorr_min(current)/60;
+
+  HO_deg(current):=HA_deg(current)+HPcorr_min(current)/60
+         +altCorr_min(current)/60;
+
+  IF limbSign(current)=2 THEN 
+    HO_deg(current):=HO_deg(current)-30/60;
+  END;
+
+  RETURN c;
+END;
+
+LOCAL PRE_CALCULATED_SIGHT()
+BEGIN
+
+  LOCAL c:=INPUT({a_nm(current),Zn_deg(current),
+         DRlat_deg(current),DRlong_deg(current)},
+        "LOP "+STRING(current)+" Pre-calculated values",
+        {"A:","ZN:","Lat:","Long:"},
+        {"Distance from assumed position (nm)",
+         "Azimuth to celestial body (°)",
+         "Latitude of assumed or DR position (°)",
+         "Longitude of assumed or DR position (°)"});
+  
+  IF NOT c THEN RETURN c; END;
+  
+  DRlat_default:=DRlat_deg(current);
+  DRlon_default:=DRlong_deg(current);
+  
+  LOP_EQUATION(current);
+  
+  RETURN c;
+END;
+
+EXPORT PLOT_LOPs()
+BEGIN
+  Function.Xmin:=-180;
+  Function.Xmax:=180;
+  Function.Ymin:=-90;
+  Function.Ymax:=90;
+  LOCAL i:=1;
+  STARTAPP("Function");
+
+  // This doesn't work with a loop
+  // for some reason
+  IF a_nm(1)<>0 THEN CHECK(1); END;
+  IF a_nm(2)<>0 THEN CHECK(2); END;
+  IF a_nm(3)<>0 THEN CHECK(3); END;
+  IF a_nm(4)<>0 THEN CHECK(4); END;
+  IF a_nm(5)<>0 THEN CHECK(5); END;
+  IF a_nm(6)<>0 THEN CHECK(6); END;
+  IF a_nm(7)<>0 THEN CHECK(7); END;
+  IF a_nm(8)<>0 THEN CHECK(8); END;
+  IF a_nm(9)<>0 THEN CHECK(9); END;
+  IF a_nm(10)<>0 THEN CHECK(0); END;
+  
+  STARTVIEW(1,1);
+  
+  // Draw dot(s) for assumed position(s)  
+  ARC(6,-73,45,10,0,360,3);  
+  FOR i FROM 1 TO 10 DO
+    IF a_nm(i)<>0 THEN
+      ARC(6,DRlong_deg(i),DRlat_deg(i),10);
+    END;
+  END;
+  
+END;
+
+EXPORT VIEW_LOP_PARAMETERS()
+BEGIN
+  LOCAL c:=SELECT_LOP(current,"Select LOP to view");
+  IF c=0 THEN RETURN "Canceled."; END;
+
+  VIEW_LOP_PARAMETERS(c);
+END;
+
+VIEW_LOP_PARAMETERS(c)
+BEGIN
+  LOCAL nl:=CHAR(10);
+  
+  IF NOT MSGBOX("Ho  : "+→DMD(HO_deg(c))+nl+
+         "GHA : "+→DMD(GHA_deg(c))+nl+
+         "Dec.: "+→DMD(dec_deg(c))+nl+
+         "LHA : "+→DMD(LHA_deg(c))+nl+
+         "Hc  : "+→DMD(Hc_deg(c)),1) THEN RETURN 0; END;
+
+  IF NOT MSGBOX("LOP: " + c + nl
+         + "a (nm): "+IFTE(ABS(a_nm(c))<0.05,"0.0",STRING(HMS→(ABS(a_nm(c))),2,1)
+           +IFTE(a_nm(c)≤0," AWAY"," TOWARD")) + nl
+         + "Zn (°): "+STRING(Zn_deg(c),2,1) + nl
+         + "AP lat (°): "+→DMD(DRlat_deg(c)) + nl
+         + "AP lon (°): "+→DMD(DRlong_deg(c)),1) THEN RETURN 0; END;
+  
+  RETURN 1;
+  
+END;
+
+EXPORT SHIFT_LOP()
+BEGIN
+  LOCAL f,index,fn;
+  LOCAL d_nm,brg_deg;
+
+  LOCAL c:=SELECT_LOP(current,"Select LOP to shift");
+  IF c=0 THEN RETURN "Canceled."; END;
+ 
+  LOCAL rv:=INPUT({rfBrg_deg(c),
+         rfDist_nm(c)},
+    "LOP "+STRING(c)+" Shift",
+    {"Bearing:","Distance:"},
+    {"Bearing direction for shift (°)",
+     "Distance of shift (nm)"
+     });
+  IF rv=0 THEN RETURN "Canceled."; END;
+
+  fn:=c;
+  // If register 10 is chosen, it
+  // must be retrieved from Function F0
+  IF fn==10 THEN fn:=0; END;
+
+  LOCAL dx:=rfDist_nm(c)/60*SIN(rfBrg_deg(c));
+  LOCAL dy:=rfDist_nm(c)/60*COS(rfBrg_deg(c));
+
+  // Retrieve LOP formula and use x
+  // instead of the reserved X (which always
+  // has an assigned value) and add
+  // Y offset using CAS    
+  f:="CAS(\"F"+STRING(c)+"(x-dx)+dy\");";
+  f:=STRING(EXPR(f));
+
+  // Replace x with X using string
+  // manipulation to ensure X is not
+  // evaluated to its assigned value
+  index:=INSTRING(f,"x"); 
+  f:=LEFT(f,index-1)+"'X'"
+     + MID(f,index+1);
+
+  LOCAL d:=SELECT_LOP(c,"Select destination LOP register");
+  IF d=0 THEN RETURN "Canceled."; END;
+  IF d=10 THEN d:=0; END;
+
+  // Store LOP equation in destination
+  // formula register
+  f:="F"+STRING(d)+":="+f;
+
+  EXPR(f);      
+
+  MSGBOX("Shifted LOP "+STRING(c)+" by "
+         +→DMD(dx)+" lat. and "+→DMD(dx)+" lon."+CHAR(10)
+         +" into "+STRING(d));
+END;
+
+// Defining local variables external to function 
+// so last defined values remain valid
+// between invocations
+LOCAL ephLat,ephLon,ephStar:={1,15,30,45};
+
+LOCAL OUTPUT_EPHEMERIS(bodyName,eph,lat,lon)
+BEGIN
+  PRINT(bodyName);
+  PRINT("  GHA:"+→DMD(eph(1)));
+  PRINT("  DEC:"+→DMD(eph(2)));
+  LOCAL c:=HC_AZ(eph(1),eph(2),lat,lon);
+  PRINT("  HC :"+→DMD(c(1)));
+  PRINT("  AZ :"+→DMD(c(2)));
+END;
+
+EXPORT EPHEMERIDES()
+BEGIN
+  LOCAL date_:=Date;
+  LOCAL time_:=Time;
+  LOCAL i;
+  
+  LOCAL c:=INPUT(
+    {date_,time_,ephLat,ephLon,
+    {ephStar(1),CAS("col(navstar_,1)")},
+    {ephStar(2),CAS("col(navstar_,1)")},
+    {ephStar(3),CAS("col(navstar_,1)")},
+    {ephStar(4),CAS("col(navstar_,1)")}},
+     "Ephemeris",
+    {"Date:","Time:","Latitude:","Longitude:","Star:","Star:","Star:","Star:"},
+    {"Date of ephemerides (YYYY.MMDD)",
+     "UTC Time (HH°MM'DD\")",
+     "Latitude (°)","Longitude (°)",
+	 "Star to include in results",
+     "Star to include in results",
+     "Star to include in results",
+     "Star to include in results"});
+	 
+  IF NOT c THEN RETURN "Canceled."; END;
+  
+  PRINT();
+  c:=SunEphemeris(date_,time_,0);
+  OUTPUT_EPHEMERIS("Sun",c,ephLat,ephLon);
+  PRINT("  SD :"+c(4)+"\"");  
+  
+  PRINT("Aries:");
+  PRINT("  GHA:"+→DMD(c(3)));
+  
+  OUTPUT_EPHEMERIS("Moon",MoonEphemeris(date_,time_),ephLat,ephLon);
+  
+  FOR i FROM 1 TO 4 DO
+    c:=PlanetEphemeris(i,date_,time_,0,0);
+    OUTPUT_EPHEMERIS(planets_(i),c,ephLat,ephLon);
+	// Output the semi-diameter of Mars and Venus
+	IF i<=2 THEN
+	  PRINT("  SD :"+c(4)+"\"");
+	END;
+  END;
+
+  FOR i FROM 1 TO 4 DO  
+    OUTPUT_EPHEMERIS(navstar_(ephStar(i),1),StarEphemeris(ephStar(i),date_,time_),ephLat,ephLon);
+  END;
+END;
+
+LOP_EQUATION(index)
+BEGIN
+  LOCAL c:=atdz(DRlat_deg(index),DRlong_deg(index),
+                a_nm(index),Zn_deg(index));
+
+  LOCAL f:=−1/TAN(90-Zn_deg(index))
+            *COS(DRlat_deg(index))
+            *('X'-c(2))+c(1);
+
+  CASE
+    IF index=10 THEN F0:=f; END;
+    IF index=1 THEN F1:=f; END;
+    IF index=2 THEN F2:=f; END;
+    IF index=3 THEN F3:=f; END;
+    IF index=4 THEN F4:=f; END;
+    IF index=5 THEN F5:=f; END;
+    IF index=6 THEN F6:=f; END;
+    IF index=7 THEN F7:=f; END;
+    IF index=8 THEN F8:=f; END;
+    IF index=9 THEN F9:=f; END;    
+  END;
+END;
+
+
+SELECT_LOP(default,prompt)
+BEGIN
+  LOCAL lop:=default;
+
+  LOCAL r:=INPUT({{lop,{"1","2","3","4","5",
+     "6","7","8","9","10"}},
+     {progressFlag,1}},
+     "LOP register",
+     {"LOP:","Show progress"},
+     {prompt,
+      "Select to display calculation progress"});
+
+  IF r=0 THEN RETURN 0;
+  ELSE RETURN lop;
+  END;
+END;
+
+SELECT_LOP(default)
+BEGIN
+  RETURN SELECT_LOP(default,"Select LOP register");
+END;
+
+INPUT_HS_AND_BODY()
+BEGIN
+  LOCAL c:=SELECT_LOP(current);
+  IF NOT c THEN RETURN c; END;
+  
+  current:=c;
+  
+  c:=INPUT(
+    {{sightType(current),{"Sun","Moon","Star","Planet",
+        "Sun with Tables","Moon with Tables",
+        "Pre-calc (skip to next screen)"}},
+     obs_UTC(current),
+     HS_deg(current)},
+    "LOP "+STRING(current)+": Sextant Observation",
+    {"Body:","UTC:","HS:"},
+    {"Type of body being observed",
+     "Observation time UTC (HH°MM'SS)",
+     "Sextant Height (°)"});
+
+  IF NOT c THEN RETURN c; END;
+  
+  IF IC_min(current)=0 THEN IC_min(current):=IC_default; END;
+  IF HE_ft(current)=0 THEN HE_ft(current):=HE_default; END;
+  IF temp_C(current)=0 THEN temp_C(current):=temp_default; END;
+  IF press_mb(current)=0 THEN press_mb(current):=press_default; END;
+  
+  c:=INPUT(
+    {IC_min(current),
+     HE_ft(current),
+	 horShort_nm(current),
+     temp_C(current),
+     press_mb(current)},
+    "LOP "+STRING(current)+": Corrections",
+    {"IC:","HE:","Dip short:","Temp:","Pressure:"},
+    {"Index Correction ' (+=Off -=On scale)",
+     "Eye Height (ft.)",
+	 "Horizon distance (nm) (0 if true horizon)",
+     "Temperature (°C)",
+     "Pressure (mb)"});
+
+  IF NOT c THEN RETURN c; END;
+  
+  IC_default:=IC_min(current);
+  HE_default:=HE_ft(current);
+  temp_default:=temp_C(current);
+  press_default:=press_mb(current);
+
+  HA_CALC(current);  
+  RETURN c;
+END;
+
+
+HA_CALC(index)
+BEGIN
+
+  // If a horizon distance is specified,
+  // use dip short formula
+  IF horShort_nm(index) > 0 THEN
+    dip_min(index):=(0.0416*horShort_nm(index))+(0.566*HE_ft/horShort_nm(index));
+  ELSE
+    dip_min(index):=0.97*√(HE_ft(index));
+  END;
+  HA_deg(index):=HS_deg(index)+(IC_min(index)-dip_min(index))/60;
+
+  RETURN HA_deg(index);
+END;
+
+LOCAL REFRACTION(index)
+BEGIN
+  LOCAL P:=press_mb(index);
+  LOCAL T:=temp_C(index);
+  LOCAL a:=HA_deg(index);  
+  LOCAL K:=273;  
+  
+  // Based on Bennett, G. G., J. Inst. Nav., vol. 30, p. 255
+  // From https://navlist.net/img/104673.refraction.pdf
+  RETURN 60*0.0167/TAN(a+7.31/(a+4.4))*0.28*P/(T+K);  
+END;
+
+HO_CALC_SUN(index)
+BEGIN
+
+  limb(index):=(limbSign(index)-1)*2-1;
+  semiD(index):=16+0.3*COS(0.9856*(DoY(obsDate(index))-4));
+  refr(index):=REFRACTION(index);
+  paralX(index):=0.15*COS(HA_deg(index));
+  
+  altCorr_min(index):=-refr(index)-limb(index)*semiD(index)+paralX(index);
+
+  HO_deg(index):=HA_deg(index)+altCorr_min(index)/60;
+  
+  RETURN HO_deg;
+END;
+
+HC_CALC(index)
+BEGIN
+
+  LOCAL c:=HC_AZ(GHA_deg(index),
+     dec_deg(index),
+   DRlat_deg(index),
+   DRlong_deg(index));
+  
+  Hc_deg(index):=c(1);
+  Zn_deg(index):=c(2);
+  LHA_deg(index):=c(3);
+  
+  IF Hc_deg(index)<0 THEN
+    IF NOT MSGBOX("Hc is negative."+nl+
+      "Unless you're looking through"+nl+
+      "the earth, check your assumed"+nl+
+      "position.",1) THEN RETURN 0; END;
+  END;
+
+  // Calculate distance offset from
+  // assumed position in nautical miles
+  a_nm(index):=(HO_deg(index)-Hc_deg(index))*60;
+
+  RETURN Hc_deg(index);
+END;
+
+LOCAL HC_AZ(gha,dec,lat,lon)
+BEGIN
+  // Calculate LHA from GHA 
+  // based on longitude
+  LOCAL lha:=(gha+lon) MOD 360;
+
+  // Compute sign of declination and LHA 
+  // to use Hc formula 
+  LOCAL decSign:=SIGN(dec)*SIGN(lat);  
+  LOCAL lhaSign:=−SIGN(lha-180);
+
+  LOCAL hc:=ASIN(SIN(decSign*ABS(dec))
+               *SIN(ABS(lat))
+              +COS(decSign*ABS(dec))
+               *COS(ABS(lat))
+               *COS(lha)
+          );
+
+  LOCAL z:=ATAN2(SIN(lhaSign*lha),
+              (COS(ABS(lat))
+               *TAN(decSign*ABS(dec))
+               -SIN(ABS(lat))
+                *COS(lha))
+          );
+
+  // Adjust Z if negative
+  IF z≤0 THEN
+    z:=z+180;
+  END;
+
+  // Calculate azimuth to body based
+  // on Z, latitude, and LHA
+  IF lat≥0 THEN
+    IF lha≥180 THEN
+      z:=z;
+    ELSE
+      z:=360-z;
+    END;
+  ELSE
+    IF lha≥180 THEN
+      z:=180-z;
+    ELSE
+      z:=180+z;
+    END;
+  END; 
+
+  RETURN {hc,z,lha};
+END;
+
+// Returns the day number in the year for a
+// given date. Used in calculations of sun semi-diameter.
+DoY(date)
+BEGIN
+  LOCAL M:=IP(FP(date)*100);
+  LOCAL D:=IP(FP(date*100)*100);
+
+  IF M≤2 THEN
+    RETURN IP(30.6*M+368.8)+D-399;
+  ELSE
+    RETURN IP(30.6*M+1.6)+D-34;
+  END;
+END;
+
+// Returns the GHA of Aries for a given date and time
+// See the AstroCalc program for a more accurate formula
+// taking into account nutation of longitude
+LOCAL GHAAriesApprox(date,time)
+BEGIN
+  LOCAL J:=jdt(date,time)-2451545;
+  LOCAL T:=J/36525;
+  
+  RETURN (280.46061837
+          +360.98564736629*J
+          +0.000387933*T^2
+          +T^3/38710000) MOD 360;
+END;
+
+EXPORT RESET_SIGHTS()
+BEGIN
+  LOCAL init:={0,0,0,0,0,0,0,0,0,0};
+  current           := 1;
+
+  dip_min           := init;
+  horShort_nm       := init;
+  HE_ft             := init;
+  HS_deg            := init; 
+  temp_C            := init;
+  press_mb          := init;
+  HO_deg            := init;
+  HA_deg            := init;   
+  DRlat_deg         := init;
+  DRlong_deg        := init;
+  IC_min            := init;
+  altCorr_min       := init;
+  obs_UTC           := init;
+  dec_deg           := init;
+  decBefore_utc     := init;
+  decAfter_utc      := init;
+  GHABefore_UTC     := init;
+  GHA_deg           := init;
+  LHA_deg           := init;
+  Hc_deg            := init;
+  Z_deg             := init;
+  Zn_deg            := init;
+  a_nm              := init;
+  limbSign          := init;
+  limb              := init;
+  refr              := init;
+  semiD             := init;
+  paralX            := init; 
+  rfDist_nm         := init;
+  rfBrg_deg         := init;
+  SHA_deg           := init;
+  starId            := init;
+  obsDate           := init;
+  GHATimeCorr_deg   := init;
+  GHAvcorr_min      := init;
+  decdcorr_min      := init;
+  HPcorr_min        := init;
+  tableGHA_deg      := init;
+  tableDec_deg      := init;
+  sightType         := init;
+
+  IC_default:=0;
+  HE_default:=0;
+  DRlat_default:=0;
+  DRlon_default:=0;
+  date_default:=Date;
+  temp_default:=20;
+  press_default:=1010;
+
+  RETURN {};
+END; 
+
+// Returns the coordinates {longitude, latitude} of
+// a point located d nautical miles from coordinates
+// (latitude y1, longitude x1) on bearing of z degrees
+// true.
+// Inputs:  y0: initial latitude
+//          x0: initial longitude
+//      d : distance in nm
+//      z : bearing in true degrees
+//
+// Returns: {longitude,latitude} : a list 
+//          with the calculated coordinates
+
+LOCAL atdz(y0,x0,d,z)
+BEGIN
+  LOCAL y1,x1,R;
+
+  R:=3440.065;
+   
+  y1:=ASIN(SIN(y0)*COS((d/R)*(180/π))
+      +COS(y0)*SIN((d/R)*(180/π))*COS(z));
+  
+  x1:=x0+ARG(i*SIN(z)*SIN((d/R)*(180/π))*COS(y0)+(COS((d/R)*(180/π))-SIN(y0)*SIN(y1)));
+   
+  RETURN {y1,x1};
+END;
+ 
+LOCAL jdt(date,time)
+BEGIN
+  RETURN DDAYS(2000.0101,date)+2451545
+         +(time-12°0′0)/24;
+END;
+
+LOCAL jd(date)
+BEGIN
+  RETURN jdt(date,12);
+END;
+
+// Converts a degree/minute/second number D to
+// a string formatted as  degrees and
+// decimal minutes: DD°MM.M'
+LOCAL →DMD(D)
+BEGIN
+  LOCAL d:=HMS→(D);
+
+  RETURN STRING(IP(d))+"°"
+     +STRING(FP(ABS(d))*60,2,1)+"'";
+END;
+
+LOCAL ATAN2(y, x)
+BEGIN
+  RETURN ARG(x + i*y);
+END;
