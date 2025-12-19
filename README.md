@@ -1,7 +1,7 @@
 # Ephemeris and Sight Reduction for the HP Prime Calculator
 This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime 48 calculator](https://www.hpcc.org/calculators/hpprime.html) to perform astronomical calculations for the ephemerides of the usual bodys used in celestial navigation (Sun, Moon, Mars, Venus, Jupiter, Saturn, and 58 stars), and the sight reduction of sextant observations to Lines of Position (LOPs) which rely on those ephemerides. The LOPs are represented in a Cartesian plot from which a fix can readily be deduced. The program also provides support for running fixes through a function that allows the translation of lines of position by a certain distance on a given bearing.
 
-Of course there are other more accurate methods to derive a fix from sextant observations without even an assumed position but which rely on numerical methods that can't be performed without a more powerful computer. This program merely automates the manual process but it results in a perfectly usable reliable, low-cost sight reduction calculator that can live in the chart table and requires no updates until 2100.
+Of course there are other more accurate methods to derive a fix from sextant observations without even an assumed position but which rely on numerical methods that can't be performed without a more powerful computer. This program merely automates the manual process but it results in a perfectly usable, reliable, low-cost sight reduction calculator that can live in the chart table and requires no updates until 2100.
 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
 
@@ -51,6 +51,9 @@ After this setup, all the functions can be accessed by running the **Sight Reduc
 # Using the Program
 ## Initialization
 The first thing to do is to initialize lists and variables and set default values. To do this, highlight the **Sight Reduction** program and press the **Run** soft key. From the list of options, pick **RESET**. The calculator will prompt you to set the local time of its internal clock and the time zone in which observations are made:
+
+   * **Local time**: the local time to which to set the calculator. Enter a time a few seconds in the future and click the **Ok** soft key when your watch reads the entered time
+   * **UTC Offset**: the number of hours ahead or behind of UTC. Use a positive value for locations West of Greenwhich and negative for East. Keep in mind that this offset changes with Daylight Savings Time (DST)   
 
 ![Setting the time and timezone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
 
