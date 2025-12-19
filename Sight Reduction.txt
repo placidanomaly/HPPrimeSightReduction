@@ -562,7 +562,7 @@ BEGIN
   
   IF c(1)>=minElevAngle THEN
     IF ((minAz<maxAz) AND (c(2)>=minAz) AND (c(2)<=maxAz))
-	   OR ((minAz>maxAz) AND (c(2)>=minAz) AND (c(2)<=maxAz)) THEN
+	   OR ((minAz>maxAz) AND ((c(2)>=minAz) OR (c(2)<=maxAz))) THEN
 	  EXPR("Spreadsheet.A"+lin+":=\""+body+"\"");
 	  EXPR("Spreadsheet.B"+lin+":="+c(2));
 	  EXPR("Spreadsheet.C"+lin+":="+c(1));
@@ -627,9 +627,11 @@ BEGIN
 	                   ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
   END;
   
-  FOR i FROM 1 TO SIZE(navstar_) DO
-      PRINT("Computing "+navstar_(i,1));
-	  c:= StarEphemeris(i,date_,time_);
+  PRINT("Computing stars");
+  d:=StarEphemerisAll(date_,time_);
+  
+  FOR i FROM 1 TO SIZE(d) DO      
+	  c:=d(i);	  
 	  lin:=lin+WRITELINE(lin,navstar_(i,1),c(1),c(2),0,
 	                   ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
   END;
@@ -643,9 +645,9 @@ BEGIN
 	EXPR("Spreadsheet.F"+i+":=\"\"");
   END;
   
-  STARTAPP("Spreadsheet");
-  
   PRINT("Press any key to view results.");
+
+  STARTAPP("Spreadsheet");  
 
 END;
 
@@ -915,7 +917,7 @@ BEGIN
   Time:=time;
   
   MSGBOX("Local time: " + Time + nl
-        +"Zulu time: " + GET_UTC_TIME());
+        +"UTC time: " + GET_UTC_TIME());
 END;
 
 EXPORT RESET_SIGHTS()
@@ -967,8 +969,8 @@ BEGIN
 
   IC_default:=0;
   HE_default:=0;
-  DRlat_default:=0;
-  DRlon_default:=0;
+  DRlat_default:=45;
+  DRlon_default:=-73;
   date_default:=Date;
   temp_default:=20;
   press_default:=1010;

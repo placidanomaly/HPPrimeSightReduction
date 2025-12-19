@@ -224,16 +224,31 @@ EXPORT StarEphemeris(star,date,time)
 BEGIN
 
   CONVERT_DATETIME(date,time);
-
-  starname_:=star;
   
   TimeMeasures_();
   Nutation_();
   SunComplete_();
   Aries_();
-  Star_();
+  Star_(star);
 
   RETURN {GHAstar_, DECstar_, RAstar_};
+END;
+
+EXPORT StarEphemerisAll(date,time)
+BEGIN
+  LOCAL r:={{}};
+  LOCAL i;
+  
+  CONVERT_DATETIME(date,time);
+  
+  r(1):=StarEphemeris(1,date,time);
+  FOR i FROM 2 TO SIZE(navstar_) DO
+    Star_(i);
+    r:=CONCAT(r, {{GHAstar_, DECstar_, RAstar_}});
+  END;
+  
+  RETURN r;
+
 END;
 
 //Returns a list containing planet
@@ -1019,7 +1034,7 @@ BEGIN
 END;
 
 
-LOCAL Star_()
+LOCAL Star_(star)
 BEGIN
   LOCAL RAstar0_, DECstar0_, dRAstar_, dDECstar_, par_;
   LOCAL Vstar_, argD_, dDECRA_, dDECstar1_, DECstarGC_, dRAstar1_, parscale_;
@@ -1031,6 +1046,7 @@ BEGIN
   oldHA:=HAngle;
   HAngle:=0;
 
+  starname_:=star;
   // Extracting star info using 1-based indexing
   RAstar0_ := 15 * navstar_(starname_,2);
   DECstar0_ := navstar_(starname_,3);
@@ -1252,8 +1268,6 @@ END;
 EXPORT Test()
 BEGIN
   CONVERT_DATETIME(1978.1025,18°51′58″);
-
-  starname_:=13;
   
   TimeMeasures_();
   Nutation_();
@@ -1261,7 +1275,7 @@ BEGIN
   Aries_();  
   SunComplete_(1);
   Moon_();
-  Star_();
+  Star_(13);
   
   LOCAL i,a,b,c,d;
   FOR i FROM 1 TO 4 DO
