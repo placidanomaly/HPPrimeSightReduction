@@ -52,13 +52,13 @@ All the steps to perform a sight reduction, from capturing sextant observations 
 
 1. To run the program, highlight the **Sight Reduction** program and press the **Run** soft key.
 
-1. Reset all previous calculations by running **RESET_SIGHTS** in the **Sight Reduction** program.
+1. Reset all previous observations and calculations by running **RESET_SIGHTS** in the **Sight Reduction** program.
 
 ![Sight Reduction programs](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightreductionprograms.png)
 
 3. Enter a new observation: select **SIGHT** and press the **Enter** soft key.
 
-4. Select an observation register for this observation, let's say **1** for this first one, and hit the **OK** soft key. (The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by that number.)
+4. The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by an LOP register number from 1 to 10. Select an LOP register for this observation, let's say **1** for this first one, and hit the **OK** soft key.
 
 ![Observation register selection](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input1.png)
 
@@ -66,31 +66,31 @@ All the steps to perform a sight reduction, from capturing sextant observations 
    * **Body**: select the body that was observed, let's say the **Sun** for this one
    * **Date**: the date of the observation in HP Prime date format (YYYY.MMDD) (for ephemeris calculations)
    * **Time UTC**: enter the UTC time of the observation in the calculator time format (HH°MM'SS") using the Shift-(a b/c) key combination (for ephemeris and local hour angle (LHA) calculations)   
-   * **HS**: enter the observed height from the sextant in degrees, arc minutes and arc seconds format (DD°MM'SS") using the Shift-(a b/c) key. Sextants show fractional minutes in decimals which can be converted to seconds by simply multiplying the decimal part of the minutes by 6, e.g. 13°32.4' on the sextant must be entered as 13°32'24".
+   * **HS**: enter the observed height from the sextant in degrees, arc minutes and arc seconds format (DD°MM'SS") using the Shift-(a b/c) key. Sextants show fractional minutes in decimals which can be converted to arc seconds by simply multiplying the decimal part of the minutes by 6, e.g. 13°32.4' on the sextant must be entered as 13°32'24".
 
 ![Basic observation data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input2.png)
 
 7. On the 3rd screen, enter the observation conditions which will result in altitude corrections:
    * **IC**: the index correction of the sextant in minutes, negative values for "on-scale" correction and positive for "off-scale"
    * **HE**: eye height from the horizon in feet (for dip correction)
-   * **Dip short**: distance in nautical miles (nm) from observer where the horizon ends (e.g. the other side of a large lake), or zero if a true horizon is used as reference for the observation
+   * **Dip short**: distance in nautical miles (nm) from observer where the horizon ends (e.g. the other side of a large lake), or zero if an infinite horizon is used as reference for the observation
    * **Temp**: the air temperature in degrees C (for refraction correction)
    * **Pressure**: the atmospheric pressure at sea level in millibars (for refraction correction)
 
 ![Observation correction data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input3.png)
 
 8. On the 3rd screen, enter body-specific data and the assumed position
-   * **Limb**: for the sun, whether the observation was made on the lower or upper limb (for semi-diameter correction). Other bodies will have body-specific parameters to enter here, for example the observed limb for a moon sight and the star name for a star sight
+   * **Limb**: for the sun, whether the observation was made on the lower or upper limb (for semi-diameter correction). Other bodies will have body-specific parameters to enter here: the observed limb for a moon sight and the star name for a star sight
    * **DR Lat**: the latitude of the assumed or DR position at the time of the observation in DMS format (DD°MM'SS")
    * **DR Lon**: the longitude of the assumed or DR position at the time of the observation in DMS format (DD°MM'SS")
 
 ![More input data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input4.png)
 
-9. The calculator will present the values for Ho (observed height), GHA (Greenwhich Hour Angle) of the body, dec (declination) of the body, LHA (Local Hour Angle) of the body, and Hc (calculated height) of the body. Click **OK**
+9. The calculator will present the values for observed height *Ho*, Greenwhich Hour Angle *GHA* of the body, declination *dec* of the body, Local Hour Angle *LHA* of the body, and the calculated height *Hc* of the body. Click **OK**
 
 ![Calculation results](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output1.png)
 
-11. The calculator will then present the parameters of the line of position: LOP register, distance *a* from LOP either TOWARD or AWAY from the body, azimuth *Zn* to the body, and the assumed position latitude and longitude. These parameters enable plotting of the line of position.
+11. The calculator will then present the usual 4 parameters of the line of position: LOP register, distance *a* from LOP either *TOWARD* or *AWAY* from the body, azimuth *Zn* to the body, and the assumed position latitude and longitude. These parameters enable plotting of the line of position.
 
 ![LOP parameters](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output2.png)
 
@@ -98,7 +98,7 @@ All the steps to perform a sight reduction, from capturing sextant observations 
 
 ![LOP Equation](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output3.png)
 
-14. Once you've entered 2 or more sights in different LOP registers, you can view the LOPs on a graph: run the **Sight Reduction** program and select **PLOT LOPs**. A line of position will be plotted for each LOP defined in the **SIGHT** program. The calculator functions can then be used to calculate the intersection of LOPs, etc., and the cursor can be used to find the centroid of the "cocked hat" to make a fix.
+14. Once you've entered 2 or more sights in different LOP registers, you can view the LOPs on a graph: run the **Sight Reduction** program and select **PLOT LOPs**. This will open the calculator's Function app and a line of position will be plotted for each LOP defined in the **SIGHT** program. The calculator functions can then be used to calculate the intersection of LOPs, etc., and the cursor can be used to manually find the centroid or some other position in the "cocked hat" to make a fix.
 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
 
