@@ -52,7 +52,7 @@ After this setup, all the functions can be accessed by running the **Sight Reduc
 ## Initialization
 The first thing to do is to initialize lists and variables and set default values. To do this, highlight the **Sight Reduction** program and press the **Run** soft key. From the list of options, pick **RESET**. The calculator will prompt you to set the local time of its internal clock and the time zone in which observations are made:
 
-   * **Local time**: the local time to which to set the calculator. Enter a time a few seconds in the future and click the **Ok** soft key when your watch reads the entered time
+   * **Local time**: the local time to which to set the calculator. Enter a time a few seconds in the future and click the **Ok** soft key when your watch reads the time entered
    * **UTC Offset**: the number of hours ahead or behind of UTC. Use a positive value for locations West of Greenwhich and negative for East. Keep in mind that this offset changes with Daylight Savings Time (DST)   
 
 ![Setting the time and timezone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
