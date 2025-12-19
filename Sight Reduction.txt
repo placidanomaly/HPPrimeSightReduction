@@ -703,10 +703,15 @@ BEGIN
   LOCAL c:=SELECT_LOP(current);
   IF NOT c THEN RETURN c; END;
   
+  IF obs_UTC(current)=0 THEN
+    MSGBOX("Press any key to record the time"+nl
+	      +"when the observation is made.");
+	obs_UTC(current):=GET_UTC_TIME();
+  END;
+  
   current:=c;
   
-  IF obsDate(current)=0 THEN obsDate(current):=date_default; END;
-  IF obs_UTC(current)=0 THEN obs_UTC(current):=GET_UTC_TIME(); END;
+  IF obsDate(current)=0 THEN obsDate(current):=date_default; END;  
   
   c:=INPUT(
     {{sightType(current),{"Sun","Moon","Star","Planet",
@@ -919,6 +924,8 @@ BEGIN
   
   MSGBOX("Local time: " + Time + nl
         +"UTC time: " + GET_UTC_TIME());
+		
+  RETURN "";
 END;
 
 EXPORT RESET_SIGHTS()
@@ -990,8 +997,6 @@ BEGIN
   F8:=""; Function.UNCHECK(8);
   F9:=""; Function.UNCHECK(9);
   F0:=""; Function.UNCHECK(0);
-  
-  SET_TIME();
   
   RETURN {};
 END; 
