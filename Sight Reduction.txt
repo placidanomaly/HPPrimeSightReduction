@@ -26,6 +26,7 @@ LOCAL GHATimeCorr_deg, GHAvcorr_min, decdcorr_min, HPcorr_min;
 LOCAL tableGHA_deg,tableDec_deg;
 
 // Utility variables
+LOCAL timeZone:=-5;
 LOCAL maxLOP:=9;
 LOCAL current;
 LOCAL nl:=CHAR(10);
@@ -51,11 +52,11 @@ BEGIN
     IF sightType(current)=6 THEN c:=MOON_SIGHT_WITH_TABLES(); END;
     IF sightType(current)=7 THEN
       c:=PRE_CALCULATED_SIGHT();
-    // As the name implies, this is a pre-calculated
-    // sight so no need to continue with the HC
-    // and LOP calculations.
-    IF NOT c THEN RETURN "Canceled."; ELSE RETURN; END;
-  END;
+      // As the name implies, this is a pre-calculated
+      // sight so no need to continue with the HC
+      // and LOP calculations.
+      IF NOT c THEN RETURN "Canceled."; ELSE RETURN; END;
+    END;
   END;
   
   IF NOT c THEN RETURN "Canceled."; END;
@@ -378,16 +379,16 @@ BEGIN
   
   // This doesn't work with a loop
   // for some reason
-  IF a_nm(1)<>0 THEN CHECK(1); END;
-  IF a_nm(2)<>0 THEN CHECK(2); END;
-  IF a_nm(3)<>0 THEN CHECK(3); END;
-  IF a_nm(4)<>0 THEN CHECK(4); END;
-  IF a_nm(5)<>0 THEN CHECK(5); END;
-  IF a_nm(6)<>0 THEN CHECK(6); END;
-  IF a_nm(7)<>0 THEN CHECK(7); END;
-  IF a_nm(8)<>0 THEN CHECK(8); END;
-  IF a_nm(9)<>0 THEN CHECK(9); END;
-  IF a_nm(10)<>0 THEN CHECK(0); END;  
+  IF a_nm(1)<>0 THEN Function.CHECK(1); END;
+  IF a_nm(2)<>0 THEN Function.CHECK(2); END;
+  IF a_nm(3)<>0 THEN Function.CHECK(3); END;
+  IF a_nm(4)<>0 THEN Function.CHECK(4); END;
+  IF a_nm(5)<>0 THEN Function.CHECK(5); END;
+  IF a_nm(6)<>0 THEN Function.CHECK(6); END;
+  IF a_nm(7)<>0 THEN Function.CHECK(7); END;
+  IF a_nm(8)<>0 THEN Function.CHECK(8); END;
+  IF a_nm(9)<>0 THEN Function.CHECK(9); END;
+  IF a_nm(10)<>0 THEN Function.CHECK(0); END;  
   
   STARTVIEW(1,1);  
   
@@ -481,20 +482,22 @@ END;
 // between invocations
 LOCAL ephLat,ephLon,ephStar:={1,15,30,45};
 
+
 LOCAL OUTPUT_EPHEMERIS(bodyName,eph,lat,lon)
 BEGIN
+  LOCAL c:=HC_AZ(eph(1),eph(2),lat,lon);  
+  
   PRINT(bodyName);
   PRINT("  GHA:"+→DMD(eph(1)));
   PRINT("  DEC:"+→DMD(eph(2)));
-  LOCAL c:=HC_AZ(eph(1),eph(2),lat,lon);
   PRINT("  HC :"+→DMD(c(1)));
-  PRINT("  AZ :"+→DMD(c(2)));
+  PRINT("  AZ :"+→DMD(c(2)));  
 END;
 
 EXPORT EPHEMERIDES()
 BEGIN
   LOCAL date_:=Date;
-  LOCAL time_:=Time;
+  LOCAL time_:=GET_UTC_TIME();
   LOCAL i;
   
   ephLat:=DRlat_default;
@@ -522,12 +525,14 @@ BEGIN
   DRlon_default:=ephLon;
   
   PRINT();
+  
   c:=SunEphemeris(date_,time_,0);
-  OUTPUT_EPHEMERIS("Sun",c,ephLat,ephLon);
-  PRINT("  SD :"+c(4)+"\"");  
   
   PRINT("Aries:");
   PRINT("  GHA:"+→DMD(c(3)));
+  
+  OUTPUT_EPHEMERIS("Sun",c,ephLat,ephLon);
+  PRINT("  SD :"+c(4)+"\"");  
   
   OUTPUT_EPHEMERIS("Moon",MoonEphemeris(date_,time_),ephLat,ephLon);
   
@@ -540,10 +545,110 @@ BEGIN
 	END;
   END;
 
-  FOR i FROM 1 TO 4 DO  
-    OUTPUT_EPHEMERIS(navstar_(ephStar(i),1),StarEphemeris(ephStar(i),date_,time_),ephLat,ephLon);
+  FOR i FROM 1 TO 4 DO
+    OUTPUT_EPHEMERIS(
+      navstar_(ephStar(i),1),
+	  StarEphemeris(ephStar(i),date_,time_),
+	  ephLat,
+	  ephLon);
   END;
 END;
+
+LOCAL minElevAngle_deg:=15,minAz_deg:=0,maxAz_deg:=360;
+
+LOCAL WRITELINE(lin,body,gha,dec,sd,lat,lon,minElevAngle,minAz,maxAz)
+BEGIN
+  LOCAL c:=HC_AZ(gha,dec,lat,lon);
+  
+  IF c(1)>=minElevAngle THEN
+    IF ((minAz<maxAz) AND (c(2)>=minAz) AND (c(2)<=maxAz))
+	   OR ((minAz>maxAz) AND (c(2)>=minAz) AND (c(2)<=maxAz)) THEN
+	  EXPR("Spreadsheet.A"+lin+":=\""+body+"\"");
+	  EXPR("Spreadsheet.B"+lin+":="+c(2));
+	  EXPR("Spreadsheet.C"+lin+":="+c(1));
+	  EXPR("Spreadsheet.D"+lin+":="+gha);
+	  EXPR("Spreadsheet.E"+lin+":="+dec);
+	  IF sd<>0 THEN EXPR("Spreadsheet.F"+lin+":="+sd); END;	  
+	  RETURN 1;
+	END;
+  END;
+  RETURN 0;  
+END;
+
+EXPORT LIST_VISIBLE_BODIES()
+BEGIN
+  LOCAL date_:=Date;
+  LOCAL time_:=GET_UTC_TIME();
+  LOCAL i,d;
+  LOCAL lin:=3;
+  
+  ephLat:=DRlat_default;
+  ephLon:=DRlon_default;
+  
+  LOCAL c:=INPUT(
+    {date_,time_,ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg},
+     "Ephemeris",
+    {"Date:","Time:","Latitude:","Longitude:","Elevation:",
+	 "Azimuth from:","Clockwise to:"},
+    {"Date (YYYY.MMDD)",
+     "UTC Time (HH°MM'DD\")",
+     "Latitude (°)","Longitude (°)",
+	 "Minimum elevation angle (°)",
+	 "Start of azimuth arc (°)",
+	 "End of azimuth arc (°)"});
+	 
+  IF NOT c THEN RETURN "Canceled."; END;
+  
+  DRlat_default:=ephLat;
+  DRlon_default:=ephLon;
+    
+  Spreadsheet.A1:="Body";
+  Spreadsheet.B1:="Azimuth";
+  Spreadsheet.C1:="Elev (Hc)";
+  Spreadsheet.D1:="GHA";
+  Spreadsheet.E1:="Dec";
+  Spreadsheet.F1:="Semi D";
+  
+  PRINT();
+  PRINT("Computing Sun");
+  c:=SunEphemeris(date_,time_,0);
+  lin:=lin+WRITELINE(lin,"Sun",c(1),c(2),c(4),
+       ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
+
+  PRINT("Computing Moon");
+  c:=MoonEphemeris(date_,time_);
+  lin:=lin+WRITELINE(lin,"Moon",c(1),c(2),c(4),
+       ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
+  
+  FOR i FROM 1 TO 4 DO    
+    PRINT("Computing "+planets_(i));
+    c:=PlanetEphemeris(i,date_,time_,0,0);
+	lin:=lin+WRITELINE(lin,planets_(i),c(1),c(2),c(4),
+	                   ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
+  END;
+  
+  FOR i FROM 1 TO SIZE(navstar_) DO
+      PRINT("Computing "+navstar_(i,1));
+	  c:= StarEphemeris(i,date_,time_);
+	  lin:=lin+WRITELINE(lin,navstar_(i,1),c(1),c(2),0,
+	                   ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
+  END;
+  
+  FOR i FROM lin TO 100 DO
+    EXPR("Spreadsheet.A"+i+":=\"\"");  
+	EXPR("Spreadsheet.B"+i+":=\"\"");
+	EXPR("Spreadsheet.C"+i+":=\"\"");
+	EXPR("Spreadsheet.D"+i+":=\"\"");
+	EXPR("Spreadsheet.E"+i+":=\"\"");
+	EXPR("Spreadsheet.F"+i+":=\"\"");
+  END;
+  
+  STARTAPP("Spreadsheet");
+  
+  PRINT("Press any key to view results.");
+
+END;
+
 
 LOP_EQUATION(index)
 BEGIN
@@ -599,7 +704,7 @@ BEGIN
   current:=c;
   
   IF obsDate(current)=0 THEN obsDate(current):=date_default; END;
-  IF obs_UTC(current)=0 THEN obs_UTC(current):=Time; END;
+  IF obs_UTC(current)=0 THEN obs_UTC(current):=GET_UTC_TIME(); END;
   
   c:=INPUT(
     {{sightType(current),{"Sun","Moon","Star","Planet",
@@ -795,6 +900,24 @@ BEGIN
           +T^3/38710000) MOD 360;
 END;
 
+EXPORT SET_TIME()
+BEGIN
+  LOCAL time:=Time;
+  LOCAL c;
+  
+  c:=INPUT({time,timeZone},
+           {"Set Calculator Clock"},
+		   {"Current local time (HH°MM'SS\")",
+		    "Hours from UTC (H.h) (-:West +:East of GMT)"});
+			
+  IF NOT c THEN RETURN "Canceled."; END;
+  
+  Time:=time;
+  
+  MSGBOX("Local time: " + Time + nl
+        +"Zulu time: " + GET_UTC_TIME());
+END;
+
 EXPORT RESET_SIGHTS()
 BEGIN
   LOCAL init:={0,0,0,0,0,0,0,0,0,0};
@@ -850,19 +973,23 @@ BEGIN
   temp_default:=20;
   press_default:=1010;
 
-  STARTAPP("Function");
-  F1:=""; UNCHECK(1);
-  F2:=""; UNCHECK(2);
-  F3:=""; UNCHECK(3);
-  F4:=""; UNCHECK(4);
-  F5:=""; UNCHECK(5);
-  F6:=""; UNCHECK(6);
-  F7:=""; UNCHECK(7);
-  F8:=""; UNCHECK(8);
-  F9:=""; UNCHECK(9);
-  F0:=""; UNCHECK(0);
-  STARTVIEW(-1,1);
-
+  minElevAngle_deg:=15;
+  minAz_deg:=0;
+  maxAz_deg:=360;
+  
+  F1:=""; Function.UNCHECK(1);
+  F2:=""; Function.UNCHECK(2);
+  F3:=""; Function.UNCHECK(3);
+  F4:=""; Function.UNCHECK(4);
+  F5:=""; Function.UNCHECK(5);
+  F6:=""; Function.UNCHECK(6);
+  F7:=""; Function.UNCHECK(7);
+  F8:=""; Function.UNCHECK(8);
+  F9:=""; Function.UNCHECK(9);
+  F0:=""; Function.UNCHECK(0);
+  
+  SET_TIME();
+  
   RETURN {};
 END; 
 
@@ -917,4 +1044,9 @@ END;
 LOCAL ATAN2(y, x)
 BEGIN
   RETURN ARG(x + i*y);
+END;
+
+LOCAL GET_UTC_TIME()
+BEGIN
+  RETURN Time - timeZone;
 END;
