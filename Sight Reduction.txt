@@ -909,8 +909,9 @@ BEGIN
   
   c:=INPUT({time,timeZone},
            {"Set Calculator Clock"},
+		   {"Local time:","UTC offset:"},
 		   {"Current local time (HH°MM'SS\")",
-		    "Hours from UTC (H.h) (-:West +:East of GMT)"});
+		    "Hours from UTC (HH°MM') (-:West +:East)"});
 			
   IF NOT c THEN RETURN "Canceled."; END;
   
