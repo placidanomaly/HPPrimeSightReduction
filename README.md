@@ -1,5 +1,5 @@
 # Ephemeris and Sight Reduction for the HP Prime Calculator
-This repository contains a set of programs to perform astronomical calculations for the ephemerides of the usual bodys used in celestial naviation, and the sight reduction of sextant observations to Lines of Position (LOPs) which relies on those ephemerides. The LOPs are represented in a graph from which a fix can readily be deduced. The program also provides support for running fixes through a function that allows the translation of lines of position by a certain distance on a given bearing.
+This repository contains a set of programs to perform astronomical calculations for the ephemerides of the usual bodys used in celestial naviation (Sun, Moon, Mars, Venus, Jupiter, Saturn, and 58 stars), and the sight reduction of sextant observations to Lines of Position (LOPs) which rely on those ephemerides. The LOPs are represented in a Cartesian plot from which a fix can readily be deduced. The program also provides support for running fixes through a function that allows the translation of lines of position by a certain distance on a given bearing.
 
 ![LOP plot example](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
 
@@ -8,6 +8,9 @@ The astronomical calculations are derived from the incredible work of Henning Um
 The sight reduction formulas used in this program were derived from many sources that are usually listed in the source code comments.
 
 For an excellent textbook on celestial navigation and the process of sight reduction, refer to *Celestial Navigation: A Complete Home Study Course* by David Burch and Tobias Burch.
+
+Of course there are other more accurate methods to derive a fix from sextant observations without an assumed position but which rely on numerical methods that can't be performed without a more powerful computer. This program meréy automates the manual process and was written with a goal to gain a better understanding of the method. But it results in a perfectly usable $49 sight reduction calculator that can live in the chart table and requires no updates.
+
 
 # Installing the Program
 The program can be installed on the calculator or on the [virtual calculator program](https://www.hpcalc.org/details/8939) from the *.txt* source files in the main directory of this repository or from the binaries in the */bin* directory. 
