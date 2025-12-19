@@ -3,7 +3,7 @@ This repository contains a set of programs to perform astronomical calculations 
 
 ![LOP plot example](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
 
-The astronomical calculatons are derived from the incredible work of Henning Umland which he has been kind enough to share [on his web site](https://celnav.de/).
+The astronomical calculations are derived from the incredible work of Henning Umland which he has been kind enough to share [on his web site](https://celnav.de/).
 
 The sight reduction formulas used in this program were derived from many sources that are usually listed in the source code comments.
 
