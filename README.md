@@ -46,9 +46,32 @@ To install from the binaries, the *.hpprgm* files must be loaded into the Connec
 4. Drag all the *.hpprgm* files in the */bin* directory of the repository into the **Content** section of the HP Connectivity Kit program
 5. Drag all the files in the **Content** window of the HP Connectivity Kit program onto the **Programs** section label of the calculator
 
-After this setup, sight reduction can be preformed by choosing the **SIGHT** option of the **Sight Reduction** program.
- 
-# Performing a Sight Reduction
+After this setup, all the functions can be accessed by running the **Sight Reduction** program.
+
+# Using the Program
+## Initialization
+The first thing to do is to initialize lists and variables and set default values. To do this, highlight the **Sight Reduction** program and press the **Run** soft key. From the list of options, pick **RESET**. The calculator will prompt you to set the local time of its internal clock and the time zone in which observations are made:
+
+![Setting the time and timezone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
+
+## Planning Observations
+It can be helpful to know which celestial bodies will be visible and where ahead of an observation session with the sextant so that the bodies to be observed can be selected ahead of time. This is done with the **LIST_VISIBLE_BODIES** function of the **Sight Reduction** program. You will be prompted to enter the parameters for listing the bodies:
+
+   * **Date**: the date on which the observations will be made in YYYY.MMDD format
+   * **Time**: the approximate UTC time at which the observations will be made in HH°MM'SS" format using the Shift-(a b/c) key
+   * **Latitude**: the assumed latitude from which the observations will be made in either DD°MM'SS" format using the Shift-(a b/c) key or in decimal degrees DD.ddddddd...
+   * **Longitude**: the assumed longitude from which the observations will be made in degrees
+   * **Elevation**: the minimum elevation of the celestial bodies to included in the list in degrees
+   * **Azimuth from**: the true heading in degrees of the beginning of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
+   * **Clockwise to**: the true heading in degrees of the end of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
+
+![Parameters for listing bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_input.png)
+
+The output will be shown in the Spreadsheet app and will include, for each celestial body meeting the minimum elevation and azimuth range criteria, the azimuth, elevation, Greenwhich Hour Angle (GHA), declination (dec), and the semi-diameter in seconds of the body (if applicable):
+
+![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output.png)
+
+## Performing a Sight Reduction
 All the steps to perform a sight reduction, from capturing sextant observations to plotting lines of position and identifying a fix are done within the **Sight Reduction** program. The other programs support ephemeris calculations which were too big to fit within a single program. Those programs need to be present for **Sight Reduction** to work, but they do not need to be invoked by the user under normal usage scenarios. 
 
 1. To run the program, highlight the **Sight Reduction** program and press the **Run** soft key.
@@ -87,15 +110,15 @@ All the steps to perform a sight reduction, from capturing sextant observations 
 
 ![More input data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input4.png)
 
-9. The calculator will present the values for observed height *Ho*, Greenwhich Hour Angle *GHA* of the body, declination *dec* of the body, Local Hour Angle *LHA* of the body, and the calculated height *Hc* of the body. Click **OK**
+9. The calculator will display the values for observed height *Ho*, Greenwhich Hour Angle *GHA* of the body, declination *dec* of the body, Local Hour Angle *LHA* of the body, and the calculated height *Hc* of the body. Click **OK**
 
 ![Calculation results](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output1.png)
 
-11. The calculator will then present the usual 4 parameters of the line of position: LOP register, distance *a* from LOP either *TOWARD* or *AWAY* from the body, azimuth *Zn* to the body, and the assumed position latitude and longitude. These parameters enable plotting of the line of position.
+11. The calculator will then display the usual 4 parameters of the line of position: LOP register, distance *a* from LOP either *TOWARD* or *AWAY* from the body, azimuth *Zn* to the body, and the assumed position latitude and longitude. These parameters enable plotting of the line of position.
 
 ![LOP parameters](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output2.png)
 
-12. Lastly, the calculator presents the equation for the line of position in a longitude (x) and latitude (y) cartesian plane which can be used to plot it in a program. That equation is stored in the F register of the Function app of the calculator corresponding to the LOP register selected, e.g. LOP 1 will be stored in F1, which means they can be plotted using the calculator's Function app.
+12. Lastly, the calculator displays the equation for the line of position in a longitude (x) and latitude (y) cartesian plane which can be used to plot it in a program. That equation is stored in the F register of the Function app of the calculator corresponding to the LOP register selected, e.g. LOP 1 will be stored in F1, which means they can be plotted using the calculator's Function app.
 
 ![LOP Equation](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output3.png)
 
