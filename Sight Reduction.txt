@@ -922,10 +922,7 @@ BEGIN
   
   Time:=time;
   
-  MSGBOX("Local time: " + Time + nl
-        +"UTC time: " + GET_UTC_TIME());
-		
-  RETURN "";
+  RETURN "Local time:"+Time+" UTC Time:"+GET_UTC_TIME();
 END;
 
 EXPORT RESET_SIGHTS()
@@ -998,7 +995,7 @@ BEGIN
   F9:=""; Function.UNCHECK(9);
   F0:=""; Function.UNCHECK(0);
   
-  RETURN {};
+  RETURN "Reset complete";
 END; 
 
 // Returns the coordinates {longitude, latitude} of
