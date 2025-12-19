@@ -100,7 +100,7 @@ All the steps to perform a sight reduction, from capturing sextant observations 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
 
 # Remaining Work
-The ephemeris calculations are usually accurate to within less than 1' of the values in the Almanac for the period 1900-2100, but errors up to 2' are sometimes seen. This is probably sufficiently accurate for most practical cases of celestial navigation but perfect precision would be better. The differences are still being investigated because the same program in Javascript from Umland's web site produces the exact same numbers as the Almanac. The possibility of a discrepancy in the code is one theory. Another is that it would be due to the lower number of significant digits in the calculator vs. a regular computer, but that has yet to be proven.
+The ephemeris calculations are usually accurate to within less than 0.1' of the values in the Almanac for the period 1900-2100, but errors up to 0.3' are sometimes seen. This is probably sufficiently accurate for most practical cases of celestial navigation but perfect precision would be better. The differences are still being investigated because the same program in Javascript from Umland's web site produces the exact same numbers as the Almanac. The possibility of a discrepancy in the code is one theory. Another is that it would be due to the lower number of significant digits in the calculator vs. a regular computer, but that has yet to be proven.
 
 # Contact
 This program was developed by [Charles Vaillancourt](mailto:charles.vaillancourt@gmail.com).
