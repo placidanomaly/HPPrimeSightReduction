@@ -49,8 +49,12 @@ To install from the binaries, the *.hpprgm* files must be loaded into the Connec
 After this setup, all the functions can be accessed by running the **Sight Reduction** program.
 
 # Using the Program
-## Initialization
-The first thing to do is to initialize lists and variables and set default values. To do this, highlight the **Sight Reduction** program and press the **Run** soft key. From the list of options, pick **RESET**. The calculator will prompt you to set the local time of its internal clock and the time zone in which observations are made:
+## Initialization and Setting the Time and Timezone
+The first thing to do is to initialize lists and variables, set default values, and set the time and timezone of the calculator:
+
+1. Highlight the **Sight Reduction** program and press the **Run** soft key
+2. From the list of options, pick **RESET** on the touchscreen or with the arrows and the *Enter* key. Click any key to dismiss the confirmation message.
+3. Now re-run the program and pick **SET_TIME** and set the calculator's local time clock and the timezone:
 
    * **Local time**: the local time to which to set the calculator. Enter a time a few seconds in the future and click the **Ok** soft key when your watch reads the time entered
    * **UTC Offset**: the number of hours ahead or behind of UTC. Use a positive value for locations West of Greenwhich and negative for East. Keep in mind that this offset changes with Daylight Savings Time (DST)   
