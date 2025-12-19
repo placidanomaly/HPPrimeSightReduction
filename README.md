@@ -1,9 +1,11 @@
 # Ephemeris and Sight Reduction for the HP Prime Calculator
-This repository contains a set of programs written in Prime Programming Language (PPL) for the HP Prime 48 calculator to perform astronomical calculations for the ephemerides of the usual bodys used in celestial navigation (Sun, Moon, Mars, Venus, Jupiter, Saturn, and 58 stars), and the sight reduction of sextant observations to Lines of Position (LOPs) which rely on those ephemerides. The LOPs are represented in a Cartesian plot from which a fix can readily be deduced. The program also provides support for running fixes through a function that allows the translation of lines of position by a certain distance on a given bearing.
+This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime 48 calculator](https://www.hpcc.org/calculators/hpprime.html) to perform astronomical calculations for the ephemerides of the usual bodys used in celestial navigation (Sun, Moon, Mars, Venus, Jupiter, Saturn, and 58 stars), and the sight reduction of sextant observations to Lines of Position (LOPs) which rely on those ephemerides. The LOPs are represented in a Cartesian plot from which a fix can readily be deduced. The program also provides support for running fixes through a function that allows the translation of lines of position by a certain distance on a given bearing.
 
 Of course there are other more accurate methods to derive a fix from sextant observations without even an assumed position but which rely on numerical methods that can't be performed without a more powerful computer. This program merely automates the manual process but it results in a perfectly usable reliable, low-cost sight reduction calculator that can live in the chart table and requires no updates until 2100.
 
-![LOP plot example](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
+![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
+
+![HP Prime 48 G2 calculator](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/hp48g2.png)
 
 The astronomical calculations are derived from the incredible work of Henning Umland which he has been kind enough to share [on his web site](https://celnav.de/).
 
