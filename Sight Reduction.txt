@@ -2,7 +2,7 @@
 LOCAL sightType;
 LOCAL dip_min, HE_ft, IC_min;
 LOCAL horShort_nm, HS_deg, HO_deg;
-LOCAL temp_C,press_mb;
+LOCAL artificial,temp_C,press_mb;
 LOCAL HA_deg; 
 
 LOCAL DRlat_deg, DRlong_deg;
@@ -716,7 +716,6 @@ BEGIN
   
   IF obsDate(current)=0 THEN obsDate(current):=date_default; END;  
   
-  LOCAL artificial:=0;
   c:=INPUT(
     {{sightType(current),{"Sun","Moon","Star","Planet",
         "Sun with Tables","Moon with Tables",
@@ -724,19 +723,17 @@ BEGIN
      obsDate(current),
      obs_UTC(current),
      HS_deg(current),
-	 {artificial,1}
+	 {artificial(current),1}
 	 },
     "LOP "+STRING(current)+": Sextant Observation",
-    {"Body:","Date:","Time UTC:","HS:","Double:"},
+    {"Body:","Date:","Time UTC:","HS:","Artificial:"},
     {"Type of body being observed",
      "Observation date (YYYY.MMDD)",
      "Observation time UTC (HH°MM'SS)",
      "Measured sextant height (°)",
-	 "Check if entered height must be halved"});
+	 "Check if reading is made with an artificial horizon"});
 
   IF NOT c THEN RETURN c; END;
-  
-  IF artificial=1 THEN HS_deg(current):=HS_deg(current)/2; END;
   
   date_default:=obsDate(current);
   
@@ -781,7 +778,11 @@ BEGIN
   ELSE
     dip_min(index):=0.97*√(HE_ft(index));
   END;
-  HA_deg(index):=HS_deg(index)+(IC_min(index)-dip_min(index))/60;
+  IF artificial(index)==1 THEN
+    HA_deg(index):=(HS_deg(index)+IC_min(index)/60)/2;
+  ELSE
+    HA_deg(index):=HS_deg(index)+(IC_min(index)-dip_min(index))/60;
+  END;
 
   RETURN HA_deg(index);
 END;
@@ -998,6 +999,7 @@ BEGIN
   horShort_nm       := init;
   HE_ft             := init;
   HS_deg            := init; 
+  artificial        := init;
   temp_C            := init;
   press_mb          := init;
   HO_deg            := init;
