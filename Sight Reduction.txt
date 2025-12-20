@@ -964,7 +964,7 @@ BEGIN
   IF c==1 THEN
     LOCAL i;
     FOR i FROM 1 TO 10 DO
-	  IC_min(i):=ic;
+	  IF IC_min(i)==0 THEN IC_min(i):=ic; END;
 	END;
 	RETURN "Index correction set.";
   END;

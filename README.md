@@ -14,10 +14,20 @@ The sight reduction formulas used in this program were derived from many sources
 For an excellent textbook on celestial navigation and the process of sight reduction, refer to *Celestial Navigation: A Complete Home Study Course* by David Burch and Tobias Burch.
 
 # Installing the Program
-The program can be installed on the calculator or on the [virtual calculator program](https://www.hpcalc.org/details/8939) from the *.txt* source files in the main directory of this repository or from the binaries in the */bin* directory. 
+The program can be installed on the calculator or on the [virtual calculator program](https://www.hpcalc.org/details/8939) from the *.txt* source files in the main directory of this repository or from the binary files in the */bin* directory. 
 When all is done, your Connectivity Kit screen should look like this:
 
 ![Connectivity Kit screen shot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/connectivity.png)
+
+## Installing from the Binaries (RECOMMENDED)
+
+To install from the binaries, the *.hpprgm* files must be loaded into the Connectivity kit:
+
+1. Download and install the [HP Connectivity Kit](https://updates.moravia-consulting.com/)
+2. Launch the HP Connectivity Kit program
+3. Connect an HP Prime Calculator to the computer with a USB cable and confirm that the Connectivity Kit sees the calculator
+4. Drag all the *.hpprgm* files in the */bin* directory of the repository into the **Content** section of the HP Connectivity Kit program
+5. Drag all the files in the **Content** window of the HP Connectivity Kit program onto the **Programs** section label of the calculator
 
 ## Installing from the Source Files
 
@@ -36,28 +46,21 @@ When all is done, your Connectivity Kit screen should look like this:
 13. Select the **Sight Reduction** program, press **Run**, select **RESET_SIGHTS** and press **Enter**. This will initialize all the necessary variables for the program to work.
 14. To confirm everything is working, select the **Sight Reduction** program, press **Run**, select **EPHEMERIDES** and press **Enter**. Fill out the form and press **Enter**. The requested ephemerides should be displayed on the screen. Check them against an Almanac.
 
-## Installing from the Binaries
-
-To install from the binaries, the *.hpprgm* files must be loaded into the Connectivity kit:
-
-1. Download and install the [HP Connectivity Kit](https://updates.moravia-consulting.com/)
-2. Launch the HP Connectivity Kit program
-3. Connect an HP Prime Calculator to the computer with a USB cable and confirm that the Connectivity Kit sees the calculator
-4. Drag all the *.hpprgm* files in the */bin* directory of the repository into the **Content** section of the HP Connectivity Kit program
-5. Drag all the files in the **Content** window of the HP Connectivity Kit program onto the **Programs** section label of the calculator
-
 After this setup, all the functions can be accessed by running the **Sight Reduction** program.
 
 # Using the Program
 ## Initialization and Setting the Time and Timezone
-The first thing to do is to initialize lists and variables, set default values, and set the time and timezone of the calculator:
+**\*IMPORTANT\*** The first thing to do is to initialize lists and variables, set default values, and set the time and timezone of the calculator. This must also be done every time after editing a program even if no changes were made to it. Proceed as follows:
 
 1. Highlight the **Sight Reduction** program and press the **Run** soft key
-2. From the list of options, pick **RESET** on the touchscreen or with the arrows and the *Enter* key. Click any key to dismiss the confirmation message.
-3. Now re-run the program and pick **SET_TIME** and set the calculator's local time clock and the timezone:
+2. From the list of options, pick **RESET_SIGHTS** on the touchscreen or with the arrows and the *Enter* key, or press the *8* key. Click any key to dismiss the confirmation message.
+
+![Resetting variables](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightreductionprograms.png)
+
+4. Now re-run the program and pick **SET_TIME** and set the calculator's local time clock and timezone:
 
    * **Local time**: the local time to which to set the calculator. Enter a time a few seconds in the future and click the **Ok** soft key when your watch reads the time entered
-   * **UTC Offset**: the number of hours ahead or behind of UTC. Use a positive value for locations West of Greenwhich and negative for East. Keep in mind that this offset changes with Daylight Savings Time (DST)   
+   * **UTC Offset**: the number of hours ahead of or behind UTC. Use a positive value for locations West of Greenwhich and negative for East (e.g. -5 for New York standard time). Keep in mind that this offset changes with Daylight Savings Time (DST)
 
 ![Setting the time and timezone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
 
@@ -77,6 +80,22 @@ It can be helpful to know which celestial bodies will be visible and where ahead
 The output will be shown in the Spreadsheet app and will include, for each celestial body meeting the minimum elevation and azimuth range criteria, the azimuth, elevation, Greenwhich Hour Angle (GHA), declination (dec), and the semi-diameter in seconds of the body (if applicable):
 
 ![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output.png)
+
+** Calculating Index Correction from Sun diameter (OPTIONAL)
+
+The program contains a function to apply the index correction method described by the Starpath School of Nabigation in [this document](https://www.starpath.com/online/celestial/solar_ic.pdf). After running this program, the default value for the index correction in the sight reduction forms will be set to the value calculated by this procedure (otherwise the default index correction value will be zero). To run the program, highlight the **Sight Reduction** program and hit the **6** key to run the **SOLAR_IC** program. The program briefly describes the measurements that need to be taken:
+
+![Solar IC intro](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_intro.png)
+
+You can then enter the *top* and *Bottom* measurements in minutes in the input form:
+
+![Solar IC input](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_input.png)
+
+The program will present the calculated index correction result as well as the implied semi-diameter of the sun, which is then compared with the actual semi-diameter of the sun at the current time. This allows validating the inputs used before applying the calculated index correction to future sights:
+
+![Solar IC output](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_output.png)
+
+After pressing a key, the program prompts whether to accept or reject the calculated index correction. If accepted, the value will be applied to all sights that did not have a manually entered index correction.
 
 ## Performing a Sight Reduction
 All the steps to perform a sight reduction, from capturing sextant observations to plotting lines of position and identifying a fix are done within the **Sight Reduction** program. The other programs support ephemeris calculations which were too big to fit within a single program. Those programs need to be present for **Sight Reduction** to work, but they do not need to be invoked by the user under normal usage scenarios. 
