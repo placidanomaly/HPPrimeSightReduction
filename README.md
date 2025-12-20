@@ -81,7 +81,7 @@ The output will be shown in the Spreadsheet app and will include, for each celes
 
 ![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output.png)
 
-** Calculating Index Correction from Sun diameter (OPTIONAL)
+## Calculating Index Correction from Sun diameter (OPTIONAL)
 
 The program contains a function to apply the index correction method described by the Starpath School of Nabigation in [this document](https://www.starpath.com/online/celestial/solar_ic.pdf). After running this program, the default value for the index correction in the sight reduction forms will be set to the value calculated by this procedure (otherwise the default index correction value will be zero). To run the program, highlight the **Sight Reduction** program and hit the **6** key to run the **SOLAR_IC** program. The program briefly describes the measurements that need to be taken:
 
