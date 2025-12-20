@@ -14,10 +14,7 @@ The sight reduction formulas used in this program were derived from many sources
 For an excellent textbook on celestial navigation and the process of sight reduction, refer to [*Celestial Navigation: A Complete Home Study Course*](https://starpath.com/catalog/books/1887.htm) by David Burch and Tobias Burch.
 
 # Installing the Program
-The program can be installed on the calculator or on the [virtual calculator program](https://www.hpcalc.org/details/8939) from the *.txt* source files in the main directory of this repository or from the binary files in the */bin* directory. 
-When all is done, your Connectivity Kit screen should look like this:
-
-![Connectivity Kit screen shot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/connectivity.png)
+The program can be installed on the calculator or on the [virtual calculator program](https://www.hpcalc.org/details/8939) from the *.txt* source files in the main directory of this repository or from the binary files in the */bin* directory.
 
 ## Installing from the Binaries (RECOMMENDED)
 
@@ -45,6 +42,10 @@ To install from the binaries, the *.hpprgm* files must be loaded into the Connec
 12. Open each program and hit **Check** to confirm that there are no syntax errors
 13. Select the **Sight Reduction** program, press **Run**, select **RESET_SIGHTS** and press **Enter**. This will initialize all the necessary variables for the program to work.
 14. To confirm everything is working, select the **Sight Reduction** program, press **Run**, select **EPHEMERIDES** and press **Enter**. Fill out the form and press **Enter**. The requested ephemerides should be displayed on the screen. Check them against an Almanac.
+
+When all is done, your Connectivity Kit screen should look like this:
+
+![Connectivity Kit screen shot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/connectivity.png)
 
 After this setup, all the functions can be accessed by running the **Sight Reduction** program.
 
