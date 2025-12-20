@@ -730,7 +730,7 @@ BEGIN
     {"Type of body being observed",
      "Observation date (YYYY.MMDD)",
      "Observation time UTC (HH°MM'SS)",
-     "Measured sextant height (°)",
+     "Sextant reading (°)",
 	 "Check if reading is made with an artificial horizon"});
 
   IF NOT c THEN RETURN c; END;

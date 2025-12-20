@@ -163,6 +163,8 @@ BEGIN
 
   CONVERT_DATETIME(date,time);
 
+  IF showProgress THEN PRINT("Calculating ephemeris of the Sun"); END;
+  
   TimeMeasures_();
   Nutation_();
   Aries_();
@@ -268,6 +270,11 @@ EXPORT PlanetEphemeris(planetId,date,time,centroid,showProgress)
 BEGIN
 
   CONVERT_DATETIME(date,time);
+  
+  IF showProgress THEN
+    PRINT("Calculating ephemeris of "+planets_(planetId)); 
+	PRINT("Starting with position of the Sun:");
+  END;
   
   TimeMeasures_();
   Nutation_();
