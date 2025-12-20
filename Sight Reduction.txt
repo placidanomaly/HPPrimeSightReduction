@@ -394,7 +394,7 @@ BEGIN
   
 END;
 
-EXPORT VIEW_LOP_PARAMETERS()
+VIEW_LOP_PARAMETERS()
 BEGIN
   LOCAL c:=SELECT_LOP(current,"Select LOP to view");
   IF c=0 THEN RETURN "Canceled."; END;
@@ -514,11 +514,11 @@ BEGIN
     {"Date of ephemerides (YYYY.MMDD)",
      "UTC Time (HH°MM'DD\")",
      "Latitude (°)","Longitude (°)",
-	 "Star to include in results",
+   "Star to include in results",
      "Star to include in results",
      "Star to include in results",
      "Star to include in results"});
-	 
+   
   IF NOT c THEN RETURN "Canceled."; END;
   
   DRlat_default:=ephLat;
@@ -539,18 +539,18 @@ BEGIN
   FOR i FROM 1 TO 4 DO
     c:=PlanetEphemeris(i,date_,time_,0,0);
     OUTPUT_EPHEMERIS(planets_(i),c,ephLat,ephLon);
-	// Output the semi-diameter of Mars and Venus
-	IF i<=2 THEN
-	  PRINT("  SD :"+c(4)+"\"");
-	END;
+  // Output the semi-diameter of Mars and Venus
+  IF i<=2 THEN
+    PRINT("  SD :"+c(4)+"\"");
+  END;
   END;
 
   FOR i FROM 1 TO 4 DO
     OUTPUT_EPHEMERIS(
       navstar_(ephStar(i),1),
-	  StarEphemeris(ephStar(i),date_,time_),
-	  ephLat,
-	  ephLon);
+    StarEphemeris(ephStar(i),date_,time_),
+    ephLat,
+    ephLon);
   END;
 END;
 
@@ -562,15 +562,15 @@ BEGIN
   
   IF c(1)>=minElevAngle THEN
     IF ((minAz<maxAz) AND (c(2)>=minAz) AND (c(2)<=maxAz))
-	   OR ((minAz>maxAz) AND ((c(2)>=minAz) OR (c(2)<=maxAz))) THEN
-	  EXPR("Spreadsheet.A"+lin+":=\""+body+"\"");
-	  EXPR("Spreadsheet.B"+lin+":="+c(2));
-	  EXPR("Spreadsheet.C"+lin+":="+c(1));
-	  EXPR("Spreadsheet.D"+lin+":="+gha);
-	  EXPR("Spreadsheet.E"+lin+":="+dec);
-	  IF sd<>0 THEN EXPR("Spreadsheet.F"+lin+":="+sd); END;	  
-	  RETURN 1;
-	END;
+     OR ((minAz>maxAz) AND ((c(2)>=minAz) OR (c(2)<=maxAz))) THEN
+    EXPR("Spreadsheet.A"+lin+":=\""+body+"\"");
+    EXPR("Spreadsheet.B"+lin+":="+c(2));
+    EXPR("Spreadsheet.C"+lin+":="+c(1));
+    EXPR("Spreadsheet.D"+lin+":="+gha);
+    EXPR("Spreadsheet.E"+lin+":="+dec);
+    IF sd<>0 THEN EXPR("Spreadsheet.F"+lin+":="+sd); END;    
+    RETURN 1;
+  END;
   END;
   RETURN 0;  
 END;
@@ -589,14 +589,14 @@ BEGIN
     {date_,time_,ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg},
      "Ephemeris",
     {"Date:","Time:","Latitude:","Longitude:","Elevation:",
-	 "Azimuth from:","Clockwise to:"},
+   "Azimuth from:","Clockwise to:"},
     {"Date (YYYY.MMDD)",
      "UTC Time (HH°MM'DD\")",
      "Latitude (°)","Longitude (°)",
-	 "Minimum elevation angle (°)",
-	 "Start of azimuth arc (°)",
-	 "End of azimuth arc (°)"});
-	 
+   "Minimum elevation angle (°)",
+   "Start of azimuth arc (°)",
+   "End of azimuth arc (°)"});
+   
   IF NOT c THEN RETURN "Canceled."; END;
   
   DRlat_default:=ephLat;
@@ -610,8 +610,8 @@ BEGIN
   Spreadsheet.F1:="Semi D";
   
   PRINT();
-  PRINT("Computing Sun");
-  c:=SunEphemeris(date_,time_,0);
+  
+  c:=SunEphemeris(date_,time_,1);
   lin:=lin+WRITELINE(lin,"Sun",c(1),c(2),c(4),
        ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
 
@@ -620,29 +620,28 @@ BEGIN
   lin:=lin+WRITELINE(lin,"Moon",c(1),c(2),c(4),
        ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
   
-  FOR i FROM 1 TO 4 DO    
-    PRINT("Computing "+planets_(i));
-    c:=PlanetEphemeris(i,date_,time_,0,0);
-	lin:=lin+WRITELINE(lin,planets_(i),c(1),c(2),c(4),
-	                   ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
+  FOR i FROM 1 TO 4 DO        
+    c:=PlanetEphemeris(i,date_,time_,0,1);
+  lin:=lin+WRITELINE(lin,planets_(i),c(1),c(2),c(4),
+                     ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
   END;
   
   PRINT("Computing stars");
   d:=StarEphemerisAll(date_,time_);
   
   FOR i FROM 1 TO SIZE(d) DO      
-	  c:=d(i);	  
-	  lin:=lin+WRITELINE(lin,navstar_(i,1),c(1),c(2),0,
-	                   ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
+    c:=d(i);    
+    lin:=lin+WRITELINE(lin,navstar_(i,1),c(1),c(2),0,
+                     ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
   END;
   
   FOR i FROM lin TO 100 DO
-    EXPR("Spreadsheet.A"+i+":=\"\"");  
-	EXPR("Spreadsheet.B"+i+":=\"\"");
-	EXPR("Spreadsheet.C"+i+":=\"\"");
-	EXPR("Spreadsheet.D"+i+":=\"\"");
-	EXPR("Spreadsheet.E"+i+":=\"\"");
-	EXPR("Spreadsheet.F"+i+":=\"\"");
+  EXPR("Spreadsheet.A"+i+":=\"\"");  
+  EXPR("Spreadsheet.B"+i+":=\"\"");
+  EXPR("Spreadsheet.C"+i+":=\"\"");
+  EXPR("Spreadsheet.D"+i+":=\"\"");
+  EXPR("Spreadsheet.E"+i+":=\"\"");
+  EXPR("Spreadsheet.F"+i+":=\"\"");
   END;
   
   PRINT("Press any key to view results.");
@@ -702,33 +701,43 @@ INPUT_HS_AND_BODY()
 BEGIN
   LOCAL c:=SELECT_LOP(current);
   IF NOT c THEN RETURN c; END;
+
+  current:=c;
   
   IF obs_UTC(current)=0 THEN
-    MSGBOX("Press any key to record the time"+nl
-	      +"when the observation is made.");
-	obs_UTC(current):=GET_UTC_TIME();
+    PRINT();
+	PRINT(" ");
+	PRINT(" ");
+	PRINT("Press any key to record the time");
+    PRINT("when the observation is made and");
+	PRINT("enter the sextant altitude.");
+  obs_UTC(current):=GET_UTC_TIME();
   END;
-  
-  current:=c;
   
   IF obsDate(current)=0 THEN obsDate(current):=date_default; END;  
   
+  LOCAL artificial:=0;
   c:=INPUT(
     {{sightType(current),{"Sun","Moon","Star","Planet",
         "Sun with Tables","Moon with Tables",
         "Pre-calc (skip to next screen)"}},
-	 obsDate(current),
+     obsDate(current),
      obs_UTC(current),
-     HS_deg(current)},
+     HS_deg(current),
+	 {artificial,1}
+	 },
     "LOP "+STRING(current)+": Sextant Observation",
-    {"Body:","Date:","Time UTC:","HS:"},
+    {"Body:","Date:","Time UTC:","HS:","Double:"},
     {"Type of body being observed",
      "Observation date (YYYY.MMDD)",
      "Observation time UTC (HH°MM'SS)",
-     "Sextant Height (°)"});
+     "Measured sextant height (°)",
+	 "Check if entered height must be halved"});
 
   IF NOT c THEN RETURN c; END;
-
+  
+  IF artificial=1 THEN HS_deg(current):=HS_deg(current)/2; END;
+  
   date_default:=obsDate(current);
   
   IF IC_min(current)=0 THEN IC_min(current):=IC_default; END;
@@ -739,14 +748,14 @@ BEGIN
   c:=INPUT(
     {IC_min(current),
      HE_ft(current),
-	 horShort_nm(current),
+   horShort_nm(current),
      temp_C(current),
      press_mb(current)},
     "LOP "+STRING(current)+": Corrections",
     {"IC:","HE:","Dip short:","Temp:","Pressure:"},
     {"Index Correction ' (+=Off -=On scale)",
      "Eye Height (ft.)",
-	 "Horizon distance (nm) (0 if true horizon)",
+   "Horizon distance (nm) (0 if true horizon)",
      "Temperature (°C)",
      "Pressure (mb)"});
 
@@ -907,6 +916,61 @@ BEGIN
           +T^3/38710000) MOD 360;
 END;
 
+EXPORT SOLAR_IC()
+BEGIN
+  LOCAL on_scale,off_scale;
+  PRINT();
+  PRINT("This will set the index correction to");
+  PRINT("a value calculated from a measurement of");
+  PRINT("the diameter of the sun. First, set the");
+  PRINT("reflected sun so its top touches the bottom");
+  PRINT("of the observed sun and record that in the");
+  PRINT("BELOW field. Then continue to move the");
+  PRINT("reflected sun up until its bottom touches");
+  PRINT("the top of the observed sun and record the");
+  PRINT("direct sextant reading (no 60 minus) in the");
+  PRINT("ABOVE value.");
+  PRINT(" ");
+  PRINT("Press any key to continue...");
+  WAIT(-1);
+  
+  LOCAL c:=INPUT({on_scale,off_scale},
+    "Solar Index Correction Calc",
+	{"Below:","Above:"},
+	{"Reflected sun below actual sun (')",
+	 "Reflected sun above actual sun (')"});
+  
+  IF NOT c THEN RETURN("Canceled."); END;
+  
+  off_scale:=60-off_scale;
+  LOCAL ic:=ABS((on_scale-off_scale)/2);
+  
+  IF on_scale>off_scale THEN ic:=-1*ic; END;
+  
+  PRINT();  
+  LOCAL d:=SunEphemeris(Date,Time,1);
+  LOCAL sd:=(on_scale+off_scale)/4;
+  PRINT("Index correction: "+STRING(ic,2,1)+"'");
+  PRINT("Measured sun semi-diameter: "+STRING(sd,2,1)+"'");
+  PRINT("Actual sun semi-diameter: "+STRING(d(4)/60,2,2)+"'");
+  PRINT("Difference: "+STRING(sd-d(4)/60,2,2)+"'");
+  PRINT(" ");
+  PRINT("Press any key to continue...");
+  WAIT(-1);
+  
+  CHOOSE(c,"Accept results?",
+         "Accept","Reject");
+		 
+  IF c==1 THEN
+    LOCAL i;
+    FOR i FROM 1 TO 10 DO
+	  IC_min(i):=ic;
+	END;
+	RETURN "Index correction set.";
+  END;
+  RETURN "Canceled.";
+END;
+
 EXPORT SET_TIME()
 BEGIN
   LOCAL time:=Time;
@@ -914,10 +978,10 @@ BEGIN
   
   c:=INPUT({time,timeZone},
            {"Set Calculator Clock"},
-		   {"Local time:","UTC offset:"},
-		   {"Current local time (HH°MM'SS\")",
-		    "Hours from UTC (HH°MM') (-:West +:East)"});
-			
+       {"Local time:","UTC offset:"},
+       {"Current local time (HH°MM'SS\")",
+        "Hours from UTC (HH°MM') (-:West +:East)"});
+      
   IF NOT c THEN RETURN "Canceled."; END;
   
   Time:=time;
@@ -1043,7 +1107,7 @@ BEGIN
   LOCAL d:=HMS→(D);
 
   RETURN STRING(IP(d))+"°"
-     +STRING(FP(ABS(d))*60,2,1)+"'";
+     +STRING(ROUND(FP(ABS(d))*600)/10,2,1)+"'";
 END;
 
 LOCAL ATAN2(y, x)
