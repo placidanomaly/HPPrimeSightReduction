@@ -49,8 +49,8 @@ To install from the binaries, the *.hpprgm* files must be loaded into the Connec
 After this setup, all the functions can be accessed by running the **Sight Reduction** program.
 
 # Using the Program
-## Initialization and Setting the Time and Timezone
-**\*IMPORTANT\*** The first thing to do is to initialize lists and variables, set default values, and set the time and timezone of the calculator. This must also be done every time after editing a program even if no changes were made to it. Proceed as follows:
+## Initialization \*IMPORTANT\*
+The first thing to do is to initialize lists and variables, set default values, and set the time and timezone of the calculator. This must also be done every time after editing a program even if no changes were made to it. Proceed as follows:
 
 1. Highlight the **Sight Reduction** program and press the **Run** soft key
 2. From the list of options, pick **RESET_SIGHTS** on the touchscreen or with the arrows and the *Enter* key, or press the *8* key. Click any key to dismiss the confirmation message.
