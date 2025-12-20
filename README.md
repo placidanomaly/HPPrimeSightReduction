@@ -49,8 +49,8 @@ To install from the binaries, the *.hpprgm* files must be loaded into the Connec
 After this setup, all the functions can be accessed by running the **Sight Reduction** program.
 
 # Using the Program
-## Initialization and Setting the Time and Timezone
-**\*IMPORTANT\*** The first thing to do is to initialize lists and variables, set default values, and set the time and timezone of the calculator. This must also be done every time after editing a program even if no changes were made to it. Proceed as follows:
+## Initialization \*IMPORTANT\*
+The first thing to do is to initialize lists and variables, set default values, and set the time and timezone of the calculator. This must also be done every time after editing a program even if no changes were made to it. Proceed as follows:
 
 1. Highlight the **Sight Reduction** program and press the **Run** soft key
 2. From the list of options, pick **RESET_SIGHTS** on the touchscreen or with the arrows and the *Enter* key, or press the *8* key. Click any key to dismiss the confirmation message.
@@ -81,7 +81,7 @@ The output will be shown in the Spreadsheet app and will include, for each celes
 
 ![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output.png)
 
-** Calculating Index Correction from Sun diameter (OPTIONAL)
+## Calculating Index Correction from Sun diameter (OPTIONAL)
 
 The program contains a function to apply the index correction method described by the Starpath School of Nabigation in [this document](https://www.starpath.com/online/celestial/solar_ic.pdf). After running this program, the default value for the index correction in the sight reduction forms will be set to the value calculated by this procedure (otherwise the default index correction value will be zero). To run the program, highlight the **Sight Reduction** program and hit the **6** key to run the **SOLAR_IC** program. The program briefly describes the measurements that need to be taken:
 
@@ -117,6 +117,7 @@ All the steps to perform a sight reduction, from capturing sextant observations 
    * **Date**: the date of the observation in HP Prime date format (YYYY.MMDD) (for ephemeris calculations)
    * **Time UTC**: enter the UTC time of the observation in the calculator time format (HH°MM'SS") using the Shift-(a b/c) key combination (for ephemeris and local hour angle (LHA) calculations)   
    * **HS**: enter the observed height from the sextant in degrees, arc minutes and arc seconds format (DD°MM'SS") using the Shift-(a b/c) key. Sextants show fractional minutes in decimals which can be converted to arc seconds by simply multiplying the decimal part of the minutes by 6, e.g. 13°32.4' on the sextant must be entered as 13°32'24".
+   * **Artificial**: check this box if the observation was made on an artificial horizon. If that's the case, the value entered in HS must be the actual sextant reading, i.e. double the actual body height. When this box is checked, the index correction will be applied before dividing the reading by half and no dip correction will be applied
 
 ![Basic observation data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input2.png)
 
