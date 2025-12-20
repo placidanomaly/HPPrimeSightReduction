@@ -25,7 +25,7 @@ To install from the binaries, the *.hpprgm* files must be loaded into the Connec
 
 1. Download and install the [HP Connectivity Kit](https://updates.moravia-consulting.com/)
 2. Launch the HP Connectivity Kit program
-3. Connect an HP Prime Calculator to the computer with a USB cable and confirm that the Connectivity Kit sees the calculator
+3. Connect an HP Prime Calculator to the computer with a USB cable (or launch the virtual calculator) and confirm that the Connectivity Kit sees the calculator
 4. Drag all the *.hpprgm* files in the */bin* directory of the repository into the **Content** section of the HP Connectivity Kit program
 5. Drag all the files in the **Content** window of the HP Connectivity Kit program onto the **Programs** section label of the calculator
 
