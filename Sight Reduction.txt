@@ -18,7 +18,7 @@ LOCAL rfDist_nm,rfBrg_deg;
 LOCAL starId,SHA_deg;
 
 // Default values for subsequent sights
-LOCAL IC_default, DRlat_default, DRlon_default,HE_default;
+LOCAL IC_default, DRlat_default:=45, DRlon_default:=-73,HE_default;
 LOCAL date_default,temp_default,press_default;
 
 //Moon sight variables
@@ -84,6 +84,8 @@ BEGIN
   
   IF NOT c THEN RETURN c; END;
   
+  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
+  
   DRlat_default:=DRlat_deg(current);
   DRlon_default:=DRlong_deg(current);  
   
@@ -119,6 +121,8 @@ BEGIN
      "DR Longitude (N=+ S=-)",
      "Observed limb"});
   IF NOT c THEN RETURN c; END;
+
+  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
 
   DRlat_default:=DRlat_deg(current);
   DRlon_default:=DRlong_deg(current);
@@ -177,6 +181,8 @@ BEGIN
   
   IF NOT c THEN RETURN c; END;
 
+  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
+
   DRlat_default:=DRlat_deg(current);
   DRlon_default:=DRlong_deg(current);  
   
@@ -217,6 +223,8 @@ BEGIN
      "DR Longitude (N=+ S=-)",     
      "Observed star"});
   IF NOT c THEN RETURN c; END;
+
+  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
 
   DRlat_default:=DRlat_deg(current);
   DRlon_default:=DRlong_deg(current);  
@@ -267,6 +275,8 @@ BEGIN
          "DR latitude at "+obs_UTC(current)+" (°) (+=N -=S)'",
          "DR longitude "+obs_UTC(current)+" (°) (+=E -=W)"});
   IF NOT c THEN RETURN c; END;
+
+  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
   
   DRlat_default:=DRlat_deg(current);
   DRlon_default:=DRlong_deg(current);
@@ -306,6 +316,8 @@ BEGIN
      "Declination from Almanac (°)",
      "Observed limb"});
   IF NOT c THEN RETURN c; END;
+
+  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
 
   DRlat_default:=DRlat_deg(current);
   DRlon_default:=DRlong_deg(current);
@@ -358,6 +370,8 @@ BEGIN
          "Longitude of assumed or DR position (°)"});
   
   IF NOT c THEN RETURN c; END;
+
+  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
   
   DRlat_default:=DRlat_deg(current);
   DRlon_default:=DRlong_deg(current);
@@ -478,10 +492,9 @@ BEGIN
 END;
 
 // Defining local variables external to function 
-// so last defined values remain valid
+// so the last defined values remain valid
 // between invocations
 LOCAL ephLat,ephLon,ephStar:={1,15,30,45};
-
 
 LOCAL OUTPUT_EPHEMERIS(bodyName,eph,lat,lon)
 BEGIN
@@ -520,6 +533,8 @@ BEGIN
      "Star to include in results"});
    
   IF NOT c THEN RETURN "Canceled."; END;
+
+  ephLon:=NORMALIZE_LONGITUDE(ephLon);
   
   DRlat_default:=ephLat;
   DRlon_default:=ephLon;
@@ -598,6 +613,8 @@ BEGIN
    "End of azimuth arc (°)"});
    
   IF NOT c THEN RETURN "Canceled."; END;
+
+  ephLon:=NORMALIZE_LONGITUDE(ephLon);
   
   DRlat_default:=ephLat;
   DRlon_default:=ephLon;
@@ -703,38 +720,43 @@ BEGIN
   IF NOT c THEN RETURN c; END;
 
   current:=c;
+  LOCAL tempTime:=obs_UTC(current);
+  LOCAL tempDate:=obsDate(current);
   
-  IF obs_UTC(current)=0 THEN
+  IF tempTime=0 THEN
     PRINT();
 	PRINT(" ");
 	PRINT(" ");
 	PRINT("Press any key to record the time");
     PRINT("when the observation is made and");
 	PRINT("enter the sextant altitude.");
-  obs_UTC(current):=GET_UTC_TIME();
+	WAIT(-1);
+    tempTime:=GET_UTC_TIME();
   END;
-  
-  IF obsDate(current)=0 THEN obsDate(current):=date_default; END;  
+
+  IF tempDate=0 THEN tempDate:=date_default; END;  
   
   c:=INPUT(
-    {{sightType(current),{"Sun","Moon","Star","Planet",
+    {HS_deg(current),
+	 {sightType(current),{"Sun","Moon","Star","Planet",
         "Sun with Tables","Moon with Tables",
         "Pre-calc (skip to next screen)"}},
-     obsDate(current),
-     obs_UTC(current),
-     HS_deg(current),
-	 {artificial(current),1}
+     tempDate,
+     tempTime,
+     {artificial(current),1}
 	 },
     "LOP "+STRING(current)+": Sextant Observation",
-    {"Body:","Date:","Time UTC:","HS:","Artificial:"},
-    {"Type of body being observed",
+    {"HS:","Body:","Date:","Time UTC:","Artificial:"},
+    {"Sextant reading (°)",
+	 "Type of body being observed",
      "Observation date (YYYY.MMDD)",
-     "Observation time UTC (HH°MM'SS)",
-     "Sextant reading (°)",
+     "Observation time UTC (HH°MM'SS)",     
 	 "Check if reading is made with an artificial horizon"});
 
   IF NOT c THEN RETURN c; END;
   
+  obs_UTC(current):=tempTime;
+  obsDate(current):=tempDate;
   date_default:=obsDate(current);
   
   IF IC_min(current)=0 THEN IC_min(current):=IC_default; END;
@@ -889,6 +911,13 @@ BEGIN
   RETURN {hc,z,lha};
 END;
 
+NORMALIZE_LONGITUDE(lon)
+BEGIN
+  LOCAL l:=lon MOD 360;
+  IF l>180 THEN l:=l-360; END;
+  RETURN l;
+END;
+
 // Returns the day number in the year for a
 // given date. Used in calculations of sun semi-diameter.
 DoY(date)
@@ -1038,10 +1067,10 @@ BEGIN
   tableDec_deg      := init;
   sightType         := init;
 
-  IC_default:=0;
-  HE_default:=0;
-  DRlat_default:=45;
-  DRlon_default:=-73;
+  //IC_default:=0;
+  //HE_default:=0;
+  //DRlat_default:=45;
+  //DRlon_default:=-73;
   date_default:=Date;
   temp_default:=20;
   press_default:=1010;
