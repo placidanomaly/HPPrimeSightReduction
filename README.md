@@ -12,9 +12,9 @@ Of course there are other more accurate methods to derive a fix from sextant obs
 
 The astronomical calculations are derived from the incredible work of Henning Umland which he has been kind enough to share [on his web site](https://celnav.de/).
 
-The sight reduction formulas used in this program were derived from many sources that are usually listed in the source code comments.
+The sight reduction formulas used in this program were derived from many sources that are usually listed in the comments within the source code.
 
-For an excellent textbook on celestial navigation and the process of sight reduction, refer to [*Celestial Navigation: A Complete Home Study Course*](https://starpath.com/catalog/books/1887.htm) by David Burch and Tobias Burch.
+For an excellent textbook on celestial navigation and the process of sight reduction, refer to [*Celestial Navigation: A Complete Home Study Course*](https://starpath.com/catalog/books/1887.htm) by David Burch and Tobias Burch. The calculations in this program follow the sight reduction process described in the book.
 
 # Installing the Program
 The program can be installed on the calculator or on the [virtual calculator program](https://www.hpcalc.org/details/8939) from the *.txt* source files in the main directory of this repository or from the binary files in the */bin* directory.
