@@ -51,18 +51,20 @@ After this setup, all the functions can be accessed by running the **Sight Reduc
 
 # Using the Program
 
+All the functionality is accessed through the **Sight Reduction** program. The other programs support astronomical calculations that are too voluminous to fit within a single program. Those programs need to be present for **Sight Reduction** to work, but they should not be invoked by the user under normal usage scenarios.
+
 ## Units and Conventions
-The program relies on dates, times, positions, and other information to perform the calculations. Whenever a field is highlighted, the line at the bottom of the display will provide hints as to which unit and format should be used. The units are not consistent, they follow the conventions of sight reduction. For example positions are expressed in degrees, corrections are in arc minutes, and the semi-diameter of celestial bodies is expressed in arc seconds, so pay attention to the hints.
+The program relies on dates, times, positions, and other information to perform the calculations. Whenever a field is highlighted for input, the line at the bottom of the display will provide hints as to which unit and format should be used. Keep in mind that the units are not consistent, they follow the conventions of celestial navigation. For example positions are expressed in degrees, corrections are in arc minutes, and the semi-diameter of celestial bodies is expressed in arc seconds, so pay attention to the hints.
 
 ### Negative Numbers
 
-Negative numbers must be prefixed by a - symbol using the **+/-** key, and NOT with the minus sign, which will cause an error. If the calculator is in reverse Polish notation (RPN) mode, all characters in an input field must be cleared before a negative value can be entered. This is why we recommend setting the calculator in Textbook mode (the default value) using the **SHIFT-Home** key combination prior to using this program
+Negative numbers must be prefixed by a - symbol using the **+/-** key, and NOT with the minus sign, which will cause an error. If the calculator is in Reverse Polish Notation (RPN) mode, all characters in an input field must be cleared before a negative value can be entered. This is why we recommend setting the calculator in Textbook mode (the default value) using the **SHIFT-Home** key combination prior to using this program
 
 ### Position Format
 
 Positions are represented in degrees of latitude and longitude which can be entered either as *DD°MM'SS"* using the **SHIFT-(a b/c)** key combination or in decimal degrees *DD.ddddddd*. Northern latitudes are positive, so 14°45'21"N is entered as 14°45'21", while southern latitudes are negative, so 20.2321S is entered as -20.2321. Same with declination: N45.2345 is represented as 45.2345 while S12°51'03" is represented as -12°51'03". **NOTE: using eastern values of longitude greater than 180° instead of negative numbers for western longitude produces erroneous results.** (this is a bug that will eventually be corrected).
 
-Celestial navigation positions and declinations are traditionally represented using decimal minutes, e.g. Celestial navigation positions andis usually done using decimal minutes for declination and position information, e.g. Celestial navigation positions andis usually done using decimal minutes for declination and position information, e.g. Celestial navigation positions anis usual
+Celestial navigation positions, declinations, corrections, hour angles, etc., are traditionally represented using degrees and decimal minutes to one decimal place, e.g. DD°MM.m', but the calculator does not natively support that format. Decimal minutes must be converted to arc seconds which are equal to the decimal part of minutes multiplied by 6. For example, S24°8.4' must be entered as -24°8'24". That being said, the program usually outputs values using decimal minutes.
 
 ### Date Format
 
@@ -91,37 +93,37 @@ The first thing to do is to initialize lists and variables, set default values, 
 It can be helpful to know which celestial bodies will be visible and where ahead of an observation session with the sextant so that the bodies to be observed can be selected ahead of time. This is done with the **LIST_VISIBLE_BODIES** function of the **Sight Reduction** program. You will be prompted to enter the parameters for listing the bodies:
 
    * **Date**: the date on which the observations will be made in YYYY.MMDD format
-   * **Time**: the approximate UTC time at which the observations will be made in HH°MM'SS" format using the Shift-(a b/c) key
-   * **Latitude**: the assumed latitude from which the observations will be made in either DD°MM'SS" format using the Shift-(a b/c) key or in decimal degrees DD.ddddddd...
-   * **Longitude**: the assumed longitude from which the observations will be made in degrees
-   * **Elevation**: the minimum elevation of the celestial bodies to included in the list in degrees
+   * **Time**: the approximate UTC time at which the observations will be made in HH°MM'SS" format
+   * **Latitude**: the assumed latitude in degrees from which the observations will be made
+   * **Longitude**: the assumed longitude in degrees from which the observations will be made
+   * **Elevation**: the minimum elevation in degrees of the celestial bodies to be included in the list
    * **Azimuth from**: the true heading in degrees of the beginning of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
    * **Clockwise to**: the true heading in degrees of the end of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
 
 ![Parameters for listing bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_input.png)
 
-The output will be shown in the Spreadsheet app and will include, for each celestial body meeting the minimum elevation and azimuth range criteria, the azimuth, elevation, Greenwhich Hour Angle (GHA), declination (dec), and the semi-diameter in seconds of the body (if applicable):
+The output will be shown in the Spreadsheet app and will include, for each celestial body meeting the minimum elevation and azimuth range criteria, the azimuth, elevation, Greenwhich Hour Angle (GHA), declination (dec), and the semi-diameter in arc seconds of the body (if applicable):
 
 ![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output.png)
 
 ## Calculating Index Correction from Sun diameter (OPTIONAL)
 
-The program contains a function to apply the index correction method described by the Starpath School of Nabigation in [this document](https://www.starpath.com/online/celestial/solar_ic.pdf). After running this program, the default value for the index correction in the sight reduction forms will be set to the value calculated by this procedure (otherwise the default index correction value will be zero). To run the program, highlight the **Sight Reduction** program and hit the **6** key to run the **SOLAR_IC** program. The program briefly describes the measurements that need to be taken:
+The program contains a function to apply the index correction method described in [this document](https://www.starpath.com/online/celestial/solar_ic.pdf). After running this program, the default value for the index correction in the sight reduction forms will be set to the value calculated by this procedure (otherwise the default index correction value will be zero). To run the program, highlight the **Sight Reduction** program and hit the **6** key to run the **SOLAR_IC** program. The program briefly describes the measurements that need to be taken:
 
 ![Solar IC intro](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_intro.png)
 
-You can then enter the *top* and *Bottom* measurements in minutes in the input form:
+Values for the *Below* and *Above** observations as read on the sextant, in arc minutes, can be entered in the input form. Do NOT correct the off scale *Below* reading by subtracting it from 60, the program will do that for you. Use the value directly read on the instrument.
 
 ![Solar IC input](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_input.png)
 
-The program will present the calculated index correction result as well as the implied semi-diameter of the sun, which is then compared with the actual semi-diameter of the sun at the current time. This allows validating the inputs used before applying the calculated index correction to future sights:
+The program will display the calculated index correction result as well as the implied semi-diameter of the sun, which is then compared with the actual semi-diameter of the sun at the current time. This allows validating the inputs used before applying the calculated index correction to future sights.
 
 ![Solar IC output](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_output.png)
 
-After pressing a key, the program prompts whether to accept or reject the calculated index correction. If accepted, the value will be applied to all sights that did not have a manually entered index correction.
+After pressing a key, the program prompts whether to accept or reject the calculated index correction. If accepted, the value will be applied to all sights that did not have a manually entered index correction and will be used as the default value for new sights.
 
-## Performing a Sight Reduction
-All the steps to perform a sight reduction, from capturing sextant observations to plotting lines of position and identifying a fix are done within the **Sight Reduction** program. The other programs support ephemeris calculations which were too big to fit within a single program. Those programs need to be present for **Sight Reduction** to work, but they do not need to be invoked by the user under normal usage scenarios. 
+## Reducing Sights
+Performing a sight reduction is a straightforward process: 
 
 1. To run the program, highlight the **Sight Reduction** program and press the **Run** soft key.
 
@@ -145,7 +147,7 @@ All the steps to perform a sight reduction, from capturing sextant observations 
 ![Basic observation data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input2.png)
 
 7. On the 3rd screen, enter the observation conditions which will result in altitude corrections:
-   * **IC**: the index correction of the sextant in minutes, negative values for "on-scale" correction and positive for "off-scale"
+   * **IC**: the index correction of the sextant in arc minutes, negative values for "on-scale" correction and positive for "off-scale"
    * **HE**: eye height from the horizon in feet (for dip correction)
    * **Dip short**: distance in nautical miles (nm) from observer where the horizon ends (e.g. the other side of a large lake), or zero if an infinite horizon is used as reference for the observation
    * **Temp**: the air temperature in degrees C (for refraction correction)
@@ -155,16 +157,16 @@ All the steps to perform a sight reduction, from capturing sextant observations 
 
 8. On the 3rd screen, enter body-specific data and the assumed position
    * **Limb**: for the sun, whether the observation was made on the lower or upper limb (for semi-diameter correction). Other bodies will have body-specific parameters to enter here: the observed limb for a moon sight and the star name for a star sight
-   * **DR Lat**: the latitude of the assumed or DR position at the time of the observation in DMS format (DD°MM'SS")
-   * **DR Lon**: the longitude of the assumed or DR position at the time of the observation in DMS format (DD°MM'SS")
+   * **DR Lat**: the latitude of the assumed or DR position in degrees at the time of the observation
+   * **DR Lon**: the longitude of the assumed or DR position in degrees at the time of the observation
 
 ![More input data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input4.png)
 
-9. The calculator will display the values for observed height *Ho*, Greenwhich Hour Angle *GHA* of the body, declination *dec* of the body, Local Hour Angle *LHA* of the body, and the calculated height *Hc* of the body. Click **OK**
+9. The calculator will display the values for observed height *Ho*, Greenwhich Hour Angle *GHA*, declination *dec*, Local Hour Angle *LHA*, and the calculated height *Hc* of the body. Click **OK**
 
 ![Calculation results](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output1.png)
 
-11. The calculator will then display the usual 4 parameters of the line of position: LOP register, distance *a* from LOP either *TOWARD* or *AWAY* from the body, azimuth *Zn* to the body, and the assumed position latitude and longitude. These parameters enable plotting of the line of position.
+11. The calculator will then display the usual 4 parameters of the line of position: LOP register, distance *a* from the LOP either *TOWARD* or *AWAY* from the body, azimuth *Zn* to the body, and the assumed position latitude and longitude as entered (no correction of assumed position is necessary here because fractional LHA and Zn can easily be handled by the calculator). These parameters enable plotting of the line of position.
 
 ![LOP parameters](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output2.png)
 
@@ -172,12 +174,12 @@ All the steps to perform a sight reduction, from capturing sextant observations 
 
 ![LOP Equation](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output3.png)
 
-14. Once you've entered 2 or more sights in different LOP registers, you can view the LOPs on a graph: run the **Sight Reduction** program and select **PLOT LOPs**. This will open the calculator's Function app and a line of position will be plotted for each LOP defined in the **SIGHT** program. The calculator functions can then be used to calculate the intersection of LOPs, etc., and the cursor can be used to manually find the centroid or some other position in the "cocked hat" to make a fix.
+14. Once you've entered 2 or more sights in different LOP registers, you can make a fix from a graphical representation of the LOPs on a Cartesian plane. To do that, run the **Sight Reduction** program and select **PLOT LOPs**. This will open the calculator's Function app and a line of position will be plotted for each LOP defined in the **SIGHT** program. The calculator functions can then be used to calculate the intersection of LOPs, etc., and the cursor can be used to manually find the centroid or some other position in the "cocked hat" to make a fix. In order to determine which line color corresponds to which LOP, use the **Symb** key to view the color coding and the corresponding LOP equations, and use the **Plot** key to go back to the graph.
 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
 
 # Remaining Work
-The ephemeris calculations are usually accurate to within less than 0.1' of the values in the Almanac for the period 1900-2200, but errors up to 0.3' are sometimes seen. This is probably sufficiently accurate for most practical cases of celestial navigation but perfect precision would be better. The differences are still being investigated because the same program in Javascript from Umland's web site produces the exact same numbers as the Almanac. The possibility of a discrepancy in the code is one theory. Another is that it would be due to the lower number of significant digits in the calculator vs. a regular computer, but that has yet to be proven.
+The ephemeris calculations are usually accurate to within less than 0.1' of the values in the Almanac for the period 1900-2200 (subject to Delta T adjustments), but errors of up to 0.3' are sometimes seen. This is sufficient for most practical cases of celestial navigation but perfect precision would be better. The differences are still being investigated because the same program in Javascript from Henning Umland's web site seems to always output the exact same numbers as the Almanac. The possibility of a discrepancy in the code is one theory but a more likely one is that the lower number of significant digits in the calculator vs. a regular computer introduces rounding errors that add up in the lengthy calculations, but that has yet to be proven.
 
 # Contact
-This program was developed by [Charles Vaillancourt](mailto:charles.vaillancourt@gmail.com).
+This program was developed by [Charles Vaillancourt](mailto:charles.vaillancourt@gmail.com). I welcome comments and suggestions for improvement and will gladly review pull requests for inclusion in the program.
