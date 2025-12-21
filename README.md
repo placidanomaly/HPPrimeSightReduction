@@ -1,4 +1,4 @@
-# Ephemeris and Sight Reduction for the HP Prime Calculator
+# Ephemerides and Sight Reduction for the HP Prime Calculator
 This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime 48 calculator](https://www.hpcc.org/calculators/hpprime.html) to perform astronomical calculations for the ephemerides of the usual celestial navigation bodies (Sun, Moon, Mars, Venus, Jupiter, Saturn, and 58 stars), and the sight reduction of sextant observations to Lines of Position (LOPs) which relies on those ephemerides. The LOPs are represented in a Cartesian plot from which a fix can easily be deduced. The program also provides support for running fixes through a function that allows the translation of lines of position by a certain distance on a given bearing. The program can also help in planning observations by listing the azimuth and elevation of all the visible bodies that meet minimum elevation and azimuth restrictions at a specified future date and time. The program also includes a function to calculate the index error of the sextant based on two simple observations of the sun.
 
 Of course there are other more accurate methods to derive a fix from sextant observations without even an assumed position but which rely on numerical methods that can't be performed without a more powerful computer. This program merely automates the manual process but it results in a perfectly usable, reliable, low-cost sight reduction calculator that can live in the chart table and requires no updates until 2200 (subject to delta T adjustments).
@@ -50,6 +50,14 @@ When all is done, your Connectivity Kit screen should look like this:
 After this setup, all the functions can be accessed by running the **Sight Reduction** program.
 
 # Using the Program
+
+## Units and Conventions
+The program relies on dates, times, positions, and other information to perform the calculations. Whenever a field is highlighted, the line at the bottom of the display will provide hints as to which unit and format should be used. The units are not consistent, they follow the conventions of sight reduction. For example positions are expressed in degrees, corrections are in arc minutes, and the semi-diameter of celestial bodies is expressed in arc seconds, so pay attention to the hints.
+
+### Position
+
+Positions are represented in latitude and longitude. They can be entered as 
+
 ## Initialization \*IMPORTANT\*
 The first thing to do is to initialize lists and variables, set default values, and set the time and timezone of the calculator. This must also be done every time after editing a program even if no changes were made to it. Proceed as follows:
 
