@@ -41,8 +41,8 @@ To install from the binaries, the *.hpprgm* files must be loaded into the Connec
 8. Select all the text (Ctrl-A), copy it to the clipboard (Ctrl-C), and paste it into the editor window in the HP Connectivity Kit program (Ctrl-V)
 9. Save the file (Ctrl-S) and close the editor window
 10. Repeat steps 5-8 above for each text file in the repository
-11. On the calculator, go to the **Programs** page (Shift-1) and confirm that all the programs are loaded
-12. Open each program and hit **Check** to confirm that there are no syntax errors
+11. On the calculator, go to the **Programs** page with <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle"> and confirm that all the programs are loaded
+12. Open each program and hit <img alt="Check" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/check.png" valign="middle"> to confirm that there are no syntax errors
 
 When all is done, your Connectivity Kit screen should look like this:
 
@@ -50,8 +50,8 @@ When all is done, your Connectivity Kit screen should look like this:
 
 To confirm that the installation was successful, perform the following verification:
 
-1. On the calculator, open the Programs page using the **Shift-1** keys. Select the **Sight Reduction** program using the arrows, press the **Run** soft key, select **RESET_SIGHTS** using the arrows and press **Enter**. This will initialize all the necessary variables for the program to work.
-2. Select the **Sight Reduction** program, press **Run**, select **EPHEMERIDES** using the arrows and press **Enter**. Fill out the form with a date, time, and location following the conventions in the next section and press **Enter**. If everything was installed properly, the requested ephemerides should be displayed and you can scroll through them using the touchscreen (if not, double-check that ALL the programs are installed). Check the values against an Almanac.
+1. On the calculator, open the Programs page using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle"> keys. Select the **Sight Reduction** program using the arrows, press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key, select **RESET_SIGHTS** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. This will initialize all the necessary variables for the program to work.
+2. Select the **Sight Reduction** program, press <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle">, select **EPHEMERIDES** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. Fill out the form with a date, time, and location following the conventions in the next section and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. If everything was installed properly, the requested ephemerides will be displayed and you can scroll through them using the touchscreen. Check the values against an Almanac for accuracy. If this fails, double-check that all the programs are installed and, if you installed them from source, that the programs were checked per step 12 above.
 
 # Using the Program
 
@@ -62,33 +62,33 @@ The program relies on dates, times, positions, and other information to perform 
 
 ### Negative Numbers
 
-Negative numbers must be prefixed by a - symbol entered using the **+/-** key, and NOT with the minus key, which will cause an error. If the calculator is in Reverse Polish Notation (RPN) mode, all characters in an input field must be cleared before a negative value can be entered. This is why we recommend setting the calculator in Textbook mode (the default value) using the **SHIFT-Home** key combination prior to using this program. An alternative to avoid having to enter negative numbers is to enter western longitudes as their corresponding eastern equivalent, e.g. instead of entering 45W, which must be entered as -45 as will be explained later, you can enter 315E, which is entered as 315.
+Negative numbers must be prefixed by a - symbol entered using the **+/-** key, and NOT with the minus key, which will cause an error. If the calculator is in Reverse Polish Notation (RPN) mode, all characters in an input field must be cleared before a negative value can be entered. This is why we recommend setting the calculator in Textbook mode (the default value) using the **SHIFT-Home** key combination prior to using this program. An alternative to avoid having to enter negative numbers is to enter western longitudes as their corresponding eastern equivalent, e.g. instead of entering 45W, which must be entered as `-45` as will be explained later, you can enter 315E, which is entered as `315`.
 
 ### Position Format
 
-Positions are represented in degrees of latitude and longitude which can be entered either as *DD°MM'SS"* using the **SHIFT-(a b/c)** key combination or in decimal degrees *DD.ddddddd*. Northern latitudes are positive, so 14°45'21"N is entered as 14°45'21", while southern latitudes are negative, so 20.2321S is entered as -20.2321. Same with declination: N45.2345 is represented as 45.2345 while S12°51'03" is represented as -12°51'03". Positive values of longitude greater than 180° will be converted to a negative value corresponding to the western longitude, e.g. 220 will be converted to -140.
+Positions are represented in degrees of latitude and longitude which can be entered either as *DD°MM'SS"* using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="abc" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/abc.png" valign="middle"> key combination or in decimal degrees *DD.ddddddd*. Northern latitudes are positive, so 14°45'21"N is entered as `14°45'21"`, while southern latitudes are negative, so 20.2321S is entered as `-20.2321`. Same with declination: N45.2345 is represented as `45.2345` while S12°51'03" is represented as `-12°51'03"`. Positive values of longitude greater than 180° will be converted to a negative value corresponding to the western longitude, e.g. 220 will be converted to -140.
 
-Celestial navigation positions, declinations, corrections, hour angles, etc., are traditionally represented using degrees and decimal minutes to one decimal place, e.g. DD°MM.m', but the calculator does not natively support that format. Decimal minutes must be converted to arc seconds which are equal to the decimal part of minutes multiplied by 6. For example, S24°8.4' must be entered as -24°8'24". That being said, the program usually outputs values using decimal minutes.
+Celestial navigation positions, declinations, corrections, hour angles, etc., are traditionally represented using degrees and decimal minutes to one decimal place, e.g. DD°MM.m', but the calculator does not natively support that format. Decimal minutes must be converted to arc seconds which are equal to the decimal part of minutes multiplied by 6. For example, S24°8.4' must be entered as `-24°8'24"`. That being said, the program usually outputs values using decimal minutes.
 
 ### Date Format
 
-Date values are represented using the native calculator format which is *YYYY.MMDD*. For example, April 23, 2026 must be entered as 2026.0423.
+Date values are represented using the native calculator format which is *YYYY.MMDD*. For example, April 23, 2026 must be entered as `2026.0423`.
 
 ### Time Format
 
-Time values are represented in 24-hour hours using the same format as position degrees, i.e. HH°MM'SS", using the **SHIFT-(a b/c)** key. For example 11:43:12pm is entered as 23°43'12".
+Time values are represented in 24-hour hours using the same format as position degrees, i.e. HH°MM'SS", using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="abc" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/abc.png" valign="middle"> keys. For example 11:43:12pm is entered as `23°43'12"`.
 
 ## Initialization \*IMPORTANT\*
 The first thing to do is to initialize lists and variables, set default values, and set the time and timezone of the calculator. This must also be done every time after editing a program even if no changes were made to it. Proceed as follows:
 
-1. Highlight the **Sight Reduction** program and press the **Run** soft key
-2. From the list of options, pick **RESET_SIGHTS** on the touchscreen or with the arrows and the *Enter* key, or press the *8* key. Click any key to dismiss the confirmation message.
+1. Highlight the **Sight Reduction** program and press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key
+2. From the list of options, pick **RESET_SIGHTS** on the touchscreen or with the arrows and the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key, or press the <img alt="8" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/8.png" valign="middle"> key. Click any key to dismiss the confirmation message.
 
 ![Resetting variables](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightreductionprograms.png)
 
 4. Now re-run the program and pick **SET_TIME** and set the calculator's local time clock and timezone:
 
-   * **Local time**: the local time to which to set the calculator. Enter a time a few seconds in the future and click the **Ok** soft key when your watch reads the time entered
+   * **Local time**: the local time to which to set the calculator. Enter a time a few seconds in the future and click the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key when your watch reads the time entered
    * **UTC Offset**: the number of hours ahead of or behind UTC. Use a positive value for locations West of Greenwhich and negative for East (e.g. -5 for New York standard time). Keep in mind that this offset changes with Daylight Savings Time (DST)
 
 ![Setting the time and timezone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
@@ -112,7 +112,7 @@ The output will be shown in the Spreadsheet app and will include, for each celes
 
 ## Calculating Index Correction from Sun diameter (OPTIONAL)
 
-The program contains a function to apply the index correction method described in [this document](https://www.starpath.com/online/celestial/solar_ic.pdf). After running this program, the default value for the index correction in the sight reduction forms will be set to the value calculated by this procedure (otherwise the default index correction value will be zero). To run the program, highlight the **Sight Reduction** program and hit the **6** key to run the **SOLAR_IC** program. The program briefly describes the measurements that need to be taken:
+The program contains a function to apply the index correction method described in [this document](https://www.starpath.com/online/celestial/solar_ic.pdf). After running this program, the default value for the index correction in the sight reduction forms will be set to the value calculated by this procedure (otherwise the default index correction value will be zero). To run the program, highlight the **Sight Reduction** program and hit the ![6](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/6.png) key to run the **SOLAR_IC** program. The program briefly describes the measurements that need to be taken:
 
 ![Solar IC intro](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_intro.png)
 
@@ -129,23 +129,23 @@ After pressing a key, the program prompts whether to accept or reject the calcul
 ## Reducing Sights
 Performing a sight reduction is a straightforward process: 
 
-1. To run the program, highlight the **Sight Reduction** program and press the **Run** soft key.
+1. To run the program, highlight the **Sight Reduction** program and press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key.
 
 1. Reset all previous observations and calculations by running **RESET_SIGHTS** in the **Sight Reduction** program.
 
 ![Sight Reduction programs](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightreductionprograms.png)
 
-3. Enter a new observation: select **SIGHT** and press the **Enter** soft key.
+3. Enter a new observation: select **SIGHT** and press the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> soft key.
 
-4. The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by an LOP register number from 1 to 10. Select an LOP register for this observation, let's say **1** for this first one, and hit the **OK** soft key.
+4. The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by an LOP register number from 1 to 10. Select an LOP register for this observation, let's say **1** for this first one, and hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key.
 
 ![Observation register selection](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input1.png)
 
 6. On the 2nd screen:
    * **Body**: select the body that was observed, let's say the **Sun** for this one
    * **Date**: the date of the observation in HP Prime date format (YYYY.MMDD) (for ephemeris calculations)
-   * **Time UTC**: enter the UTC time of the observation in the calculator time format (HH°MM'SS") using the Shift-(a b/c) key combination (for ephemeris and local hour angle (LHA) calculations)   
-   * **HS**: enter the observed height from the sextant in degrees, arc minutes and arc seconds format (DD°MM'SS") using the Shift-(a b/c) key. Sextants show fractional minutes in decimals which can be converted to arc seconds by simply multiplying the decimal part of the minutes by 6, e.g. 13°32.4' on the sextant must be entered as 13°32'24".
+   * **Time UTC**: enter the UTC time of the observation in the calculator time format (HH°MM'SS")(for ephemeris and local hour angle (LHA) calculations)   
+   * **HS**: enter the observed height from the sextant in degrees, arc minutes and arc seconds format (DD°MM'SS"). Sextants show fractional minutes in decimals which can be converted to arc seconds by simply multiplying the decimal part of the minutes by 6, e.g. 13°32.4' on the sextant must be entered as 13°32'24".
    * **Artificial**: check this box if the observation was made on an artificial horizon. If that's the case, the value entered in HS must be the actual sextant reading, i.e. double the actual body height. When this box is checked, the index correction will be applied before dividing the reading by half and no dip correction will be applied
 
 ![Basic observation data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input2.png)
@@ -174,11 +174,13 @@ Performing a sight reduction is a straightforward process:
 
 ![LOP parameters](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output2.png)
 
-12. Lastly, the calculator displays the equation for the line of position in a longitude (x) and latitude (y) cartesian plane which can be used to plot it in a program. That equation is stored in the F register of the Function app of the calculator corresponding to the LOP register selected, e.g. LOP 1 will be stored in F1, which means they can be plotted using the calculator's Function app.
+12. Lastly, the calculator displays the equation for the line of position in a longitude (x) and latitude (y) Cartesian plane which can be used to plot it in a program. That equation is stored in the `F` register of the Function app of the calculator corresponding to the LOP register selected, e.g. LOP 1 will be stored in `F1`, which means they can be plotted using the calculator's Function app.
 
 ![LOP Equation](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output3.png)
 
-14. Once you've entered 2 or more sights in different LOP registers, you can make a fix from a graphical representation of the LOPs on a Cartesian plane. To do that, run the **Sight Reduction** program and select **PLOT LOPs**. This will open the calculator's Function app and a line of position will be plotted for each LOP defined in the **SIGHT** program. The calculator functions can then be used to calculate the intersection of LOPs, etc., and the cursor can be used to manually find the centroid or some other position in the "cocked hat" to make a fix. In order to determine which line color corresponds to which LOP, use the **Symb** key to view the color coding and the corresponding LOP equations, and use the **Plot** key to go back to the graph.
+## Making a Fix
+
+Once you've entered 2 or more sights in different LOP registers, you can make a fix from a graphical representation of the LOPs on a Cartesian plane. To do that, run the **Sight Reduction** program and select **PLOT LOPs**. This will open the calculator's Function app and a line of position will be plotted for each LOP defined in the **SIGHT** program. The calculator functions can then be used to calculate the intersection of LOPs, etc., and the cursor can be used to manually find the centroid or some other position in the "cocked hat" to make a fix. In order to determine which line color corresponds to which LOP, use the **Symb** key to view the color coding and the corresponding LOP equations, and use the **Plot** key to go back to the graph.
 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
 
