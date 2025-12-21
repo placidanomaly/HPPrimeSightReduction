@@ -43,14 +43,15 @@ To install from the binaries, the *.hpprgm* files must be loaded into the Connec
 10. Repeat steps 5-8 above for each text file in the repository
 11. On the calculator, go to the **Programs** page (Shift-1) and confirm that all the programs are loaded
 12. Open each program and hit **Check** to confirm that there are no syntax errors
-13. Select the **Sight Reduction** program, press **Run**, select **RESET_SIGHTS** and press **Enter**. This will initialize all the necessary variables for the program to work.
-14. To confirm everything is working, select the **Sight Reduction** program, press **Run**, select **EPHEMERIDES** and press **Enter**. Fill out the form and press **Enter**. The requested ephemerides should be displayed on the screen. Check them against an Almanac.
 
 When all is done, your Connectivity Kit screen should look like this:
 
 ![Connectivity Kit screen shot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/connectivity.png)
 
-After this setup, all the functions can be accessed by running the **Sight Reduction** program.
+To confirm that the installation was successful, perform the following verification:
+
+1. On the calculator, open the Programs page using the **Shift-1** keys. Select the **Sight Reduction** program using the arrows, press the **Run** soft key, select **RESET_SIGHTS** using the arrows and press **Enter**. This will initialize all the necessary variables for the program to work.
+2. Select the **Sight Reduction** program, press **Run**, select **EPHEMERIDES** using the arrows and press **Enter**. Fill out the form with a date, time, and location following the conventions in the next section and press **Enter**. If everything was installed properly, the requested ephemerides should be displayed and you can scroll through them using the touchscreen (if not, double-check that ALL the programs are installed). Check the values against an Almanac.
 
 # Using the Program
 
