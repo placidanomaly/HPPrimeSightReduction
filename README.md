@@ -54,9 +54,23 @@ After this setup, all the functions can be accessed by running the **Sight Reduc
 ## Units and Conventions
 The program relies on dates, times, positions, and other information to perform the calculations. Whenever a field is highlighted, the line at the bottom of the display will provide hints as to which unit and format should be used. The units are not consistent, they follow the conventions of sight reduction. For example positions are expressed in degrees, corrections are in arc minutes, and the semi-diameter of celestial bodies is expressed in arc seconds, so pay attention to the hints.
 
-### Position
+### Negative Numbers
 
-Positions are represented in latitude and longitude. They can be entered as 
+Negative numbers must be prefixed by a - symbol using the **+/-** key, and NOT with the minus sign, which will cause an error. If the calculator is in reverse Polish notation (RPN) mode, all characters in an input field must be cleared before a negative value can be entered. This is why we recommend setting the calculator in Textbook mode (the default value) using the **SHIFT-Home** key combination prior to using this program
+
+### Position Format
+
+Positions are represented in degrees of latitude and longitude which can be entered either as *DD°MM'SS"* using the **SHIFT-(a b/c)** key combination or in decimal degrees *DD.ddddddd*. Northern latitudes are positive, so 14°45'21"N is entered as 14°45'21", while southern latitudes are negative, so 20.2321S is entered as -20.2321. Same with declination: N45.2345 is represented as 45.2345 while S12°51'03" is represented as -12°51'03". **NOTE: using eastern values of longitude greater than 180° instead of negative numbers for western longitude produces erroneous results.** (this is a bug that will eventually be corrected).
+
+Celestial navigation positions and declinations are traditionally represented using decimal minutes, e.g. Celestial navigation positions andis usually done using decimal minutes for declination and position information, e.g. Celestial navigation positions andis usually done using decimal minutes for declination and position information, e.g. Celestial navigation positions anis usual
+
+### Date Format
+
+Date values are represented using the native calculator format which is *YYYY.MMDD*. For example, April 23, 2026 must be entered as 2026.0423.
+
+### Time Format
+
+Time values are represented in 24-hour hours using the same format as position degrees, i.e. HH°MM'SS", using the **SHIFT-(a b/c)** key. For example 11:43:12pm is entered as 23°43'12".
 
 ## Initialization \*IMPORTANT\*
 The first thing to do is to initialize lists and variables, set default values, and set the time and timezone of the calculator. This must also be done every time after editing a program even if no changes were made to it. Proceed as follows:
