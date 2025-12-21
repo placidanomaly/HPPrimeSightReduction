@@ -57,11 +57,11 @@ After this setup, all the functions can be accessed by running the **Sight Reduc
 All the functionality is accessed through the **Sight Reduction** program. The other programs support astronomical calculations that are too voluminous to fit within a single program. Those programs need to be present for **Sight Reduction** to work, but they should not be invoked by the user under normal usage scenarios.
 
 ## Units and Conventions
-The program relies on dates, times, positions, and other information to perform the calculations. Whenever a field is highlighted for input, the line at the bottom of the display will provide hints as to which unit and format should be used. Keep in mind that the units are not consistent, they follow the conventions of celestial navigation. For example positions are expressed in degrees, corrections are in arc minutes, and the semi-diameter of celestial bodies is expressed in arc seconds, so pay attention to the hints.
+The program relies on dates, times, positions, and other information to perform the calculations. Whenever a field is highlighted for input, the line at the bottom of the screen will provide hints as to which unit and format should be used for that field. Keep in mind that the units are not consistent, they follow the conventions of celestial navigation. For example positions, hour angles, and declinations are expressed in degrees, corrections are in arc minutes, and the semi-diameter of celestial bodies is expressed in arc seconds, so pay attention to the input hints.
 
 ### Negative Numbers
 
-Negative numbers must be prefixed by a - symbol using the **+/-** key, and NOT with the minus sign, which will cause an error. If the calculator is in Reverse Polish Notation (RPN) mode, all characters in an input field must be cleared before a negative value can be entered. This is why we recommend setting the calculator in Textbook mode (the default value) using the **SHIFT-Home** key combination prior to using this program
+Negative numbers must be prefixed by a - symbol entered using the **+/-** key, and NOT with the minus key, which will cause an error. If the calculator is in Reverse Polish Notation (RPN) mode, all characters in an input field must be cleared before a negative value can be entered. This is why we recommend setting the calculator in Textbook mode (the default value) using the **SHIFT-Home** key combination prior to using this program
 
 ### Position Format
 
