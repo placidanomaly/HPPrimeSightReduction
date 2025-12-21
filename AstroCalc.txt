@@ -370,7 +370,7 @@ BEGIN
   LOCAL year_temp_, month_temp_;
   
 
-  deltaT_:=DeltaT(year,month,day);
+  deltaT_:=DeltaT(year_,month_,day_);
   
   dayfraction_ := (hour_ + minute_/60 + second_/3600)/24;
 
