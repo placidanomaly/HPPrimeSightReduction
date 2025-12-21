@@ -4,7 +4,7 @@ This repository contains a set of programs written in Prime Programming Language
 * Observation planning by listing the azimuth and elevation of all the visible bodies that meet minimum elevation and azimuth restrictions at a specified future date and time
 * Index error determination from two simple observations of the Sun
 
-Of course there are other more accurate methods to derive a fix from sextant observations without even an assumed position but which rely on numerical methods that can't be performed without a more powerful computer. This program merely automates the manual process but it results in a perfectly usable, reliable, low-cost sight reduction calculator that can live in the chart table and requires no updates until 2200 (subject to delta T adjustments -- see the Future Improvements section of this document for details).
+Of course there are other more accurate methods to derive a fix from sextant observations without even an assumed position but which rely on numerical methods that can't be performed without a more powerful computer. This program merely automates the manual process but it results in a perfectly usable, reliable, low-cost sight reduction calculator that can live in the chart table and requires no updates until 2200 (although it would be wise to revisit the formulas for delta T in the AstroCalc subprogram every decade or so).
 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
 
@@ -186,8 +186,6 @@ Once you've entered 2 or more sights in different LOP registers, you can make a 
 
 # Future Improvements
 The ephemeris calculations are usually accurate to within less than 0.1' of the values in the Almanac for the period 1900-2200 (subject to Delta T adjustments), but errors of up to 0.3' are sometimes seen. This is sufficient for most practical cases of celestial navigation but perfect precision would be better. The differences are still being investigated because the same program in Javascript from Henning Umland's web site seems to always output the exact same numbers as the Almanac. The possibility of a discrepancy in the code is one theory but a more likely one is that the lower number of significant digits in the calculator vs. a regular computer introduces rounding errors that add up in the lengthy calculations, but that has yet to be proven.
-
-The program requires an accurate value of Delta T for most astronomical calculations. Delta T is the time difference between the steady, uniform atomic time scale (Terrestrial Time, TT) and the time based on Earth's slightly slowing, irregular rotation (Universal Time, UT), essentially measuring how much the Earth's day has lengthened over centuries. It reflects the gap between an "ideal" constant Earth and our "real," gradually decelerating planet, caused mainly by lunar tidal effects. Predicted values of Delta T are tabulated in the AstroCalc program until 2100 but the actual values of Delta T depend essentially on the introduction of leap seconds by the International Earth Rotation and Reference Systems Service (IERS). The table of Delta T values in the program should be updated to reflect the actual values every decade or so. Perhaps some way to input updated Delta T values through the calculator's user interface should be added to the AstroCalc program.
 
 # Contact
 This program was developed by [Charles Vaillancourt](mailto:charles.vaillancourt@gmail.com). I welcome comments and suggestions for improvement and will gladly review pull requests for inclusion in the program.
