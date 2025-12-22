@@ -19,7 +19,7 @@ For an excellent textbook on celestial navigation and the process of sight reduc
 # Installing the Program
 The program can be installed on the calculator or on the [virtual calculator program](https://www.hpcalc.org/details/8939) from the *.txt* source files in the main directory of this repository or from the binary files in the */bin* directory.
 
-## Installing from the Binaries (RECOMMENDED)
+## Installing from Binaries (RECOMMENDED)
 
 To install from the binaries, the *.hpprgm* files must be loaded into the Connectivity kit:
 
@@ -29,7 +29,7 @@ To install from the binaries, the *.hpprgm* files must be loaded into the Connec
 4. Drag all the *.hpprgm* files in the */bin* directory of the repository into the **Content** section of the HP Connectivity Kit program
 5. Drag all the files in the **Content** window of the HP Connectivity Kit program onto the **Programs** section label of the calculator
 
-## Installing from the Source Files
+## Installing from Source Files
 
 1. Download and install the [HP Connectivity Kit](https://updates.moravia-consulting.com/)
 2. Launch the HP Connectivity Kit program
