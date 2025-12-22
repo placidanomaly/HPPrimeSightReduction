@@ -62,7 +62,7 @@ The program relies on dates, times, positions, and other information to perform 
 
 ### Negative Numbers
 
-Negative numbers must be prefixed by a - symbol entered using the **+/-** key, and NOT with the minus key, which will cause an error. If the calculator is in Reverse Polish Notation (RPN) mode, all characters in an input field must be cleared before a negative value can be entered. This is why we recommend setting the calculator in Textbook mode (the default value) using the **SHIFT-Home** key combination prior to using this program. An alternative to avoid having to enter negative numbers is to enter western longitudes as their corresponding eastern equivalent, e.g. instead of entering 45W, which must be entered as `-45` as will be explained later, you can enter 315E, which is entered as `315`.
+Negative numbers must be prefixed by a `-` symbol entered using the <img alt="+/-" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/plusminus.png" valign="middle"> key, and NOT with the subtraction key, which will cause an error. If the calculator is in Reverse Polish Notation (RPN) mode, all characters in an input field must be cleared before a negative value can be entered. This is why we recommend setting the calculator in Textbook mode (the default value) using the **SHIFT-Home** key combination prior to using this program. An alternative to avoid having to enter negative numbers is to enter western longitudes as their corresponding eastern equivalent, e.g. instead of entering 45W, which must be entered as `-45` as will be explained later, you can enter 315E, which is entered as `315`.
 
 ### Position Format
 
