@@ -17,33 +17,47 @@ The sight reduction formulas used in this program were derived from many sources
 For an excellent textbook on celestial navigation and the process of sight reduction, refer to [*Celestial Navigation: A Complete Home Study Course*](https://starpath.com/catalog/books/1887.htm) by David Burch and Tobias Burch. The calculations in this program follow the sight reduction process described in the book.
 
 # Installing the Program
-The program can be installed on the calculator or on the [virtual calculator program](https://www.hpcalc.org/details/8939) from the *.txt* source files in the main directory of this repository or from the binary files in the */bin* directory.
+The program can be installed on an HP Prime calculator or on a PC or Mac running the [HP Prime Virtual Calculator](https://www.hpcalc.org/details/8939) from the source files in the */src* folder of this repository or from the binary files in the */bin* folder.
+
+## Prerequisites
+
+In order to use and install this program, you need to download this repository to your computer and you need to have the [*HP Connectivity Kit*](https://updates.moravia-consulting.com/) running on your computer and working with either an HP Prime calculator connected to your computer with a USB cable or with the [*HP Prime Virtual Calculator*](https://www.hpcalc.org/details/8939) program running on the same computer as the HP Connectivity Kit.
+
+### Downloading this Repository
+
+You can download a ZIP archive containing all the files in this repository from [this link](https://github.com/placidanomaly/HPPrimeSightReduction/archive/refs/heads/main.zip). Extract it to some folder on your computer. Alternatively, if you are familiar with *git*, you can clone the repository into your current folder in a command shell window with `git clone https://github.com/placidanomaly/HPPrimeSightReduction.git`.
+
+### HP Connectivity Kit and HP Prime Virtual Calculator
+
+Follow these steps to download and install the HP Connectivity Kit and the HP Prime Virtual Calculator program:
+
+1. Download and install the HP Connectivity Kit program from this [link](https://updates.moravia-consulting.com/)
+2. If desired, download and install the HP Prime Virtual Calculator program from this [link](https://updates.moravia-consulting.com/)
+3. Launch the *HP Connectivity Kit* program
+4. Connect an HP Prime Calculator to the computer with a USB cable, or launch the *HP Prime Virtual Calculator* program, and confirm that the calculator appears in the **Calculators** window of the Connectivity Kit
+5. Ensure that the **Content** window is visible in the *HP Connectivity Kit* program. To make it appear, select the **Window->Content** menu option
+
 
 ## Installing from Binaries (RECOMMENDED)
 
 To install from the binaries, the *.hpprgm* files must be loaded into the Connectivity kit:
 
-1. Download and install the [HP Connectivity Kit](https://updates.moravia-consulting.com/)
-2. Launch the HP Connectivity Kit program
-3. Connect an HP Prime Calculator to the computer with a USB cable (or launch the virtual calculator) and confirm that the Connectivity Kit sees the calculator
-4. Drag all the *.hpprgm* files in the */bin* directory of the repository into the **Content** section of the HP Connectivity Kit program
-5. Drag all the files in the **Content** window of the HP Connectivity Kit program onto the **Programs** section label of the calculator
+1. Drag all the *.hpprgm* files in the */bin* folder of the repository into the **Content** section of the *HP Connectivity Kit* program
+2. Drag all the files in the **Content** window of the *HP Connectivity Kit* program onto the calculator icon in the **Calculators** window
 
 ## Installing from Source Files
 
-1. Download and install the [HP Connectivity Kit](https://updates.moravia-consulting.com/)
-2. Launch the HP Connectivity Kit program
-3. Connect an HP Prime Calculator to the computer with a USB cable and confirm that the Connectivity Kit sees the calculator
-4. Expand the Program section of the calculator
+1. Expand the calculator and the **Programs** section of the calculator in the *HP Connectivity Kit* program
 5. Right-click on **Program** and select **New**
-6. Enter the name "Earth" and press Enter. An empty editor window will open
-7. Open the **earth.txt** file from this repository in a text editor
-8. Select all the text (Ctrl-A), copy it to the clipboard (Ctrl-C), and paste it into the editor window in the HP Connectivity Kit program (Ctrl-V)
+6. Enter the name *Earth* and press Enter. An empty editor window will open
+7. Open the **earth.txt** file from this repository in a text editor on your computer
+8. Select all the text (Ctrl-A), copy it to the clipboard (Ctrl-C), and paste it into the editor window in the *HP Connectivity Kit* program (Ctrl-V)
 9. Save the file (Ctrl-S) and close the editor window
 10. Repeat steps 5-8 above for each text file in the repository
 11. On the calculator, go to the **Programs** page with <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle"> and confirm that all the programs are loaded
 12. Open each program and hit <img alt="Check" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/check.png" valign="middle"> to confirm that there are no syntax errors
 
+## Confirming that Everything Works
 When all is done, your Connectivity Kit screen should look like this:
 
 ![Connectivity Kit screen shot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/connectivity.png)
