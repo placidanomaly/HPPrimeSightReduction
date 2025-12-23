@@ -1,21 +1,21 @@
 # Ephemerides and Sight Reduction for the HP Prime Calculator
-This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and requires no updates until 2200. It can also be run on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program.
+This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and requires no updates until 2200. It can also be used on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program.
 
-The programs provide the following functionality:
+The following functionality is provided:
 * Astronomical calculations of the ephemerides of the usual celestial navigation bodies (Sun, Moon, Mars, Venus, Jupiter, Saturn, and 58 stars)
+* Observation planning by listing the azimuth and elevation of all the visible bodies that meet minimum elevation and azimuth restrictions at a given location at a specified future date and time
 * Sight reduction of sextant observations of any of those celestial bodies to Lines of Position (LOPs)
 * Plotting of LOPs on a Cartesian plot from which a fix can easily be deduced.
 * Determination of the index correction of a sextant from two simple observations of the Sun
 * Support for running fixes by translating lines of position by a certain distance on a given bearing
-* Observation planning by listing the azimuth and elevation of all the visible bodies that meet minimum elevation and azimuth restrictions at a specified future date and time
 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
 
 ![HP Prime 48 G2 calculator](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/hp48g2.png)
 
-The astronomical calculations are derived from the incredible work of Henning Umland which he has been kind enough to share [on his web site](https://celnav.de/).
+The astronomical calculations are derived from the incredible work of Henning Umland which he has been kind enough to share [on his web site](https://celnav.de/). The ephemerides are generally accurate to 0.1' (see **Future Improvements** section).
 
-The sight reduction formulas used in this program were derived from many sources that are usually listed in the comments within the source code.
+The sight reduction formulas used in this program were derived from many sources that are usually provided in the comments within the source code.
 
 For an excellent textbook on celestial navigation and the process of sight reduction, refer to [*Celestial Navigation: A Complete Home Study Course*](https://starpath.com/catalog/books/1887.htm) by David Burch and Tobias Burch. The calculations in this program follow the sight reduction process described in the book.
 
