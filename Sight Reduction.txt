@@ -387,22 +387,15 @@ BEGIN
   Function.Xmax:=180;
   Function.Ymin:=-90;
   Function.Ymax:=90;
-  LOCAL i:=1;  
+  LOCAL i:=1;
   
   STARTAPP("Function");
   
   // This doesn't work with a loop
   // for some reason
-  IF a_nm(1)<>0 THEN Function.CHECK(1); END;
-  IF a_nm(2)<>0 THEN Function.CHECK(2); END;
-  IF a_nm(3)<>0 THEN Function.CHECK(3); END;
-  IF a_nm(4)<>0 THEN Function.CHECK(4); END;
-  IF a_nm(5)<>0 THEN Function.CHECK(5); END;
-  IF a_nm(6)<>0 THEN Function.CHECK(6); END;
-  IF a_nm(7)<>0 THEN Function.CHECK(7); END;
-  IF a_nm(8)<>0 THEN Function.CHECK(8); END;
-  IF a_nm(9)<>0 THEN Function.CHECK(9); END;
-  IF a_nm(10)<>0 THEN Function.CHECK(0); END;  
+  FOR i FROM 0 TO 9 DO    
+	IF a_nm(IFTE(i=0,10,i))<>0 THEN Function.CHECK(i); END;
+  END;
   
   STARTVIEW(1,1);  
   
@@ -459,14 +452,24 @@ BEGIN
   // must be retrieved from Function F0
   IF fn==10 THEN fn:=0; END;
 
+  // This is probably only valid around the equator
   LOCAL dx:=rfDist_nm(c)/60*SIN(rfBrg_deg(c));
   LOCAL dy:=rfDist_nm(c)/60*COS(rfBrg_deg(c));
-
+  
+  // Let's redo this with better calc instead
+  //@TODO: TEST ACCURACY!
+  LOCAL newCoords:=atdz(DRlat_deg(c),DRlong_deg(c),rfDist_nm(c),rfBrg_deg(c));
+  dy:=newCoords(1)-DRlat_deg(c);
+  dx:=newCoords(2)-DRlong_deg(c);
+  
   // Retrieve LOP formula and use x
   // instead of the reserved X (which always
   // has an assigned value) and add
-  // Y offset using CAS    
-  f:="CAS(\"F"+STRING(c)+"(x-dx)+dy\");";
+  // offsets using CAS    
+  
+  // Make sure x is not set  
+  CAS("PURGE(x)");
+  f:="CAS(\"Function.F"+STRING(c)+"(x-dx)+dy\");";
   f:=STRING(EXPR(f));
 
   // Replace x with X using string
@@ -482,13 +485,18 @@ BEGIN
 
   // Store LOP equation in destination
   // formula register
-  f:="F"+STRING(d)+":="+f;
+  f:="Function.F"+STRING(d)+":="+f;
 
   EXPR(f);      
 
-  MSGBOX("Shifted LOP "+STRING(c)+" by "
-         +→DMD(dx)+" lat. and "+→DMD(dx)+" lon."+CHAR(10)
-         +" into "+STRING(d));
+  // Set a_nm to a non-zero value in the destination
+  // LOP register so the shifted line will be displayed
+  // in PLOT_LOPs
+  a_nm(d):=1e-12;
+  
+  RETURN "Shifted LOP #"+STRING(c)+" by "
+         +→DMD(dy)+" lat. and "+→DMD(dx)+" lon."
+         +" into LOP #"+STRING(d);
 END;
 
 // Defining local variables external to function 
@@ -677,36 +685,40 @@ BEGIN
             *COS(DRlat_deg(index))
             *('X'-c(2))+c(1);
 
-  CASE
-    IF index=10 THEN F0:=f; END;
-    IF index=1 THEN F1:=f; END;
-    IF index=2 THEN F2:=f; END;
-    IF index=3 THEN F3:=f; END;
-    IF index=4 THEN F4:=f; END;
-    IF index=5 THEN F5:=f; END;
-    IF index=6 THEN F6:=f; END;
-    IF index=7 THEN F7:=f; END;
-    IF index=8 THEN F8:=f; END;
-    IF index=9 THEN F9:=f; END;    
-  END;
+  LOCAL i:=index;
+  IF i=10 THEN i:=0; END;
+  EXPR("Function.F"+i+":=f");
 END;
 
 
-SELECT_LOP(default,prompt)
+SELECT_LOP(default,prompt,askProgress)
 BEGIN
-  LOCAL lop:=default;
+  LOCAL lop:=default,r;
 
-  LOCAL r:=INPUT({{lop,{"1","2","3","4","5",
-     "6","7","8","9","10"}},
-     {progressFlag,1}},
-     "LOP register",
-     {"LOP:","Show progress"},
-     {prompt,
-      "Select to display calculation progress"});
-
+  IF askProgress THEN
+    r:=INPUT({{lop,{"1","2","3","4","5",
+       "6","7","8","9","10"}},
+       {progressFlag,1}},
+       "LOP register",
+       {"LOP:","Show progress"},
+       {prompt,
+        "Select to display calculation progress"});
+  ELSE
+    r:=INPUT({{lop,{"1","2","3","4","5",
+       "6","7","8","9","10"}}},
+       "LOP register",
+       {"LOP:"},
+       {prompt});
+  END;
+  
   IF r=0 THEN RETURN 0;
   ELSE RETURN lop;
   END;
+END;
+
+SELECT_LOP(default,prompt)
+BEGIN
+  RETURN SELECT_LOP(default,prompt,0);
 END;
 
 SELECT_LOP(default)
@@ -716,7 +728,7 @@ END;
 
 INPUT_HS_AND_BODY()
 BEGIN
-  LOCAL c:=SELECT_LOP(current);
+  LOCAL c:=SELECT_LOP(current,"Select LOP register",1);
   IF NOT c THEN RETURN c; END;
 
   current:=c;
@@ -734,7 +746,17 @@ BEGIN
     tempTime:=GET_UTC_TIME();
   END;
 
-  IF tempDate=0 THEN tempDate:=date_default; END;  
+  IF tempDate=0 THEN tempDate:=date_default; END;
+
+  IF tempTime>=24 THEN
+    tempTime:=tempTime-24;
+    tempDate:=DATEADD(tempDate,1);
+  ELSE
+    IF tempTime<0 THEN
+      tempTime:=tempTime+24;
+      tempDate:=DATEADD(tempDate,-1);
+	END;
+  END;	
   
   c:=INPUT(
     {HS_deg(current),
@@ -757,6 +779,7 @@ BEGIN
   
   obs_UTC(current):=tempTime;
   obsDate(current):=tempDate;
+
   date_default:=obsDate(current);
   
   IF IC_min(current)=0 THEN IC_min(current):=IC_default; END;
@@ -1079,16 +1102,11 @@ BEGIN
   minAz_deg:=0;
   maxAz_deg:=360;
   
-  F1:=""; Function.UNCHECK(1);
-  F2:=""; Function.UNCHECK(2);
-  F3:=""; Function.UNCHECK(3);
-  F4:=""; Function.UNCHECK(4);
-  F5:=""; Function.UNCHECK(5);
-  F6:=""; Function.UNCHECK(6);
-  F7:=""; Function.UNCHECK(7);
-  F8:=""; Function.UNCHECK(8);
-  F9:=""; Function.UNCHECK(9);
-  F0:=""; Function.UNCHECK(0);
+  LOCAL i;
+  FOR i FROM 0 TO 9 DO
+    EXPR("Function.F"+i+":=\"\"");
+	Function.UNCHECK(i);
+  END;
   
   RETURN "Reset complete";
 END; 

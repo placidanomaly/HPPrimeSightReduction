@@ -68,7 +68,7 @@ Negative numbers must be prefixed by a `-` symbol entered using the <img alt="+/
 
 Positions are represented in degrees of latitude and longitude which can be entered either as *DD°MM'SS"* using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="abc" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/abc.png" valign="middle"> key combination or in decimal degrees *DD.ddddddd*. Northern latitudes are positive, so 14°45'21"N is entered as `14°45'21"`, while southern latitudes are negative, so 20.2321S is entered as `-20.2321`. Same with declination: N45.2345 is represented as `45.2345` while S12°51'03" is represented as `-12°51'03"`. Positive values of longitude greater than 180° will be converted to a negative value corresponding to the western longitude, e.g. 220 will be converted to -140.
 
-Celestial navigation positions, declinations, corrections, hour angles, etc., are traditionally represented using degrees and decimal minutes to one decimal place, e.g. DD°MM.m', but the calculator does not natively support that format. Decimal minutes must be converted to arc seconds which are equal to the decimal part of minutes multiplied by 6. For example, S24°8.4' must be entered as `-24°8'24"`. That being said, the program usually outputs values using decimal minutes.
+Celestial navigation positions, declinations, corrections, hour angles, etc., are traditionally represented using degrees and decimal minutes to one decimal place, e.g. *DD°MM.m'*, but the calculator does not natively support that format. Decimal minutes must be converted to arc seconds which are equal to the decimal part of minutes multiplied by 6. For example, S24°8.4' must be entered as `-24°8'24"`. That being said, the program usually outputs values using decimal minutes.
 
 ### Date Format
 
@@ -76,7 +76,7 @@ Date values are represented using the native calculator format which is *YYYY.MM
 
 ### Time Format
 
-Time values are represented in 24-hour hours using the same format as position degrees, i.e. HH°MM'SS", using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="abc" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/abc.png" valign="middle"> keys. For example 11:43:12pm is entered as `23°43'12"`.
+Time values are represented in 24-hour hours using the same format as position degrees, i.e. *HH°MM'SS"*, using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="abc" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/abc.png" valign="middle"> keys. For example 11:43:12pm is entered as `23°43'12"`.
 
 ## Initialization \*IMPORTANT\*
 The first thing to do is to initialize lists and variables, set default values, and set the time and timezone of the calculator. This must also be done every time after editing a program even if no changes were made to it. Proceed as follows:
@@ -116,7 +116,7 @@ The program contains a function to apply the index correction method described i
 
 ![Solar IC intro](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_intro.png)
 
-Values for the *Below* and *Above** observations as read on the sextant, in arc minutes, can be entered in the input form. Do NOT correct the off scale *Below* reading by subtracting it from 60, the program will do that for you. Use the value directly read on the instrument.
+Values for the *Below* and *Above* observations as read on the sextant, in arc minutes, can be entered in the input form. Do NOT correct the off scale *Below* reading by subtracting it from 60, the program will do that for you. Use the value directly read on the instrument.
 
 ![Solar IC input](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_input.png)
 
@@ -143,8 +143,8 @@ Performing a sight reduction is a straightforward process:
 
 6. On the 2nd screen:
    * **Body**: select the body that was observed, let's say the **Sun** for this one
-   * **Date**: the date of the observation in HP Prime date format (YYYY.MMDD) (for ephemeris calculations)
-   * **Time UTC**: enter the UTC time of the observation in the calculator time format (HH°MM'SS")(for ephemeris and local hour angle (LHA) calculations)   
+   * **Date**: the date of the observation in HP Prime date format (*YYYY.MMDD*) (for ephemeris calculations)
+   * **Time UTC**: enter the UTC time of the observation in the calculator time format (*HH°MM'SS"*)(for ephemeris and local hour angle (LHA) calculations)   
    * **HS**: enter the observed height from the sextant in degrees, arc minutes and arc seconds format (DD°MM'SS"). Sextants show fractional minutes in decimals which can be converted to arc seconds by simply multiplying the decimal part of the minutes by 6, e.g. 13°32.4' on the sextant must be entered as 13°32'24".
    * **Artificial**: check this box if the observation was made on an artificial horizon. If that's the case, the value entered in HS must be the actual sextant reading, i.e. double the actual body height. When this box is checked, the index correction will be applied before dividing the reading by half and no dip correction will be applied
 
