@@ -1,10 +1,13 @@
 # Ephemerides and Sight Reduction for the HP Prime Calculator
-This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime 48 calculator](https://www.hpcc.org/calculators/hpprime.html) to perform astronomical calculations for the ephemerides of the usual celestial navigation bodies (Sun, Moon, Mars, Venus, Jupiter, Saturn, and 58 stars), and the sight reduction of sextant observations to Lines of Position (LOPs). The LOPs are represented in a Cartesian plot from which a fix can easily be deduced. The program also provides the following functionality:
-* Running fixes through the translation of lines of position by a certain distance on a given bearing
-* Observation planning by listing the azimuth and elevation of all the visible bodies that meet minimum elevation and azimuth restrictions at a specified future date and time
-* Index error determination from two simple observations of the Sun
+This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and requires no updates until 2200. It can also be run on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program.
 
-Of course there are other more accurate methods to derive a fix from sextant observations without even an assumed position but which rely on numerical methods that can't be performed without a more powerful computer. This program merely automates the manual process but it results in a perfectly usable, reliable, low-cost sight reduction calculator that can live in the chart table and requires no updates until 2200 (although it would be wise to revisit the formulas for delta T in the AstroCalc subprogram every decade or so).
+The programs provide the following functionality:
+* Astronomical calculations of the ephemerides of the usual celestial navigation bodies (Sun, Moon, Mars, Venus, Jupiter, Saturn, and 58 stars)
+* Sight reduction of sextant observations of any of those celestial bodies to Lines of Position (LOPs)
+* Plotting of LOPs on a Cartesian plot from which a fix can easily be deduced.
+* Determination of the index correction of a sextant from two simple observations of the Sun
+* Support for running fixes by translating lines of position by a certain distance on a given bearing
+* Observation planning by listing the azimuth and elevation of all the visible bodies that meet minimum elevation and azimuth restrictions at a specified future date and time
 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
 
@@ -27,12 +30,12 @@ In order to use and install this program, you need to download this repository t
 
 You can download a ZIP archive containing all the files in this repository from [this link](https://github.com/placidanomaly/HPPrimeSightReduction/archive/refs/heads/main.zip). Extract it to some folder on your computer. Alternatively, if you are familiar with *git*, you can clone the repository into your current folder in a command shell window with `git clone https://github.com/placidanomaly/HPPrimeSightReduction.git`.
 
-### HP Connectivity Kit and HP Prime Virtual Calculator
+### *HP Connectivity Kit* and *HP Prime Virtual Calculator*
 
 Follow these steps to download and install the HP Connectivity Kit and the HP Prime Virtual Calculator program:
 
-1. Download and install the HP Connectivity Kit program from this [link](https://updates.moravia-consulting.com/)
-2. If desired, download and install the HP Prime Virtual Calculator program from this [link](https://updates.moravia-consulting.com/)
+1. Download and install the *HP Connectivity Kit* program from this [link](https://updates.moravia-consulting.com/)
+2. If desired, download and install the *HP Prime Virtual Calculator* program from this [link](https://updates.moravia-consulting.com/)
 3. Launch the *HP Connectivity Kit* program
 4. Connect an HP Prime Calculator to the computer with a USB cable, or launch the *HP Prime Virtual Calculator* program, and confirm that the calculator appears in the **Calculators** window of the Connectivity Kit
 5. Ensure that the **Content** window is visible in the *HP Connectivity Kit* program. To make it appear, select the **Window->Content** menu option
