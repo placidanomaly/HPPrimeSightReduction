@@ -78,6 +78,7 @@ To confirm that the installation was successful, perform the following verificat
 All the functionality is accessed through the **Sight Reduction** program. The other programs support astronomical calculations that are too voluminous to fit within a single program. Those programs need to be present for **Sight Reduction** to work, but they should not be invoked by the user under normal usage scenarios.
 
 ## Units and Conventions
+
 The program relies on dates, times, positions, and other information to perform the calculations. Whenever a field is highlighted for input, the line at the bottom of the screen will provide hints as to which unit and format should be used for that field. Keep in mind that the units are not consistent, they follow the conventions of celestial navigation. For example positions, hour angles, and declinations are expressed in degrees, corrections are in arc minutes, and the semi-diameter of celestial bodies is expressed in arc seconds, so pay attention to the input hints.
 
 ### Negative Numbers
@@ -106,7 +107,7 @@ The first thing to do is to initialize lists and variables, set default values, 
 
 ![Resetting variables](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightreductionprograms.png)
 
-4. Now re-run the program and pick **SET_TIME** and set the calculator's local time clock and timezone:
+4. Now re-run the **Sight Reduction** program and pick the **SET_TIME** function and set the calculator's local time clock and timezone:
 
    * **Local time**: the local time to which to set the calculator. Enter a time a few seconds in the future and click the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key when your watch reads the time entered
    * **UTC Offset**: the number of hours ahead of or behind UTC. Use a positive value for locations West of Greenwhich and negative for East (e.g. -5 for New York standard time). Keep in mind that this offset changes with Daylight Savings Time (DST)
@@ -166,12 +167,14 @@ Performing a sight reduction is a straightforward process:
 ![Press any key](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc1.png)
 
 6. As soon as you've aligned the observed body with the horizon, hit any key or touch the touchscreen. This will note the time of the observation (hence why it is important to run **SET_TIME** regularly) and a screen prompting to enter the sextant reading will appear. **IMPORTANT: do not halve observations made on an artificial horizon and do not apply any dip or index corrections to the sextant reading, these corrections will be entered later.**
+
 ![Enter sextant reading](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc2.png)
 
 7. The program will return to step 5 and allows entering as many observations of the same body as desired. When no more observations are needed, hit *Cancel* or enter 0 in the HS field. If only one observation was entered, the program will skip to step 8 and use the time and sextant altitude values entered in Observation #1. Otherwise, it will display all the observations entered on a Cartesian plot with time as the horizontal axis and sextant altitude as the vertical axis. The plot includes a best fit curve of the observations, either a linear regression if 3 or fewer observations were made or a cubic regression if 4 or more observations were entered, and a red marker indicating the chosen value, which is at the midpoint of time range on the regression curve. Press a key to show the calculated values of this point on the following screen.
+
 ![Plot observations](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc3.png)
 
-6. The next screen captures the parameters of the observation:
+8. The next screen captures the parameters of the observation:
    * **Body**: select the body that was observed, let's say the **Sun** for this one
    * **Date**: the date of the observation in HP Prime date format (*YYYY.MMDD*) (for ephemeris calculations)
    * **Time UTC**: enter the UTC time of the observation in the calculator time format (*HH°MM'SS"*)(for ephemeris and local hour angle (LHA) calculations)   
