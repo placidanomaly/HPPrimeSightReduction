@@ -151,7 +151,7 @@ Performing a sight reduction is a straightforward process:
 
 1. To run the program, highlight the **Sight Reduction** program and press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key.
 
-1. Reset all previous observations and calculations by running **RESET_SIGHTS** in the **Sight Reduction** program.
+2. Reset all previous observations and calculations by running **RESET_SIGHTS** in the **Sight Reduction** program.
 
 ![Sight Reduction programs](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightreductionprograms.png)
 
@@ -161,7 +161,17 @@ Performing a sight reduction is a straightforward process:
 
 ![Observation register selection](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input1.png)
 
-6. On the 2nd screen:
+5. If there is already an observation in this LOP, the program will skip to step 8 to review the data previously entered. Otherwise, the program will prompt the user to enter sextant observations as they are made. It will show a screen asking to press any key when an observation is made and pause there until a key is pressed. (It might be useful to extend the Auto-OFF delay of hte calculator by setting the value of the *TOff* system variable to a longer delay. See ![this link](https://www.hpmuseum.org/forum/thread-5664.html)):
+
+![Press any key](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc1.png)
+
+6. As soon as you've aligned the observed body with the horizon, hit any key or touch the touchscreen. This will note the time of the observation (hence why it is important to run **SET_TIME** regularly) and a screen prompting to enter the sextant reading will appear. **IMPORTANT: do not halve observations made on an artificial horizon and do not apply any dip or index corrections to the sextant reading, these corrections will be entered later.**
+![Enter sextant reading](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc2.png)
+
+7. The program will return to step 5 and allows entering as many observations of the same body as desired. When no more observations are needed, hit *Cancel* or enter 0 in the HS field. If only one observation was entered, the program will skip to step 8 and use the time and sextant altitude values entered in Observation #1. Otherwise, it will display all the observations entered on a Cartesian plot with time as the horizontal axis and sextant altitude as the vertical axis. The plot includes a best fit curve of the observations, either a linear regression if 3 or fewer observations were made or a cubic regression if 4 or more observations were entered, and a red marker indicating the chosen value, which is at the midpoint of time range on the regression curve. Press a key to show the calculated values of this point on the following screen.
+![Plot observations](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc3.png)
+
+6. The next screen captures the parameters of the observation:
    * **Body**: select the body that was observed, let's say the **Sun** for this one
    * **Date**: the date of the observation in HP Prime date format (*YYYY.MMDD*) (for ephemeris calculations)
    * **Time UTC**: enter the UTC time of the observation in the calculator time format (*HH°MM'SS"*)(for ephemeris and local hour angle (LHA) calculations)   
