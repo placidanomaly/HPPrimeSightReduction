@@ -1,18 +1,21 @@
 # Ephemerides and Sight Reduction for the HP Prime Calculator
-This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime 48 calculator](https://www.hpcc.org/calculators/hpprime.html) to perform astronomical calculations for the ephemerides of the usual celestial navigation bodies (Sun, Moon, Mars, Venus, Jupiter, Saturn, and 58 stars), and the sight reduction of sextant observations to Lines of Position (LOPs). The LOPs are represented in a Cartesian plot from which a fix can easily be deduced. The program also provides the following functionality:
-* Running fixes through the translation of lines of position by a certain distance on a given bearing
-* Observation planning by listing the azimuth and elevation of all the visible bodies that meet minimum elevation and azimuth restrictions at a specified future date and time
-* Index error determination from two simple observations of the Sun
+This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and requires no updates until 2200. It can also be used on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program and it does not require an Internet connection to run.
 
-Of course there are other more accurate methods to derive a fix from sextant observations without even an assumed position but which rely on numerical methods that can't be performed without a more powerful computer. This program merely automates the manual process but it results in a perfectly usable, reliable, low-cost sight reduction calculator that can live in the chart table and requires no updates until 2200 (although it would be wise to revisit the formulas for delta T in the AstroCalc subprogram every decade or so).
+The following functionality is provided:
+* Astronomical calculations of the ephemerides of the usual celestial navigation bodies (Sun, Moon, Mars, Venus, Jupiter, Saturn, and 58 stars)
+* Observation planning by listing the azimuth and elevation of all the visible bodies that meet minimum elevation and azimuth restrictions at a given location at a specified future date and time
+* Sight reduction of sextant observations of any of those celestial bodies to Lines of Position (LOPs)
+* Plotting of LOPs on a Cartesian plot from which a fix can easily be deduced.
+* Determination of the index correction of a sextant from two simple observations of the Sun
+* Support for running fixes by translating lines of position by a certain distance on a given bearing
 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
 
 ![HP Prime 48 G2 calculator](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/hp48g2.png)
 
-The astronomical calculations are derived from the incredible work of Henning Umland which he has been kind enough to share [on his web site](https://celnav.de/).
+The astronomical calculations are derived from the incredible work of Henning Umland which he has been kind enough to share [on his web site](https://celnav.de/). The ephemerides are generally accurate to 0.1' (see **Future Improvements** section).
 
-The sight reduction formulas used in this program were derived from many sources that are usually listed in the comments within the source code.
+The sight reduction formulas used in this program were derived from many sources that are usually provided in the comments within the source code.
 
 For an excellent textbook on celestial navigation and the process of sight reduction, refer to [*Celestial Navigation: A Complete Home Study Course*](https://starpath.com/catalog/books/1887.htm) by David Burch and Tobias Burch. The calculations in this program follow the sight reduction process described in the book.
 
@@ -27,12 +30,12 @@ In order to use and install this program, you need to download this repository t
 
 You can download a ZIP archive containing all the files in this repository from [this link](https://github.com/placidanomaly/HPPrimeSightReduction/archive/refs/heads/main.zip). Extract it to some folder on your computer. Alternatively, if you are familiar with *git*, you can clone the repository into your current folder in a command shell window with `git clone https://github.com/placidanomaly/HPPrimeSightReduction.git`.
 
-### HP Connectivity Kit and HP Prime Virtual Calculator
+### *HP Connectivity Kit* and *HP Prime Virtual Calculator*
 
 Follow these steps to download and install the HP Connectivity Kit and the HP Prime Virtual Calculator program:
 
-1. Download and install the HP Connectivity Kit program from this [link](https://updates.moravia-consulting.com/)
-2. If desired, download and install the HP Prime Virtual Calculator program from this [link](https://updates.moravia-consulting.com/)
+1. Download and install the *HP Connectivity Kit* program from this [link](https://updates.moravia-consulting.com/)
+2. If desired, download and install the *HP Prime Virtual Calculator* program from this [link](https://updates.moravia-consulting.com/)
 3. Launch the *HP Connectivity Kit* program
 4. Connect an HP Prime Calculator to the computer with a USB cable, or launch the *HP Prime Virtual Calculator* program, and confirm that the calculator appears in the **Calculators** window of the Connectivity Kit
 5. Ensure that the **Content** window is visible in the *HP Connectivity Kit* program. To make it appear, select the **Window->Content** menu option
@@ -65,7 +68,10 @@ When all is done, your Connectivity Kit screen should look like this:
 To confirm that the installation was successful, perform the following verification:
 
 1. On the calculator, open the Programs page using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle"> keys. Select the **Sight Reduction** program using the arrows, press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key, select **RESET_SIGHTS** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. This will initialize all the necessary variables for the program to work.
-2. Select the **Sight Reduction** program, press <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle">, select **EPHEMERIDES** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. Fill out the form with a date, time, and location following the conventions in the next section and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. If everything was installed properly, the requested ephemerides will be displayed and you can scroll through them using the touchscreen. Check the values against an Almanac for accuracy. If this fails, double-check that all the programs are installed and, if you installed them from source, that the programs were checked per step 12 above.
+2. Select the **Sight Reduction** program <ul>using the arrows (the big round button) on the calculator</ul> (see note below), press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key on the screen, select **EPHEMERIDES** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. Fill out the form with a date, time, and location following the conventions in the next section and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. If everything was installed properly, the requested ephemerides will be displayed and you can scroll through them using the touchscreen. Check the values against an Almanac for accuracy. If this fails, double-check that all the programs are installed and, if you installed them from source, that the programs were checked per step 12 above.
+
+
+> **NOTE**: if you inadvertently click on a program name on the touchscreen or press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> while a program name is highlighted, you will enter the source code view. This will erase all your sights. Press the **ESC** key to leave the source code view and re-run the **RESET_SIGHTS** program. So please make sure to use the arrows to navigate to a program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key to launch it.
 
 # Using the Program
 
@@ -93,7 +99,7 @@ Date values are represented using the native calculator format which is *YYYY.MM
 Time values are represented in 24-hour hours using the same format as position degrees, i.e. *HH°MM'SS"*, using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="abc" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/abc.png" valign="middle"> keys. For example 11:43:12pm is entered as `23°43'12"`.
 
 ## Initialization \*IMPORTANT\*
-The first thing to do is to initialize lists and variables, set default values, and set the time and timezone of the calculator. This must also be done every time after editing a program even if no changes were made to it. Proceed as follows:
+The first thing to do is to initialize lists and variables, set default values, and set the time and timezone of the calculator. <ul>A reset must also be done every time the Sight Reduction program is opened in editing mode even if no changes are made to it.</ul> If you ever get an **Invalid Input** error (as you would if you try to run the program after editing it without running the reset function afterward), you need to re-run the reset procedure. Finally, you'll want to perform the reset whenever starting a new fix to remove the lines of position of the previous fix. Proceed as follows:
 
 1. Highlight the **Sight Reduction** program and press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key
 2. From the list of options, pick **RESET_SIGHTS** on the touchscreen or with the arrows and the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key, or press the <img alt="8" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/8.png" valign="middle"> key. Click any key to dismiss the confirmation message.
@@ -200,6 +206,8 @@ Once you've entered 2 or more sights in different LOP registers, you can make a 
 
 # Future Improvements
 The ephemeris calculations are usually accurate to within less than 0.1' of the values in the Almanac for the period 1900-2200 (subject to Delta T adjustments), but errors of up to 0.3' are sometimes seen. This is sufficient for most practical cases of celestial navigation but perfect precision would be better. The differences are still being investigated because the same program in Javascript from Henning Umland's web site seems to always output the exact same numbers as the Almanac. The possibility of a discrepancy in the code is one theory but a more likely one is that the lower number of significant digits in the calculator vs. a regular computer introduces rounding errors that add up in the lengthy calculations, but that has yet to be proven.
+
+Instead of storing all sights as local data in the **Sight Reduction** program, we are considering making them global which would prevent their erasure when the program is open for editing. But that would mean that dozens of variables would pollute the global scope of the calculator. Comments on this would be welcome.
 
 # Contact
 This program was developed by [Charles Vaillancourt](mailto:charles.vaillancourt@gmail.com). I welcome comments and suggestions for improvement and will gladly review pull requests for inclusion in the program.
