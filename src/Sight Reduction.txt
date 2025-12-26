@@ -768,44 +768,45 @@ BEGIN
   // curve, and display the results
   
   STARTAPP("Statistics_2Var");
-  C1:={};
-  C2:={};
+  Statistics_2Var.C1:={};
+  Statistics_2Var.C2:={};
   
   FOR t FROM 1 TO i DO
-    C1:=CONCAT(C1,{hs(t,1)});
-    C2:=CONCAT(C2,{hs(t,2)});
+    Statistics_2Var.C1:=CONCAT(Statistics_2Var.C1,{hs(t,1)});
+    Statistics_2Var.C2:=CONCAT(Statistics_2Var.C2,{hs(t,2)});
   END;
   
   // Select linear regression if 3 or fewer
   // data points, cubic otherwise
   //@TODO: Check if a trigonometric regression
   //wouldn't be better
-  IF SIZE(C1)<4 THEN r:=1; ELSE r:=9; END;
-   
-  S1:={"C1","C2","",r,"",#FF,4,0};
+  IF SIZE(Statistics_2Var.C1)<4 THEN r:=1; ELSE r:=9; END;
+  
+  Statistics_2Var.Fit:=1;
+  Statistics_2Var.S1:={"C1","C2","",r,"",#FF,4,0};
   CHECK(1);
 
   // Calculate average of observations
   // by getting the value of the regression
   // function at the midpoint of the
   // range of times observed
-  LOCAL avgTime:=C1(1)+(C1(0)-C1(1))/2;
+  LOCAL avgTime:=Statistics_2Var.C1(1)+(Statistics_2Var.C1(0)-Statistics_2Var.C1(1))/2;
   LOCAL avgHs:=PredY(avgTime);
   
   // Compute graph zoom factors
-  LOCAL factor:=(MAX(C1)-MIN(C1))*1.1;  
-  Xmax:=MAX(C1)+factor;
-  Xmin:=MIN(C1)-factor;
+  LOCAL factor:=(MAX(Statistics_2Var.C1)-MIN(Statistics_2Var.C1))*1.1;  
+  Xmax:=MAX(Statistics_2Var.C1)+factor;
+  Xmin:=MIN(Statistics_2Var.C1)-factor;
   
-  factor:=(MAX(C2)-MIN(C2))*1.1;
-  Ymax:=MAX(C2)+factor;
-  Ymin:=MIN(C2)-factor;
+  factor:=(MAX(Statistics_2Var.C2)-MIN(Statistics_2Var.C2))*1.1;
+  Ymax:=MAX(Statistics_2Var.C2)+factor;
+  Ymin:=MIN(Statistics_2Var.C2)-factor;
   
   // Create a data set so our calculated
   // point will appear on the plot
-  C3:={avgTime,avgTime};
-  C4:={avgHs,avgHs};
-  S2:={"C3","C4","",13,"",#FF0000,2,#FF0000};
+  Statistics_2Var.C3:={avgTime,avgTime};
+  Statistics_2Var.C4:={avgHs,avgHs};
+  Statistics_2Var.S2:={"C3","C4","",13,"",#FF0000,2,#FF0000};
   CHECK(2);
   
   // Show the graph
