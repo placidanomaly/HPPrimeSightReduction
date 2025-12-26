@@ -671,7 +671,7 @@ BEGIN
   
   PRINT("Press any key to view results.");
 
-  STARTAPP("Spreadsheet");  
+  STARTAPP("Spreadsheet");
 
 END;
 
@@ -724,6 +724,47 @@ END;
 SELECT_LOP(default)
 BEGIN
   RETURN SELECT_LOP(default,"Select LOP register");
+END;
+
+AVERAGE_READINGS()
+BEGIN
+  LOCAL i:=1,more:=1,c,t,r;
+  LOCAL hs:={};
+  
+  WHILE more DO
+    PRINT();
+	PRINT("OBSERVATION #"+i);
+    PRINT("Press any key to record the time");
+    PRINT("when the observation is made and");
+    PRINT("enter the sextant altitude.");
+    WAIT(-1);
+	
+	t:=GET_UTC_TIME();
+	r:=0;	
+	c:=INPUT({r},"Observation #"+i+" at "+HMS(t)+" UTC",
+	  {"HS:"},{"Enter sextant reading (°), or 0 to end"});
+	IF NOT c THEN RETURN 0; END;
+	
+	IF r>0 THEN
+	  more:=1;
+	  hs:=CONCAT(hs,{{t,r}});
+	  i:=i+1;
+	ELSE
+	  i:=i-1;
+	  more:=0
+	END;	
+  END;
+  
+  STARTAPP("Statistics_2Var");
+  //Statistics_2Var.ClearCell();
+  LOCAL cc1:={},cc2:={};
+  FOR t FROM 1 TO i DO
+    cc1:=CONCAT(cc1,{hs(t,1)});
+	cc2:=CONCAT(cc2,{hs(t,2)});
+  END;
+  C1:=cc1;
+  C2:=cc2;  
+  
 END;
 
 INPUT_HS_AND_BODY()
@@ -1157,6 +1198,13 @@ BEGIN
 
   RETURN STRING(IP(d))+"°"
      +STRING(ROUND(FP(ABS(d))*600)/10,2,1)+"'";
+END;
+
+LOCAL HMS(H)
+BEGIN
+  LOCAL d:=HMS→(H);
+  RETURN IP(d)+":"+IP(FP(d)*60)+":"
+    +IP(FP(d*60)*60);
 END;
 
 LOCAL ATAN2(y, x)
