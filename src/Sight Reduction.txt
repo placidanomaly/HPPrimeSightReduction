@@ -33,7 +33,7 @@ LOCAL nl:=CHAR(10);
 LOCAL progressFlag:=1;
 
 EXPORT SIGHT()
-BEGIN
+BEGIN  
   HAngle:=1;
   
   IF NOT INPUT_HS_AND_BODY() THEN RETURN "Canceled."; END;
@@ -383,6 +383,8 @@ END;
 
 EXPORT PLOT_LOPs()
 BEGIN
+  HAngle:=1;
+
   Function.Xmin:=-180;
   Function.Xmax:=180;
   Function.Ymin:=-90;
@@ -435,7 +437,9 @@ BEGIN
   LOCAL f,index,fn;
   LOCAL d_nm,brg_deg;
 
-  LOCAL c:=SELECT_LOP(current,"Select LOP to shift");
+  HAngle:=1;
+
+  LOCAL c:=SELECT_LOP(current,"Select LOP to shift");  
   IF c=0 THEN RETURN "Canceled."; END;
  
   LOCAL rv:=INPUT({rfBrg_deg(c),
@@ -521,6 +525,7 @@ BEGIN
   LOCAL time_:=GET_UTC_TIME();
   LOCAL i;
   
+  HAngle:=1;
   ephLat:=DRlat_default;
   ephLon:=DRlon_default;
   
@@ -604,6 +609,8 @@ BEGIN
   LOCAL time_:=GET_UTC_TIME();
   LOCAL i,d;
   LOCAL lin:=3;
+  
+  HAngle:=1;
   
   ephLat:=DRlat_default;
   ephLon:=DRlon_default;
@@ -784,7 +791,7 @@ BEGIN
   
   Statistics_2Var.Fit:=1;
   Statistics_2Var.S1:={"C1","C2","",r,"",#FF,4,0};
-  CHECK(1);
+  Statistics_2Var.CHECK(1);
 
   // Calculate average of observations
   // by getting the value of the regression
@@ -795,19 +802,19 @@ BEGIN
   
   // Compute graph zoom factors
   LOCAL factor:=(MAX(Statistics_2Var.C1)-MIN(Statistics_2Var.C1))*1.1;  
-  Xmax:=MAX(Statistics_2Var.C1)+factor;
-  Xmin:=MIN(Statistics_2Var.C1)-factor;
+  Statistics_2Var.Xmax:=MAX(Statistics_2Var.C1)+factor;
+  Statistics_2Var.Xmin:=MIN(Statistics_2Var.C1)-factor;
   
   factor:=(MAX(Statistics_2Var.C2)-MIN(Statistics_2Var.C2))*1.1;
-  Ymax:=MAX(Statistics_2Var.C2)+factor;
-  Ymin:=MIN(Statistics_2Var.C2)-factor;
+  Statistics_2Var.Ymax:=MAX(Statistics_2Var.C2)+factor;
+  Statistics_2Var.Ymin:=MIN(Statistics_2Var.C2)-factor;
   
   // Create a data set so our calculated
   // point will appear on the plot
   Statistics_2Var.C3:={avgTime,avgTime};
   Statistics_2Var.C4:={avgHs,avgHs};
   Statistics_2Var.S2:={"C3","C4","",13,"",#FF0000,2,#FF0000};
-  CHECK(2);
+  Statistics_2Var.CHECK(2);
   
   // Show the graph
   STARTVIEW(1,1);
@@ -1067,6 +1074,9 @@ END;
 EXPORT SOLAR_IC()
 BEGIN
   LOCAL on_scale,off_scale;
+  
+  HAngle:=1;
+  
   PRINT();
   PRINT("This will set the index correction to");
   PRINT("a value calculated from a measurement of");
@@ -1140,6 +1150,7 @@ END;
 EXPORT RESET_SIGHTS()
 BEGIN
   LOCAL init:={0,0,0,0,0,0,0,0,0,0};
+  HAngle:=1;
   current           := 1;
   
   dip_min           := init;
