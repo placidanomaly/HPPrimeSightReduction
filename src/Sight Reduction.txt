@@ -396,7 +396,7 @@ BEGIN
   // This doesn't work with a loop
   // for some reason
   FOR i FROM 0 TO 9 DO    
-	IF a_nm(IFTE(i=0,10,i))<>0 THEN Function.CHECK(i); END;
+  IF a_nm(IFTE(i=0,10,i))<>0 THEN Function.CHECK(i); END;
   END;
   
   STARTVIEW(1,1);  
@@ -750,10 +750,10 @@ BEGIN
     r:=0;
     c:=INPUT({r,t},"Observation #"+i,
       {"HS:","Time:"},
-	  {"Enter sextant reading (°), or 0 to end",
-	   "UTC Time (HH°MM'SS\")"});
-	   
-    IF (c=0) AND (i=1) THEN RETURN {}; END;
+    {"Enter sextant reading (°), or 0 to end",
+     "UTC Time (HH°MM'SS\")"});
+
+    IF ((c=0) OR (r=0)) AND (i=1) THEN RETURN {}; END;
   
     IF r>0 THEN
       more:=1;
@@ -815,19 +815,43 @@ BEGIN
   Statistics_2Var.C4:={avgHs,avgHs};
   Statistics_2Var.S2:={"C3","C4","",13,"",#FF0000,2,#FF0000};
   Statistics_2Var.CHECK(2);
+    
+  LOCAL fitOptions:={
+    "Linear",
+	IFTE(i>2,"Quad",""),
+	IFTE(i>3,"Cubic",""),
+	IFTE(i>3,"Trig",""),
+	"Cancel",
+	"Ok"};
+  LOCAL fitTypes:={1,8,9,11};
   
-  // Show the graph
-  STARTVIEW(1,1);
+    
+  REPEAT
+    STARTVIEW(1,1);
+    TEXTOUT_P("Choose regression method and click Ok",G0,1,10,1,RGB(1,0,0));
+    TEXTOUT_P("Current regression: "+fitOptions(POS(fitTypes,Statistics_2Var.S1(4))),
+	  G0,1,25,1,RGB(1,0,0));
+    c:=GET_SOFTKEY(fitOptions);
+	IF c=5 OR c=0 THEN 
+	  STARTVIEW(-7,1); 
+	  RETURN {}; 
+	END;
+	IF c>0 AND c<5 THEN
+	  IF fitOptions(c)<>"" THEN
+	    Statistics_2Var.S1:={"C1","C2","",fitTypes(c),"",#FF,4,0};
+        Statistics_2Var.CHECK(1);
+	    STARTVIEW(1,1);
+  	    avgHs:=PredY(avgTime);
+        Statistics_2Var.C4:={avgHs,avgHs};
+        Statistics_2Var.CHECK(2);
+	  END;
+	END;
+  UNTIL c=6;
 
-  // Clear menu options
-  DRAWMENU({"","","","","",""});
-
-  TEXTOUT_P("Press any key to continue",G0,1,10,1,RGB(1,0,0));
-  WAIT(-1); 
   // Go back to program view (where
   // the user likely was when the program
   // was started)
-  STARTVIEW(-7);
+  STARTVIEW(-7,1);
 
   RETURN {→HMS(avgTime),→HMS(avgHs)}; 
 END;
@@ -843,9 +867,9 @@ BEGIN
   
   IF tempTime=0 THEN
     c:=AVERAGE_READINGS();
-	IF SIZE(c)=0 THEN RETURN 0; END;
-	tempTime:=c(1);
-    HS_deg(current):=c(2);	
+  IF SIZE(c)=0 THEN RETURN 0; END;
+  tempTime:=c(1);
+    HS_deg(current):=c(2);  
   END;  
   
   IF tempDate=0 THEN tempDate:=date_default; END;
@@ -857,25 +881,25 @@ BEGIN
     IF tempTime<0 THEN
       tempTime:=tempTime+24;
       tempDate:=DATEADD(tempDate,-1);
-	END;
-  END;	
+  END;
+  END;  
   
   c:=INPUT(
     {HS_deg(current),
-	 {sightType(current),{"Sun","Moon","Star","Planet",
+   {sightType(current),{"Sun","Moon","Star","Planet",
         "Sun with Tables","Moon with Tables",
         "Pre-calc (skip to next screen)"}},
      tempDate,
      tempTime,
      {artificial(current),1}
-	 },
+   },
     "LOP "+STRING(current)+": Sextant Observation",
     {"HS:","Body:","Date:","Time UTC:","Artificial:"},
     {"Sextant reading (°)",
-	 "Type of body being observed",
+   "Type of body being observed",
      "Observation date (YYYY.MMDD)",
      "Observation time UTC (HH°MM'SS)",     
-	 "Check if using an artificial horizon"});
+   "Check if using an artificial horizon"});
 
   IF NOT c THEN RETURN c; END;
   
@@ -1094,9 +1118,9 @@ BEGIN
   
   LOCAL c:=INPUT({on_scale,off_scale},
     "Solar Index Correction Calc",
-	{"Below:","Above:"},
-	{"Reflected sun below actual sun (')",
-	 "Reflected sun above actual sun (')"});
+  {"Below:","Above:"},
+  {"Reflected sun below actual sun (')",
+   "Reflected sun above actual sun (')"});
   
   IF NOT c THEN RETURN("Canceled."); END;
   
@@ -1118,13 +1142,13 @@ BEGIN
   
   CHOOSE(c,"Accept results?",
          "Accept","Reject");
-		 
+     
   IF c==1 THEN
     LOCAL i;
     FOR i FROM 1 TO 10 DO
-	  IF IC_min(i)==0 THEN IC_min(i):=ic; END;
-	END;
-	RETURN "Index correction set.";
+    IF IC_min(i)==0 THEN IC_min(i):=ic; END;
+  END;
+  RETURN "Index correction set.";
   END;
   RETURN "Canceled.";
 END;
@@ -1211,7 +1235,7 @@ BEGIN
   LOCAL i;
   FOR i FROM 0 TO 9 DO
     EXPR("Function.F"+i+":=\"\"");
-	Function.UNCHECK(i);
+  Function.UNCHECK(i);
   END;
   
   RETURN "Reset complete";
@@ -1280,4 +1304,23 @@ END;
 LOCAL GET_UTC_TIME()
 BEGIN
   RETURN →HMS(Time - timeZone);
+END;
+
+EXPORT GET_SOFTKEY(keylist)
+BEGIN
+  WHILE 1 DO
+    DRAWMENU(keylist);
+    LOCAL r:=WAIT(-1);
+    IF TYPE(r)=0 THEN
+      IF r=4 OR r=46 THEN
+        RETURN 0;
+      END;
+    ELSE 
+      IF r(1)=3 THEN
+        IF r(3)>220 THEN
+          RETURN IP(r(2)/53)+1;
+        END;
+      END;
+    END;
+  END;
 END;
