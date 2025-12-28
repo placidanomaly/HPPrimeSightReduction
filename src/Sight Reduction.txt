@@ -1,5 +1,5 @@
 // Observation and calculated values
-LOCAL sightType;
+LOCAL sightType,bodyItem;
 LOCAL dip_min, HE_ft, IC_min;
 LOCAL horShort_nm, HS_deg, HO_deg;
 LOCAL artificial,temp_C,press_mb;
@@ -40,9 +40,6 @@ BEGIN
   IF TYPE(obs_UTC)=0 THEN RESET_SIGHTS(); END;
 
   IF NOT INPUT_HS_AND_BODY() THEN RETURN "Canceled."; END;
-
-  IF DRlat_deg(current)=0 THEN DRlat_deg(current):=DRlat_default; END;
-  IF DRlong_deg(current)=0 THEN DRlong_deg(current):=DRlon_default; END;  
   
   LOCAL c;
   
@@ -75,23 +72,7 @@ END;
 LOCAL SUN_SIGHT()
 BEGIN
   HAngle:=1;
-  
-  LOCAL c:=INPUT({{limbSign(current),{"Lower","Upper"}},
-            DRlat_deg(current),
-            DRlong_deg(current)},
-    "LOP "+STRING(current)+" Observation Data",
-    {"Limb:","DR Lat:","DR Lon:"},
-    {"Observed Limb",
-     "DR latitude at "+obs_UTC(current)+" (°) (+=N -=S)'",
-     "DR longitude "+obs_UTC(current)+" (°) (+=E -=W)"});
-  
-  IF NOT c THEN RETURN c; END;
-  
-  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
-  
-  DRlat_default:=DRlat_deg(current);
-  DRlon_default:=DRlong_deg(current);  
-  
+
   HO_CALC_SUN(current);
   
   IF progressFlag THEN
@@ -104,33 +85,14 @@ BEGIN
   dec_deg(current):=sunData(2);
   GHA_deg(current):=sunData(1);
   
-  RETURN c;  
+  RETURN 1;
 END;
 
 LOCAL MOON_SIGHT()
 BEGIN
-  LOCAL c;
-  
   HAngle:=1;
-  
-  c:=INPUT({DRlat_deg(current),
-         DRlong_deg(current),
-         {limbSign(current),
-          {"Lower","Upper"}}},
-    "LOP "+STRING(current)+" Moon Sight Data",
-    {"DR Lat:","DR Lon:",
-     "Limb:"},
-    {"DR Latitude (N=+ S=-)",
-     "DR Longitude (N=+ S=-)",
-     "Observed limb"});
-  IF NOT c THEN RETURN c; END;
-
-  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
-
-  DRlat_default:=DRlat_deg(current);
-  DRlon_default:=DRlong_deg(current);
-  
-  // Set limb sign so we add a semi-diameter correction
+    
+  // Add a semi-diameter correction
   // for lower limb and remove it for upper
   limb(current):=-1*((limbSign(current)-1)*2-1);
   
@@ -153,7 +115,7 @@ BEGIN
     +limb(current)*r(4)/3600
     +r(3)/3600*COS(HO_deg(current));
   
-  RETURN c;
+  RETURN 1;
 END;
 
  
@@ -171,23 +133,6 @@ BEGIN
   altCorr_min(current):=-1*REFRACTION(current);
   
   HO_deg(current):=HA_deg(current)+altCorr_min(current)/60;
-
-  LOCAL c:=INPUT(
-        {DRlat_deg(current),
-         DRlong_deg(current),         
-         {starId(current),planets_}},
-    "LOP "+STRING(current)+" Observation Time",
-    {"DR Lat:","DR Lon:","Planet:"},
-    {"DR Latitude (N=+ S=-)",
-     "DR Longitude (N=+ S=-)",     
-     "Planet Observed"});
-  
-  IF NOT c THEN RETURN c; END;
-
-  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
-
-  DRlat_default:=DRlat_deg(current);
-  DRlon_default:=DRlong_deg(current);  
   
   IF progressFlag THEN
     PRINT();
@@ -205,60 +150,37 @@ BEGIN
   SHA_deg(current):=360-r(5);
   GHA_deg(current):=r(1);
 
-  RETURN c;
+  RETURN 1;
 END;
 
 LOCAL STAR_SIGHT()
-BEGIN
-  LOCAL c;
-  
+BEGIN  
   HAngle:=1;
   
   altCorr_min(current):=-1*REFRACTION(current);
   HO_deg(current):=HA_deg(current)+altCorr_min(current)/60;
-
-  c:=INPUT({DRlat_deg(current),
-         DRlong_deg(current),         
-         {starId(current),CAS("col(navstar_,1)")}},
-    "LOP "+STRING(current)+" Observation Time",
-    {"DR Lat:","DR Lon:","Star:"},
-    {"DR Latitude (N=+ S=-)",
-     "DR Longitude (N=+ S=-)",     
-     "Observed star"});
-  IF NOT c THEN RETURN c; END;
-
-  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
-
-  DRlat_default:=DRlat_deg(current);
-  DRlon_default:=DRlong_deg(current);  
-  
+ 
   IF progressFlag THEN
     PRINT();
     PRINT("Calculating star ephemeris...");
   END;
-  
-  LOCAL r:=StarEphemeris(starId(current),
-           obsDate(current),
-       obs_UTC(current));
+
+  LOCAL r:=StarEphemeris(
+             starId(current),
+             obsDate(current),
+             obs_UTC(current));
        
   dec_deg(current):=r(2);
   SHA_deg(current):=360-r(3);
   GHA_deg(current):=r(1);
 
-  RETURN c;
+  RETURN 1;
 END;
 
 LOCAL SUN_SIGHT_WITH_TABLES()
 BEGIN
   LOCAL hr,hrp1,nl,fn,f,xx,c;
  
-  c:=INPUT({{limbSign(current),
-          {"Lower","Upper"}}},
-    "LOP "+STRING(current)+" Observation Time",
-    {"Limb:"},
-    {"Observed Limb"});
-  IF NOT c THEN RETURN c; END;  
-  
   HO_CALC_SUN(current);
 
   hr:=" at "+STRING(IP(obs_UTC(current)))+":00:";
@@ -266,23 +188,14 @@ BEGIN
  
   c:=INPUT({decBefore_utc(current),
          decAfter_utc(current),
-         GHABefore_UTC(current),
-         DRlat_deg(current),
-         DRlong_deg(current)},
+         GHABefore_UTC(current)},
          "LOP "+STRING(current)+" Altitude Computation",
         {"Dec."+hr,"Dec."+hrp1,
-         "GHA"+hr,"DR Lat:","DR Lon:"},
+         "GHA"+hr},
         {"Tabled declination at "+hr+" (+=N -=S)",
          "Tabled declination at "+hrp1+" (+=N -=S)",
-         "Tabled GHA at "+hr+" (°)",
-         "DR latitude at "+obs_UTC(current)+" (°) (+=N -=S)'",
-         "DR longitude "+obs_UTC(current)+" (°) (+=E -=W)"});
+         "Tabled GHA at "+hr+" (°)"});
   IF NOT c THEN RETURN c; END;
-
-  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
-  
-  DRlat_default:=DRlat_deg(current);
-  DRlon_default:=DRlong_deg(current);
   
   // Interpolate declination from tables
   dec_deg(current):=decBefore_utc(current)
@@ -302,28 +215,14 @@ LOCAL MOON_SIGHT_WITH_TABLES()
 BEGIN
   LOCAL c;
   
-  c:=INPUT({DRlat_deg(current),
-         DRlong_deg(current),
-         tableGHA_deg(current),
-         tableDec_deg(current),
-         {limbSign(current),
-          {"Lower","Upper"}}},
-    "LOP "+STRING(current)+" Moon Sight Data",
-    {"DR Lat:","DR Lon:",
-     "GHA:",
-     "Declination:",
-     "Limb:"},
-    {"DR Latitude (N=+ S=-)",
-     "DR Longitude (N=+ S=-)",
-     "GHA from Almanac (°)",
-     "Declination from Almanac (°)",
-     "Observed limb"});
+  c:=INPUT({tableGHA_deg(current),
+           tableDec_deg(current)},
+    "LOP "+STRING(current)+" Moon Almanac Data",
+    {"GHA:",
+     "Declination:"},
+    {"GHA from Almanac (°)",
+     "Declination from Almanac (°)"});
   IF NOT c THEN RETURN c; END;
-
-  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
-
-  DRlat_default:=DRlat_deg(current);
-  DRlon_default:=DRlong_deg(current);
   
   c:=INPUT({GHATimeCorr_deg(current), 
          GHAvcorr_min(current), 
@@ -363,22 +262,14 @@ END;
 LOCAL PRE_CALCULATED_SIGHT()
 BEGIN
 
-  LOCAL c:=INPUT({a_nm(current),Zn_deg(current),
-         DRlat_deg(current),DRlong_deg(current)},
+  LOCAL c:=INPUT({a_nm(current),Zn_deg(current)},
         "LOP "+STRING(current)+" Pre-calculated values",
-        {"A:","ZN:","Lat:","Long:"},
+        {"A:","ZN:"},
         {"Distance from assumed position (nm)",
-         "Azimuth to celestial body (°)",
-         "Latitude of assumed or DR position (°)",
-         "Longitude of assumed or DR position (°)"});
+         "Azimuth to celestial body (°)"});
   
   IF NOT c THEN RETURN c; END;
 
-  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
-  
-  DRlat_default:=DRlat_deg(current);
-  DRlon_default:=DRlong_deg(current);
-  
   LOP_EQUATION(current);
   
   RETURN c;
@@ -897,52 +788,81 @@ BEGIN
   IF NOT c THEN RETURN c; END;
 
   current:=c;
+
+  // OBSERVATION PARAMETERS
+
   LOCAL tempTime:=obs_UTC(current);
   LOCAL tempDate:=obsDate(current);
-  
-  IF tempTime=0 THEN
-    c:=AVERAGE_READINGS();
-  IF SIZE(c)=0 THEN RETURN 0; END;
-  tempTime:=c(1);
-    HS_deg(current):=c(2);  
-  END;  
-  
+
   IF tempDate=0 THEN tempDate:=date_default; END;
-
-  IF tempTime>=24 THEN
-    tempTime:=tempTime-24;
-    tempDate:=DATEADD(tempDate,1);
-  ELSE
-    IF tempTime<0 THEN
-      tempTime:=tempTime+24;
-      tempDate:=DATEADD(tempDate,-1);
+  IF tempTime=0 THEN 
+    tempTime:=GET_UTC_TIME();
+    IF tempTime>24 THEN tempTime:=tempTime-24; END;
+    IF tempTime<0 THEN tempTime:=tempTime+24; END;
   END;
-  END;  
-  
-  c:=INPUT(
-    {HS_deg(current),
-   {sightType(current),{"Sun","Moon","Star","Planet",
-        "Sun with Tables","Moon with Tables",
-        "Pre-calc (skip to next screen)"}},
-     tempDate,
-     tempTime,
-     {artificial(current),1}
-   },
-    "LOP "+STRING(current)+": Sextant Observation",
-    {"HS:","Body:","Date:","Time UTC:","Artificial:"},
-    {"Sextant reading (°)",
-   "Type of body being observed",
-     "Observation date (YYYY.MMDD)",
-     "Observation time UTC (HH°MM'SS)",     
-   "Check if using an artificial horizon"});
 
+
+  IF DRlat_deg(current)=0 THEN DRlat_deg(current):=DRlat_default; END;
+  IF DRlong_deg(current)=0 THEN DRlong_deg(current):=DRlon_default; END;  
+
+  // If we already have a value for HS, set
+  // default to not go through the observation
+  // averaging process
+  LOCAL avgReadings:=IFTE(HS_deg(current)=0,1,0);
+  LOCAL bodiesList:=CONCAT({
+    "Sun Lower Limb", "Sun Upper Limb", "Sun with Almanac tables",
+    "Moon Lower Limb", "Moon Upper Limb", "Moon with Almanac tables",
+    "Mars", "Venus", "Jupiter", "Saturn", "Pre-calculated sight"
+    },CAS("col(navstar_,1)"));
+
+  c:=INPUT({tempDate,
+    DRlat_deg(current),
+    DRlong_deg(current),         
+    {bodyItem(current),bodiesList},
+    {artificial(current),1},
+    {avgReadings,1}},
+    "LOP #"+STRING(current)+" Observation Parameters",
+    {"UTC Date:","DR Lat:","DR Lon:","Body:","Artificial:","Average:"},
+    {"UTC Date (YYYY.MMDD) (UTC Time: "+GET_UTC_TIME()+")",
+     "DR Latitude ° (N=+ S=-)",
+     "DR Longitude ° (N=+ S=-)",     
+     "Observed body and limb",
+     "Check if using an artificial horizon",
+     "Perform observation averaging for HS"});
   IF NOT c THEN RETURN c; END;
-  
-  obs_UTC(current):=tempTime;
-  obsDate(current):=tempDate;
 
+  CASE
+    IF bodyItem(current)=1 THEN sightType(current):=1; limbSign(current):=1; END;
+    IF bodyItem(current)=2 THEN sightType(current):=1; limbSign(current):=2; END;
+    IF bodyItem(current)=3 THEN sightType(current):=5; END;
+    IF bodyItem(current)=4 THEN sightType(current):=2; limbSign(current):=1; END;
+    IF bodyItem(current)=5 THEN sightType(current):=2; limbSign(current):=2; END;
+    IF bodyItem(current)=6 THEN sightType(current):=6; END;
+    IF (bodyItem(current)>=7) AND (bodyItem(current)<=10) THEN 
+      sightType(current):=4; 
+      starId(current):=bodyItem(current)-6; 
+    END;
+    IF bodyItem(current)=10 THEN sightType(current):=7; END;
+    IF bodyItem(current)>11 THEN 
+      sightType(current):=3; 
+      starId(current):=bodyItem(current)-11; 
+    END;
+    DEFAULT
+      RETURN 0; 
+  END;
+
+  DRlong_deg(current):=NORMALIZE_LONGITUDE(DRlong_deg(current));
+  obsDate(current):=tempDate;
   date_default:=obsDate(current);
+  DRlat_default:=DRlat_deg(current);
+  DRlon_default:=DRlong_deg(current);  
   
+  // If the pre-calculated option was selected,
+  // skip the corrections and sextant altitude screens
+  IF sightType(current)=7 THEN RETURN 1; END;
+
+  // OBSERVATION CORRECTIONS
+
   IF IC_min(current)=0 THEN IC_min(current):=IC_default; END;
   IF HE_ft(current)=0 THEN HE_ft(current):=HE_default; END;
   IF temp_C(current)=0 THEN temp_C(current):=temp_default; END;
@@ -951,14 +871,14 @@ BEGIN
   c:=INPUT(
     {IC_min(current),
      HE_ft(current),
-   horShort_nm(current),
+     horShort_nm(current),
      temp_C(current),
      press_mb(current)},
     "LOP "+STRING(current)+": Corrections",
     {"IC:","HE:","Dip short:","Temp:","Pressure:"},
-    {"Index Correction ' (+=Off -=On scale)",
+    {"Index Correction (') (+=Off -=On scale)",
      "Eye Height (ft.)",
-   "Horizon distance (nm) (0 if true horizon)",
+     "Horizon distance (nm) (0 if true horizon)",
      "Temperature (°C)",
      "Pressure (mb)"});
 
@@ -969,6 +889,39 @@ BEGIN
   temp_default:=temp_C(current);
   press_default:=press_mb(current);
 
+  // OBSERVATION READINGS
+
+  IF avgReadings=1 THEN
+    c:=AVERAGE_READINGS();
+    IF SIZE(c)>0 THEN
+      tempTime:=c(1);
+      IF tempTime>24 THEN
+        tempTime:=tempTime-24;
+      ELSE
+        IF tempTime<0 THEN
+          tempTime:=tempTime+24;
+        END;
+      END;
+      obs_UTC(current):=tempTime;
+      HS_deg(current):=c(2);
+    END;
+  END;
+
+  IF obs_UTC(current)=0 THEN obs_UTC(current):=tempTime; END;
+
+  c:=INPUT({
+    obsDate(current),
+    obs_UTC(current),
+    HS_deg(current)},
+    "LOP #"+current+" "+bodiesList(bodyItem(current))+" Observation",
+    {"Date:","Time:","HS:"},
+    {"UTC Date (YYYY.MMDD)",
+     "UTC Time (HH°MM'SS\")",
+     "Sextant Height (DD°MM'SS\") - Uncorrected"}
+  );
+  
+  date_default:=obsDate(current);
+  
   HA_CALC(current);  
   RETURN c;
 END;
@@ -1025,8 +978,8 @@ BEGIN
 
   LOCAL c:=HC_AZ(GHA_deg(index),
      dec_deg(index),
-   DRlat_deg(index),
-   DRlong_deg(index));
+     DRlat_deg(index),
+     DRlong_deg(index));
   
   Hc_deg(index):=c(1);
   Zn_deg(index):=c(2);
@@ -1209,6 +1162,7 @@ END;
 EXPORT RESET_SIGHTS()
 BEGIN
   LOCAL init:={0,0,0,0,0,0,0,0,0,0};
+  LOCAL init1:={1,1,1,1,1,1,1,1,1,1};
   HAngle:=1;
   current           := 1;
   
@@ -1254,12 +1208,17 @@ BEGIN
   tableGHA_deg      := init;
   tableDec_deg      := init;
   sightType         := init;
+  bodyItem          := init1;
 
-  //IC_default:=0;
-  //HE_default:=0;
-  //DRlat_default:=45;
-  //DRlon_default:=-73;
   date_default:=Date;
+  IF GET_UTC_TIME()>24 THEN
+    date_default:=DATEADD(date_default,1);
+  ELSE 
+    IF GET_UTC_TIME()<0 THEN
+      date_default:=DATEADD(date_default,-1);
+    END;
+  END;  
+
   temp_default:=20;
   press_default:=1010;
 
