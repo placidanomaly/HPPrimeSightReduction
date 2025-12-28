@@ -168,13 +168,13 @@ Performing a sight reduction is a straightforward process:
    * **UTC Date**: the UTC date of the observation in HP Prime date format (*YYYY.MMDD*). The hint at the bottom of the window displays the current UTC time to help determine if the UTC date is different from the local date. The default value is the current UTC date.
    * **DR Lat**: the latitude of the assumed or DR position in degrees at the time of the observation
    * **DR Lon**: the longitude of the assumed or DR position in degrees at the time of the observation
-   * **Body**: the celestial body being observed. For certain celestial bodies, the observed limb must be selected. The **Pre-calculated sights** option allows entering the *Zn* (azimut) and *a* (distance) of the line of position directly. The **Moon with tables** and **Sun with tables** options allow entering the values for declination and Greenwich Hour Angle manually based on the Almanac tables instead of using the built-in ephemerides.
+   * **Body**: a drop-down to select the celestial body being observed among a list of the Sun, Moon, 4 planets and 58 stars. For certain celestial bodies, the observed limb must also be selected. The **Pre-calculated sights** option allows entering the *Zn* (azimut) and *a* (distance) of the line of position directly instead of letting the calculator perform the sight reduction calculations (this is useful to plot lines of position that have been calculated some other way). The **Moon with tables** and **Sun with tables** options allow entering the values for declination and Greenwich Hour Angle manually based on the Almanac tables instead of using the built-in ephemerides.
    * **Artificial**: check this box if the observation was made on an artificial horizon. If that's the case, the sextant reading values entered must be the actual reading on the sextant, i.e. double the actual body height. When this box is checked, the index correction will be applied before dividing the reading by half and no dip correction will be applied regardless of the eye height or dip short values entered
    * **Average**: check this box to perform the observation averaging process described in the next step. Note: this checkbox is unchecked by default if the LOP register contains a previously entered sextant altitude. Checking it will overwrite the previously entered sextant altitude. If no previous value was entered, the checkbox is checked by default.
 
-![Basic observation data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input2.png)
+![Basic observation data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input2.png)  ![Selecting celestial body](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input2b.png)
 
-6. If the **Average** option was selected, the program will prompt the user to enter sextant observations as they are made. It will show a screen asking to press any key when an observation is made and pause there until a key is pressed. (It might be useful to extend the Auto-OFF delay of hte calculator by setting the value of the *TOff* system variable to a longer delay. See ![this link](https://www.hpmuseum.org/forum/thread-5664.html)):
+6. If the **Average** option was selected, the program will prompt the user to enter sextant observations as they are made. It will show a screen asking to press any key when an observation is made and pause there until a key is pressed. (It might be useful to extend the Auto-OFF delay of hte calculator by setting the value of the *TOff* system variable to a longer delay. See [this link](https://www.hpmuseum.org/forum/thread-5664.html)):
 
 ![Press any key](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc1.png)
 
@@ -182,11 +182,13 @@ Performing a sight reduction is a straightforward process:
 
 ![Enter sextant reading](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc2.png)
 
-7. The program will return to step 6 and allows entering as many observations of the same body as desired. When no more observations are needed, hit *Cancel* or enter 0 in the HS field. If only one observation was entered, the program will skip to step 8 and use the time and sextant altitude values entered in Observation #1. Otherwise, it will display all the observations entered on a Cartesian plot with time as the horizontal axis and sextant altitude as the vertical axis. The plot includes a best fit curve of the observations, either a linear regression if 3 or fewer observations were made or a cubic regression if 4 or more observations were entered. A red marker indicates a chosen value on the interpolated curve, which is at the midpoint of time range on the regression curve unless an extremum exists within the time range, in which case that extremum is chosen. Other regression options can be picked using the soft keys. When done, hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key to confirm the selected regression.
+8. The program will return to step 6 and allows entering as many observations of the same body as desired. When no more observations are needed, hit *Cancel* or enter `0` in the HS field and click *Ok*. If only one observation was entered, the program will skip directly to step 10 and use the time and sextant altitude values entered in Observation #1
+  
+9. If multiple observations were entered, the observations entered will be plotted on a Cartesian graph with time as the horizontal axis and sextant altitude as the vertical axis. The plot allows choosing the among various best fit curves to choose the one best approximating the path of the celestial body in the sky using the soft keys at the bottom of the graph: linear or quadratic regressions if 3 or fewer observations were made, and cubic or trigonometric regression if 4 or more observations were entered. A red marker indicates a chosen value on the interpolated curve, which is at the midpoint of time range on the regression curve unless an extremum exists within the time range, in which case that extremum is chosen. When done, hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key to confirm the selected interpolated point.
 
 ![Plot observations](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc3.png)![Plot observations](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc4.png)
 
-7. On the 3rd screen, enter the observation conditions which will result in altitude corrections:
+10. On the next screen, enter the observation conditions which will be used to compute sextant altitude corrections:
    * **IC**: the index correction of the sextant in arc minutes, negative values for "on-scale" correction and positive for "off-scale"
    * **HE**: eye height from the horizon in feet (for dip correction)
    * **Dip short**: distance in nautical miles (nm) from observer where the horizon ends (e.g. the other side of a large lake), or zero if an infinite horizon is used as reference for the observation
@@ -195,11 +197,11 @@ Performing a sight reduction is a straightforward process:
 
 ![Observation correction data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input3.png)
 
-8. The next screen shows the actual observation data. If observation averaging was performed, this merely serves to confirm the computed values from the process. Otherwise, enter the values for observation time and sextant altitude.
+11. The next screen shows the actual observation data. If the observation averaging was used, this merely serves to confirm the computed values from the process. Otherwise, enter the values for observation time and sextant altitude.
 
 ![More input data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input4.png)
 
-9. The calculator will display the values for observed height *Ho*, Greenwhich Hour Angle *GHA*, declination *dec*, Local Hour Angle *LHA*, and the calculated height *Hc* of the body. Click **OK**
+12. The calculator will display the values for observed height *Ho*, Greenwhich Hour Angle *GHA*, declination *dec*, Local Hour Angle *LHA*, and the calculated height *Hc* of the body. Click **OK**
 
 ![Calculation results](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output1.png)
 
