@@ -99,15 +99,17 @@ Date values are represented using the native calculator format which is *YYYY.MM
 
 Time values are represented in 24-hour hours using the same format as position degrees, i.e. *HH°MM'SS"*, using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="abc" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/abc.png" valign="middle"> keys. For example 11:43:12pm is entered as `23°43'12"`.
 
-## Initialization \*IMPORTANT\*
-The first thing to do is to initialize lists and variables, set default values, and set the time and timezone of the calculator. <ins>A reset must also be done every time the Sight Reduction program is opened in editing mode even if no changes are made to it.</ins> If you ever get an **Invalid Input** error (as you would if you try to run the program after editing it without running the reset function afterward), you need to re-run the reset procedure. Finally, you'll want to perform the reset whenever starting a new fix to remove the lines of position of the previous fix. Proceed as follows:
+## Re-Initialization
+The program keeps data about sights in memory until either a program is open for editing or the **RESET_SIGHTS** function is called. Generally, **RESET_SIGHTS** should be executed prior to any new fix. The calculator's internal clock is used to time observations so its setting and timezone should be set and checked regularly. If you ever get an **Invalid Input** error, you need to run **RESET_SIGHTS**. To reset all variables:
 
 1. Highlight the **Sight Reduction** program and press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key
 2. From the list of options, pick **RESET_SIGHTS** on the touchscreen or with the arrows and the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key, or press the <img alt="8" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/8.png" valign="middle"> key. Click any key to dismiss the confirmation message.
 
 ![Resetting variables](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightreductionprograms.png)
 
-4. Now re-run the **Sight Reduction** program and pick the **SET_TIME** function and set the calculator's local time clock and timezone:
+To set the calculator's internal clock and timezone:
+
+1. Run the **Sight Reduction** program and pick the **SET_TIME** function and set the calculator's local time clock and timezone:
 
    * **Local time**: the local time to which to set the calculator. Enter a time a few seconds in the future and click the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key when your watch reads the time entered
    * **UTC Offset**: the number of hours ahead of or behind UTC. Use a positive value for locations West of Greenwhich and negative for East (e.g. -5 for New York standard time). Keep in mind that this offset changes with Daylight Savings Time (DST)

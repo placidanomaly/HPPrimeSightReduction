@@ -35,7 +35,10 @@ LOCAL progressFlag:=1;
 EXPORT SIGHT()
 BEGIN  
   HAngle:=1;
-  
+
+  // Check that our variables are initialized
+  IF TYPE(obs_UTC)=0 THEN RESET_SIGHTS(); END;
+
   IF NOT INPUT_HS_AND_BODY() THEN RETURN "Canceled."; END;
 
   IF DRlat_deg(current)=0 THEN DRlat_deg(current):=DRlat_default; END;
@@ -747,7 +750,7 @@ BEGIN
     WAIT(-1);
   
     t:=GET_UTC_TIME();
-		
+    
     r:=0;
     c:=INPUT({r,t},"Observation #"+i,
       {"HS:","Time:"},
@@ -758,11 +761,11 @@ BEGIN
   
     IF r>0 THEN
       more:=1;
-	  // Remove hour part of time and expand
-	  // time readings to increase the
-	  // accuracy of statistical computations
-	  IF hourOffset=0 THEN hourOffset:=IP(t); END;
-	  t:=scalingFactor*(t-hourOffset);	
+    // Remove hour part of time and expand
+    // time readings to increase the
+    // accuracy of statistical computations
+    IF hourOffset=0 THEN hourOffset:=IP(t); END;
+    t:=scalingFactor*(t-hourOffset);  
       hs:=CONCAT(hs,{{t,r}});
       i:=i+1;
     ELSE
@@ -812,72 +815,72 @@ BEGIN
     
   LOCAL fitOptions:={
     "Linear",
-	IFTE(i>2,"Quad",""),
-	IFTE(i>3,"Cubic",""),
-	IFTE(i>3,"Trig",""),
-	"Cancel",
-	"Ok"};
+    IFTE(i>2,"Quad",""), 
+    IFTE(i>3,"Cubic",""),
+    IFTE(i>3,"Trig",""),
+    "Cancel",
+    "Ok"};
   LOCAL fitTypes:={1,8,9,11};
 
   LOCAL avgTime,avgHs;
       
   REPEAT
     // Determine interpolated sight. If
-	// the regression function has an extremum
-	// within our observed time range, use that
-	// extremum as our interpolated point.
-	// Otherwise, use the midpoint of the time
-	// range.
-	
-	// Extremums only exist for quadratic or
-	// cubic regressions
-	LOCAL extremumFlag:=0;
-    IF S1(4)=8 OR S1(4)=9 THEN
-	  // Find the extremums of the regression function	  
-	  r:=CAS("solve(eval(diff(subst(Statistics_2Var.S1(5),'X'=x),x))=0,x)");      	 
-	  // Check that they fall within our time range
-	  IF SIZE(r)>0 THEN
-	    FOR i FROM 1 TO SIZE(r) DO
-		  IF (r(i)>Statistics_2Var.C1(1)) AND (r(i)<Statistics_2Var.C1(0)) THEN
-		    extremumFlag:=1;
-		    avgTime:=r(i);
-		  END;
-		END;
-	  ELSE
-	    avgTime:=Statistics_2Var.C1(1)+(Statistics_2Var.C1(0)-Statistics_2Var.C1(1))/2;
+  // the regression function has an extremum
+  // within our observed time range, use that
+  // extremum as our interpolated point.
+  // Otherwise, use the midpoint of the time
+  // range.
+  
+  // Extremums only exist for quadratic or
+  // cubic regressions
+  LOCAL extremumFlag:=0;
+    IF Statistics_2Var.S1(4)=8 OR Statistics_2Var.S1(4)=9 THEN
+    // Find the extremums of the regression function    
+    r:=CAS("solve(eval(diff(subst(Statistics_2Var.S1(5),'X'=x),x))=0,x)");         
+    // Check that they fall within our time range
+    IF SIZE(r)>0 THEN
+      FOR i FROM 1 TO SIZE(r) DO
+      IF (r(i)>Statistics_2Var.C1(1)) AND (r(i)<Statistics_2Var.C1(0)) THEN
+        extremumFlag:=1;
+        avgTime:=r(i);
       END;
-	ELSE
-	  avgTime:=Statistics_2Var.C1(1)+(Statistics_2Var.C1(0)-Statistics_2Var.C1(1))/2;
-	END;
-	avgHs:=PredY(avgTime);
+    END;
+    ELSE
+      avgTime:=Statistics_2Var.C1(1)+(Statistics_2Var.C1(0)-Statistics_2Var.C1(1))/2;
+      END;
+  ELSE
+    avgTime:=Statistics_2Var.C1(1)+(Statistics_2Var.C1(0)-Statistics_2Var.C1(1))/2;
+  END;
+  avgHs:=PredY(avgTime);
     Statistics_2Var.C3:={avgTime,avgTime};
     Statistics_2Var.C4:={avgHs,avgHs};
     Statistics_2Var.S2:={"C3","C4","",13,"",#FF0000,2,#FF0000};
     Statistics_2Var.CHECK(2);  
     
-	// Show graph and results
-	STARTVIEW(1,1);
-	TEXTOUT_P("Review results and click Ok to continue",G0,1,10,1,RGB(1,0,0));
+  // Show graph and results
+  STARTVIEW(1,1);
+  TEXTOUT_P("Review results and click Ok to continue",G0,1,10,1,RGB(1,0,0));
     TEXTOUT_P("Interpolated values: "+HMS(avgTime/scalingFactor+hourOffset)+" - "+→DMD(avgHs)
-	  +IFTE(extremumFlag," (extremum)"," (midpoint)"),G0,1,25,1,RGB(1,0,0));
-	  
-	// Monitor soft keys and include
-	// indicator next to currently
-	// selected key
-	LOCAL flags:={0,0,0,0,0,0};
-	flags(POS(fitTypes,Statistics_2Var.S1(4))):=1;
+    +IFTE(extremumFlag," (extremum)"," (midpoint)"),G0,1,25,1,RGB(1,0,0));
+    
+  // Monitor soft keys and include
+  // indicator next to currently
+  // selected key
+  LOCAL flags:={0,0,0,0,0,0};
+  flags(POS(fitTypes,Statistics_2Var.S1(4))):=1;
     c:=GET_SOFTKEY(fitOptions,flags);
-	IF c=5 OR c=0 THEN 
-	  STARTVIEW(-7,1); 
-	  RETURN {};
-	END;
-	IF c>0 AND c<5 THEN
-	  IF fitOptions(c)<>"" THEN
-	    Statistics_2Var.S1:={"C1","C2","",fitTypes(c),"",#FF,4,0};
+  IF c=5 OR c=0 THEN 
+    STARTVIEW(-7,1); 
+    RETURN {};
+  END;
+  IF c>0 AND c<5 THEN
+    IF fitOptions(c)<>"" THEN
+      Statistics_2Var.S1:={"C1","C2","",fitTypes(c),"",#FF,4,0};
         Statistics_2Var.CHECK(1);
-	    STARTVIEW(1,1);  	    
-	  END;
-	END;
+      STARTVIEW(1,1);        
+    END;
+  END;
   UNTIL c=6;
 
   // Go back to program view (where
@@ -1338,7 +1341,7 @@ BEGIN
   RETURN →HMS(Time - timeZone);
 END;
 
-EXPORT GET_SOFTKEY(keylist,flags)
+GET_SOFTKEY(keylist,flags)
 BEGIN
   LOCAL k:=keylist,i;
   FOR i FROM 1 TO SIZE(flags) DO
@@ -1347,14 +1350,31 @@ BEGIN
   WHILE 1 DO
     DRAWMENU(k);
     LOCAL r:=WAIT(-1);
+    // Check if we have a keyboard or
+    // mouse event
     IF TYPE(r)=0 THEN
+      // We have a keyboard event. Check that
+      // either ESC or ON was pressed and
+      // return or do nothing
       IF r=4 OR r=46 THEN
         RETURN 0;
       END;
     ELSE 
+      // We have a mouse event.
+      // Check that we have a mouse 
+      // click event 
       IF r(1)=3 THEN
+        // Check that the click was
+        // on the soft key bar at the
+        // bottom
         IF r(3)>220 THEN
-          RETURN IP(r(2)/53)+1;
+          // Check that the soft key
+          // has a label attached to
+          // it or do nothing
+          LOCAL key:=IP(r(2)/53)+1;
+          IF keylist(key)<>"" THEN
+            RETURN key;
+          END;
         END;
       END;
     END;
