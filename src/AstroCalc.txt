@@ -1420,7 +1420,7 @@ BEGIN
            "GHA:"+→DMD(GHAplanet_(i))+CHAR(10)
           +"dec:"+→DMD(DECplanet_(i))+CHAR(10)
           +"SD:"+SDplanet_(i)+CHAR(10)
-          +"HP:"+HPplanet_(i));0
+          +"HP:"+HPplanet_(i));
   END;
   
   MSGBOX("Star:"+navstar_(starname_,1)+CHAR(10)
