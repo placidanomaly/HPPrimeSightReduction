@@ -987,7 +987,7 @@ BEGIN
   // If cosH>1 or <-1 then there is no sunset
   // at this latitude at this time of the year
   // (represented by sun declination)
-  IF ABS(cosH)>1 THEN RETURN 0; END;
+  IF ABS(cosH)>1 THEN RETURN {0,0}; END;
   
   LOCAL H:=ACOS(cosH);
 
@@ -1010,13 +1010,14 @@ BEGIN
   Nutation_();
   Aberration_();
   Aries_();  
-  SunComplete_(1);
+  SunComplete_();
 
   // Return an array containing:
   // {{Sunrise,Sunset},
   //  {Civil twilight begin,Civil twilight end},
   //  {Nautical twilight begin, nautical twilight end}}
-   
+  // Returns {0,0} if no sunset at the location
+  
  RETURN {RiseSetTime(lat,lon,0),
          RiseSetTime(lat,lon,6),
 		 RiseSetTime(lat,lon,12)};
@@ -1419,7 +1420,7 @@ BEGIN
            "GHA:"+→DMD(GHAplanet_(i))+CHAR(10)
           +"dec:"+→DMD(DECplanet_(i))+CHAR(10)
           +"SD:"+SDplanet_(i)+CHAR(10)
-          +"HP:"+HPplanet_(i));
+          +"HP:"+HPplanet_(i));0
   END;
   
   MSGBOX("Star:"+navstar_(starname_,1)+CHAR(10)
