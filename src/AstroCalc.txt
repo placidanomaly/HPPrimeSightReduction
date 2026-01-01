@@ -1,4 +1,5 @@
 // Global variables (part 1)
+LOCAL date_:=2026.0101, time_:=12, recalc:=1;
 LOCAL year_, month_, day_, hour_;
 LOCAL minute_, second_, deltaT_;
 LOCAL dayfraction_, JD0h_, JD_;
@@ -108,7 +109,7 @@ EXPORT navstar_ := {
 //Aberration
 LOCAL kappa_,pi0_,e_;
 
-// Helicentric coordinates of the earth
+// Heliocentric coordinates of the earth
 LOCAL Le_, Be_, Re_;
 
 // ATAN2 function returning angle in radians
@@ -134,13 +135,23 @@ END;
 
 CONVERT_DATETIME(date,time)
 BEGIN
-  LOCAL time_:=HMS→(time);
+  IF (date<>date_) OR (time<>time_) THEN
+    recalc:=1;
+  END;
+
+  date_:=date;  
+  time_:=HMS→(time);
   year_:=IP(date);
   month_:=IP(FP(date)*100);
   day_:=IP(FP(date*100)*100);
   hour_:=IP(time_);
   minute_:=IP(FP(time_)*60);
   second_:=IP(FP(time_*60)*60);
+END;
+
+CONVERT_DATETIME(date)
+BEGIN
+  CONVERT_DATETIME(date,time_);
 END;
 
 LOCAL →DMD(D)
@@ -953,13 +964,62 @@ BEGIN
    //Horizontal parallax of the Sun
    HPsun_ := 8.794/Re_;
 
-   //Equation of time
+   //Equation of time in minutes
    //EOT := 4*(Lsun_mean-0.0057183-0.0008-RAsun_+delta_psi_*cosd_(eps_));
    EOT_ := 4*GHAsun_+720-1440*dayfraction_;
    IF EOT_>20 THEN EOT_:=EOT_-1440; END;
    IF EOT_<-20 THEN EOT_:=EOT_+1440; END;
    
    HAngle:=oldHA;
+END;
+
+
+//Civil and nautical twilight calculations
+LOCAL RiseSetTime(lat,lon,zenithOffset)
+BEGIN
+  oldHA:=HAngle;
+  HAngle:=1;
+  
+  LOCAL z:=90+zenithOffset;
+
+  LOCAL cosH:=((COS(z)-SIN(lat)*SIN(SunDec_))/(COS(lat)*COS(SunDec_)));
+
+  // If cosH>1 or <-1 then there is no sunset
+  // at this latitude at this time of the year
+  // (represented by sun declination)
+  IF ABS(cosH)>1 THEN RETURN 0; END;
+  
+  LOCAL H:=ACOS(cosH);
+
+  // Solar Noon
+  LOCAL UTCnoon:=12+(-1*lon)/15-EOT_/60;
+
+  // Twilight time
+  LOCAL UTCtwilight:=UTCnoon+H/15;
+  
+  HAngle:=oldHA;
+
+  RETURN {UTCnoon-H/15,UTCnoon+H/15};
+END;
+
+EXPORT SunRiseSetTimes(lat,lon,date)
+BEGIN
+  CONVERT_DATETIME(date);
+  
+  TimeMeasures_();
+  Nutation_();
+  Aberration_();
+  Aries_();  
+  SunComplete_(1);
+
+  // Return an array containing:
+  // {{Sunrise,Sunset},
+  //  {Civil twilight begin,Civil twilight end},
+  //  {Nautical twilight begin, nautical twilight end}}
+   
+ RETURN {RiseSetTime(lat,lon,0),
+         RiseSetTime(lat,lon,6),
+		 RiseSetTime(lat,lon,12)};
 END;
 
 LOCAL SunComplete_()
@@ -1320,7 +1380,25 @@ BEGIN
   Planet_(planetId,0,0);
 END;
 
-EXPORT Test()
+TestSunset()
+BEGIN
+  CONVERT_DATETIME(2026.0101,18°51′58″);
+  
+  TimeMeasures_();
+  Nutation_();
+  Aberration_();
+  Aries_();  
+  SunComplete_(1);
+  Moon_();
+  Star_(13);
+  
+  PRINT("Rise/set times for "+Date);
+  LOCAL r:=SunRiseSetTimes(45.7951,-71.3283,Date);
+  PRINT(r);
+  WAIT(-1);
+END;
+
+LOCAL Test()
 BEGIN
   CONVERT_DATETIME(1978.1025,18°51′58″);
   
@@ -1331,6 +1409,7 @@ BEGIN
   SunComplete_(1);
   Moon_();
   Star_(13);
+  
   
   LOCAL i,a,b,c,d;
   FOR i FROM 1 TO 4 DO
