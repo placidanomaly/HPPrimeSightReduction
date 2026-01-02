@@ -2,8 +2,8 @@
 This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and requires no updates until 2200. It can also be used on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program and it does not require an Internet connection to run.
 
 The following functionality is provided:
-* Astronomical calculations of the ephemerides of the usual celestial navigation bodies (Sun, Moon, Mars, Venus, Jupiter, Saturn, and 58 stars)
-* Observation planning by listing all observable bodies (i.e. meeting user-specified elevation and azimuth constraints) during morning and evening nautical twilight and at any time of the day with their respective GHA, declination, azimuth, true altitude, apparent altitude, and semi-diameter
+* Astronomical calculations of the ephemerides of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the usual 58 stars used in celestial navication, valid from 1800 to 2200, and related calculations of Equation of Time, sunrise/sunset times, semi-diameters, centroid corrections for the partial illumination of Venus and Mars, etc.
+* Observation planning by listing all observable bodies (i.e. meeting user-specified altitude and azimuth constraints) during morning and evening nautical twilight and at any time of the day with their respective GHA, declination, azimuth, true altitude, apparent altitude, and semi-diameter
 * Sight reduction of sextant observations of any of those celestial bodies to Lines of Position (LOPs)
 * Running fix calculations through translation of lines of position by a certain distance on a given bearing
 * Plotting of LOPs on a Cartesian plot from which a fix can easily be deduced
@@ -37,16 +37,15 @@ Follow these steps to download and install the HP Connectivity Kit and the HP Pr
 1. Download and install the *HP Connectivity Kit* program from this [link](https://updates.moravia-consulting.com/)
 2. If desired, download and install the *HP Prime Virtual Calculator* program from this [link](https://updates.moravia-consulting.com/)
 3. Launch the *HP Connectivity Kit* program
-4. Connect an HP Prime Calculator to the computer with a USB cable, or launch the *HP Prime Virtual Calculator* program, and confirm that the calculator appears in the **Calculators** window of the Connectivity Kit
-5. Ensure that the **Content** window is visible in the *HP Connectivity Kit* program. To make it appear, select the **Window->Content** menu option
-
+4. Connect an HP Prime Calculator to the computer with a USB cable, or launch the *HP Prime Virtual Calculator* program, and confirm that the calculator appears in the **Calculators** window of the Connectivity Kit. NOTE: endpoint protection software like Windows Defender can interfere with the *HP Connectivity Kit* program. Try disabling any such software if you're having trouble connecting to the *HP Prime Virtual Calculator*.
 
 ## Installing from Binaries (RECOMMENDED)
 
 To install from the binaries, the *.hpprgm* files must be loaded into the Connectivity kit:
 
-1. Drag all the *.hpprgm* files in the */bin* folder of the repository into the **Content** section of the *HP Connectivity Kit* program
-2. Drag all the files in the **Content** window of the *HP Connectivity Kit* program onto the calculator icon in the **Calculators** window
+1. Launch the *HP Connectivity Kit* program and ensure the **Content** window is displayed. If not, use the **Window->Content** menu to display it.
+2. Drag all the *.hpprgm* files in the */bin* folder of the repository into the **Content** window of the *HP Connectivity Kit* program
+3. Drag all the files in the **Content** window of the *HP Connectivity Kit* program onto the calculator icon in the **Calculators** window
 
 ## Installing from Source Files
 
@@ -61,7 +60,7 @@ To install from the binaries, the *.hpprgm* files must be loaded into the Connec
 12. Open each program and hit <img alt="Check" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/check.png" valign="middle"> to confirm that there are no syntax errors
 
 ## Confirming that Everything Works
-When all is done, your Connectivity Kit screen should look like this:
+When all is done, your *HP Connectivity Kit* screen should look like this:
 
 ![Connectivity Kit screen shot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/connectivity.png)
 
@@ -117,13 +116,13 @@ To set the calculator's internal clock and timezone:
 ![Setting the time and timezone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
 
 ## Planning Observations
-It can be helpful to know which celestial bodies will be visible and where ahead of an observation session with the sextant so that the bodies to be observed can be selected ahead of time. This is done with the **LIST_VISIBLE_BODIES** function of the **Sight Reduction** program. You will be prompted to enter the parameters for listing the bodies:
+It can be helpful to know which celestial bodies will be visible and where ahead of an observation session with the sextant so that the bodies to be observed can be selected ahead of time. This is done with the **SIGHT_PLANNING** function of the **Sight Reduction** program. You will be prompted to enter the parameters for listing the bodies:
 
    * **Date**: the date on which the observations will be made in YYYY.MMDD format
    * **Time**: the approximate UTC time at which the observations will be made in HH°MM'SS" format
    * **Latitude**: the assumed latitude in degrees from which the observations will be made
    * **Longitude**: the assumed longitude in degrees from which the observations will be made
-   * **Elevation**: the minimum elevation in degrees of the celestial bodies to be included in the list
+   * **Altitude**: the minimum altitude in degrees of the celestial bodies to be included in the list
    * **Azimuth from**: the true heading in degrees of the beginning of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
    * **Clockwise to**: the true heading in degrees of the end of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
 
@@ -131,16 +130,32 @@ It can be helpful to know which celestial bodies will be visible and where ahead
 
 The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include:
 * Sunrise, sunset, civil twilight, and nautical twilight times
-* List of observable bodies (i.e. meeting azimuth and elevation constraints entered on the first screen) with, for each, the azimuth, true elevation (Hc), apparent elevation (Ha) (i.e. the one that a sextant with no index error and no dip would read), Greenwhich Hour Angle (GHA), declination (dec), and the semi-diameter in arc seconds of the body (if applicable), at 3 different times:
+* List of observable bodies (i.e. meeting azimuth and altitude constraints entered on the first screen) with, for each, the azimuth, true altitude (Hc), apparent altitude (Ha) (i.e. the one that a sextant with no index error and no dip would read), Greenwhich Hour Angle (GHA), declination (dec), and the semi-diameter in arc seconds of the body (if applicable), at 3 different times:
   * Morning nautical twilight: from morning Nautical Twilight Time to Civil Twilight Time, with body positions calculated at the midpoint of the period
   * Evening nautical twilight: from evening Civil Twilight Time to Nautical Twilight Time, with body positions calculated at the midpoint of the period
   * Time specified
  
 ![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output.png) ![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output2.png)
 
+## Ephemerides
+The program can show the Greenwich Hour Angle (GHA) and declination of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the 58 celestial navigation stars for any point in time between 1800 and 2200, as well as the corresponding azimuth and altitude from a specified geographical location. The semi-diameter of certain bodies will also be shown. To use this feature:
+
+1. From the programs screen of the calculator, select the **Sight Reduction** program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key and click on the **EPHEMERIDES** function. An input screen will appear:
+
+![Ephemerides input screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_input.png)
+  
+2. Fill in the required information:
+   * **Date**: the date of the ephemerides in YYYY.MMDD format
+   * **Time**: the UTC time of the ephemerides in HH°MM'SS" format
+   * **Latitude**: the latitude in degrees to calculate azimuth and altitude
+   * **Longitude**: the longitude in degrees to calculate azimuth and altitude
+3. The calculator will display the results in the Spreadsheet app:
+
+![Ephemerides input screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output.png)
+
 ## Calculating Index Correction from Sun diameter (OPTIONAL)
 
-The program contains a function to apply the index correction method described in [this document](https://www.starpath.com/online/celestial/solar_ic.pdf). After running this program, the default value for the index correction in the sight reduction forms will be set to the value calculated by this procedure (otherwise the default index correction value will be zero). To run the program, highlight the **Sight Reduction** program and hit the <img alt="6" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/6.png" valign="middle"> key to run the **SOLAR_IC** program. The program briefly describes the measurements that need to be taken:
+The program contains a function to apply the index correction method described in [this document](https://www.starpath.com/online/celestial/solar_ic.pdf). After running this program, the default value for the index correction in the sight reduction forms will be set to the value calculated by this procedure (otherwise the default index correction value will be zero). To run the program, highlight the **Sight Reduction** program, press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key, and hit the <img alt="6" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/6.png" valign="middle"> key to run the **SOLAR_IC** program. The program briefly describes the measurements that need to be taken:
 
 ![Solar IC intro](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_intro.png)
 
