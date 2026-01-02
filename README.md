@@ -116,19 +116,22 @@ To set the calculator's internal clock and timezone:
 ![Setting the time and timezone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
 
 ## Planning Observations
-It can be helpful to know which celestial bodies will be visible and where ahead of an observation session with the sextant so that the bodies to be observed can be selected ahead of time. This is done with the **SIGHT_PLANNING** function of the **Sight Reduction** program. You will be prompted to enter the parameters for listing the bodies:
+It can be helpful to know which celestial bodies will be visible and where ahead of an observation session with the sextant so that the bodies to be observed can be selected ahead of time based on whether they meet certain a criteria for visibility based on their altitude and azimuth. The program shows, for a given date, all the bodies that meet the visibility criteria at morning and evening nautical twilight, as well as at a specified time during that day. Here's how it works:
 
+1. From the programs screen of the calculator, select the **Sight Reduction** program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key and click on the **SIGHT_PLANNING** function. An input screen will appear:
+
+![Parameters for listing bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_input.png)
+
+2. Fill out the observation parameters and visibility criteria:
    * **Date**: the date on which the observations will be made in YYYY.MMDD format
-   * **Time**: the approximate UTC time at which the observations will be made in HH°MM'SS" format
-   * **Latitude**: the assumed latitude in degrees from which the observations will be made
-   * **Longitude**: the assumed longitude in degrees from which the observations will be made
+   * **Time**: an arbitrary time at which to show the visible bodies, in HH°MM'SS" format
+   * **Latitude**: the latitude in degrees from which the observations will be made
+   * **Longitude**: the longitude in degrees from which the observations will be made
    * **Altitude**: the minimum altitude in degrees of the celestial bodies to be included in the list
    * **Azimuth from**: the true heading in degrees of the beginning of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
    * **Clockwise to**: the true heading in degrees of the end of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
 
-![Parameters for listing bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_input.png)
-
-The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include:
+3. The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include:
 * Sunrise, sunset, civil twilight, and nautical twilight times
 * List of observable bodies (i.e. meeting azimuth and altitude constraints entered on the first screen) with, for each, the azimuth, true altitude (Hc), apparent altitude (Ha) (i.e. the one that a sextant with no index error and no dip would read), Greenwhich Hour Angle (GHA), declination (dec), and the semi-diameter in arc seconds of the body (if applicable), at 3 different times:
   * Morning nautical twilight: from morning Nautical Twilight Time to Civil Twilight Time, with body positions calculated at the midpoint of the period
@@ -186,8 +189,8 @@ Performing a sight reduction is a straightforward process:
 
 5. The next screen captures the parameters of the observation:
    * **UTC Date**: the UTC date of the observation in HP Prime date format (*YYYY.MMDD*). The hint at the bottom of the window displays the current UTC time to help determine if the UTC date is different from the local date. The default value is the current UTC date.
-   * **DR Lat**: the latitude of the assumed or DR position in degrees at the time of the observation
-   * **DR Lon**: the longitude of the assumed or DR position in degrees at the time of the observation
+   * **DR Lat**: the latitude of the dead-reckoning (DR) position in degrees at the time of the observation
+   * **DR Lon**: the longitude of the DR position in degrees at the time of the observation
    * **Body**: a drop-down to select the celestial body being observed among a list of the Sun, Moon, 4 planets and 58 stars. For certain celestial bodies, the observed limb must also be selected. The **Pre-calculated sights** option allows entering the *Zn* (azimut) and *a* (distance) of the line of position directly instead of letting the calculator perform the sight reduction calculations (this is useful to plot lines of position that have been calculated some other way). The **Moon with tables** and **Sun with tables** options allow entering the values for declination and Greenwich Hour Angle manually based on the Almanac tables instead of using the built-in ephemerides.
    * **Artificial**: check this box if the observation was made on an artificial horizon. If that's the case, the sextant reading values entered must be the actual reading on the sextant, i.e. double the actual body height. When this box is checked, the index correction will be applied before dividing the reading by half and no dip correction will be applied regardless of the eye height or dip short values entered
    * **Average**: check this box to perform the observation averaging process described in the next step. Note: this checkbox is unchecked by default if the LOP register contains a previously entered sextant altitude. Checking it will overwrite the previously entered sextant altitude. If no previous value was entered, the checkbox is checked by default.
@@ -225,7 +228,7 @@ Performing a sight reduction is a straightforward process:
 
 ![Calculation results](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output1.png)
 
-11. The calculator will then display the usual 4 parameters of the line of position: LOP register, distance *a* from the LOP either *TOWARD* or *AWAY* from the body, azimuth *Zn* to the body, and the assumed position latitude and longitude as entered (no correction of assumed position is necessary here because fractional LHA and Zn can easily be handled by the calculator). These parameters enable plotting of the line of position.
+11. The calculator will then display the usual 4 parameters of the line of position: LOP register, distance *a* from the LOP either *TOWARD* or *AWAY* from the body, azimuth *Zn* to the body, and the DR position latitude and longitude as entered (no correction of DR position to an assumed position is necessary here because the calculator can easily handle fractional LHA and Zn). These parameters enable plotting of the line of position.
 
 ![LOP parameters](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output2.png)
 
