@@ -3,11 +3,11 @@ This repository contains a set of programs written in Prime Programming Language
 
 The following functionality is provided:
 * Astronomical calculations of the ephemerides of the usual celestial navigation bodies (Sun, Moon, Mars, Venus, Jupiter, Saturn, and 58 stars)
-* Observation planning by listing the azimuth and elevation of all the visible bodies that meet minimum elevation and azimuth restrictions at a given location at a specified future date and time
+* Observation planning by listing all observable bodies (i.e. meeting user-specified elevation and azimuth constraints) during morning and evening nautical twilight and at any time of the day with their respective GHA, declination, azimuth, true altitude, apparent altitude, and semi-diameter
 * Sight reduction of sextant observations of any of those celestial bodies to Lines of Position (LOPs)
-* Plotting of LOPs on a Cartesian plot from which a fix can easily be deduced.
-* Determination of the index correction of a sextant from two simple observations of the Sun
-* Support for running fixes by translating lines of position by a certain distance on a given bearing
+* Running fix calculations through translation of lines of position by a certain distance on a given bearing
+* Plotting of LOPs on a Cartesian plot from which a fix can easily be deduced
+* Determination of the index correction of a sextant from two simple observations of the Sun (useful when no horizon is visible)
 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
 
@@ -129,9 +129,14 @@ It can be helpful to know which celestial bodies will be visible and where ahead
 
 ![Parameters for listing bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_input.png)
 
-The output will be shown in the Spreadsheet app and will include, for each celestial body meeting the minimum elevation and azimuth range criteria, the azimuth, elevation, Greenwhich Hour Angle (GHA), declination (dec), and the semi-diameter in arc seconds of the body (if applicable):
-
-![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output.png)
+The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include:
+* Sunrise, sunset, civil twilight, and nautical twilight times
+* List of observable bodies (i.e. meeting azimuth and elevation constraints entered on the first screen) with, for each, the azimuth, true elevation (Hc), apparent elevation (Ha) (i.e. the one that a sextant with no index error and no dip would read), Greenwhich Hour Angle (GHA), declination (dec), and the semi-diameter in arc seconds of the body (if applicable), at 3 different times:
+  * Morning nautical twilight: from morning Nautical Twilight Time to Civil Twilight Time, with body positions calculated at the midpoint of the period
+  * Evening nautical twilight: from evening Civil Twilight Time to Nautical Twilight Time, with body positions calculated at the midpoint of the period
+  * Time specified
+ 
+![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output.png) ![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output2.png)
 
 ## Calculating Index Correction from Sun diameter (OPTIONAL)
 
