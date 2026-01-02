@@ -410,18 +410,69 @@ BEGIN
   
   IF c(1)>=minElevAngle THEN
     IF ((minAz<maxAz) AND (c(2)>=minAz) AND (c(2)<=maxAz))
-     OR ((minAz>maxAz) AND ((c(2)>=minAz) OR (c(2)<=maxAz))) THEN
-    EXPR("Spreadsheet.A"+lin+":=\""+body+"\"");
-    EXPR("Spreadsheet.B"+lin+":=\""+→DMD(c(2))+"\"");
-    EXPR("Spreadsheet.C"+lin+":=\""+→DMD(c(1))+"\"");
-	EXPR("Spreadsheet.D"+lin+":=\""+→DMD(c(1)+REFRACTION(1010,20,c(1))/60)+"\"");
-    EXPR("Spreadsheet.E"+lin+":=\""+→DMD(gha)+"\"");
-    EXPR("Spreadsheet.F"+lin+":=\""+→DMD(dec)+"\"");
-    IF sd<>0 THEN EXPR("Spreadsheet.g"+lin+":="+ROUND(sd,1)); END;    
-    RETURN 1;
-  END;
+       OR ((minAz>maxAz) AND ((c(2)>=minAz) OR (c(2)<=maxAz))) THEN
+      EXPR("Spreadsheet.A"+lin+":=\""+body+"\"");
+      EXPR("Spreadsheet.B"+lin+":=\""+→DMD(c(2))+"\"");
+      EXPR("Spreadsheet.C"+lin+":=\""+→DMD(c(1))+"\"");
+      EXPR("Spreadsheet.D"+lin+":=\""+→DMD(c(1)+REFRACTION(1010,20,c(1))/60)+"\"");
+      EXPR("Spreadsheet.E"+lin+":=\""+→DMD(gha)+"\"");
+      EXPR("Spreadsheet.F"+lin+":=\""+→DMD(dec)+"\"");
+      IF sd<>0 THEN EXPR("Spreadsheet.g"+lin+":="+ROUND(sd,1)); END;    
+      RETURN 1;
+    END;
   END;
   RETURN 0;  
+END;
+
+OUTPUT_EPHEMERIDES(date,time,lat,lon,minElevAngle_deg,minAz_deg,maxAz_deg,sunFlag,moonFlag,planetFlag,starFlag,startingLine,includeHeading,showProgress)
+BEGIN
+  LOCAL i,c,lin:=startingLine;
+
+  IF includeHeading THEN
+    Spreadsheet.Cell(lin,2,1):="Azimuth";  
+    Spreadsheet.Cell(lin,3,1):="Elev (Hc)";
+    Spreadsheet.Cell(lin,4,1):="Elev (HA)";
+    Spreadsheet.Cell(lin,5,1):="GHA";
+    Spreadsheet.Cell(lin,6,1):="Dec";
+    Spreadsheet.Cell(lin,7,1):="Semi D";
+    FOR i FROM 1 TO 7 DO Spreadsheet.Cell(lin,i,7):=16753920; END;  
+    lin:=lin+1;
+  END;
+
+  IF sunFlag THEN
+    IF showProgress THEN PRINT("Computing sun"); END;
+    c:=SunEphemeris(date,time,showProgress);
+    lin:=lin+WRITELINE(lin,"Sun",c(1),c(2),c(4),
+          lat,lon,minElevAngle_deg,minAz_deg,maxAz_deg);    
+  END;
+  
+  IF moonFlag THEN
+    IF showProgress THEN PRINT("Computing Moon"); END;
+    c:=MoonEphemeris(date,time);
+    lin:=lin+WRITELINE(lin,"Moon",c(1),c(2),c(4),
+          lat,lon,minElevAngle_deg,minAz_deg,maxAz_deg);    
+  END;
+
+  IF planetFlag THEN
+    FOR i FROM 1 TO 4 DO        
+      c:=PlanetEphemeris(i,date,time,1,showProgress);
+      lin:=lin+WRITELINE(lin,planets_(i),c(1),c(2),c(4),
+                          lat,lon,minElevAngle_deg,minAz_deg,maxAz_deg);    
+    END;
+  END;
+  
+  IF starFlag THEN
+    IF showProgress THEN PRINT("Computing stars"); END;
+    LOCAL d:=StarEphemerisAll(date,time);
+
+    FOR i FROM 1 TO SIZE(d) DO      
+      c:=d(i);    
+      lin:=lin+WRITELINE(lin,navstar_(i,1),c(1),c(2),0,
+                        lat,lon,minElevAngle_deg,minAz_deg,maxAz_deg);    
+    END;
+  END;
+
+  RETURN lin;
 END;
 
 EXPORT SIGHT_PLANNING()
@@ -472,20 +523,30 @@ BEGIN
   IF (sunTimes(1,1)<>0) OR (sunTimes(1,2)<>0) THEN
     Spreadsheet.B3:=HMS(LOCAL_TIME(sunTimes(1,1)));
     Spreadsheet.C3:=HMS(LOCAL_TIME(sunTimes(1,2)));
+  ELSE
+    // No sunset at this location
+    Spreadsheet.B3:="-";
+    Spreadsheet.C3:="-";
+  END;
+  
+  IF (sunTimes(2,1)<>0) OR (sunTimes(2,2)<>0) THEN
     Spreadsheet.B4:=HMS(LOCAL_TIME(sunTimes(2,1)));
     Spreadsheet.C4:=HMS(LOCAL_TIME(sunTimes(2,2)));
+  ELSE
+    // No civil twilight at this location
+    Spreadsheet.B4:="-";
+    Spreadsheet.C4:="-";
+  END;
+  
+  IF (sunTimes(3,1)<>0) OR (sunTimes(3,2)<>0) THEN
     Spreadsheet.B5:=HMS(LOCAL_TIME(sunTimes(3,1)));
     Spreadsheet.C5:=HMS(LOCAL_TIME(sunTimes(3,2)));
   ELSE
-    // No sunsets at this location
-    Spreadsheet.B3:="-";
-    Spreadsheet.C3:="-";
-    Spreadsheet.B4:="-";
-    Spreadsheet.C4:="-";
+    // No nautical twilight at this location
     Spreadsheet.B5:="-";
     Spreadsheet.C5:="-";
   END;
-  		
+          
   lin:=7;  
 
   PRINT();
@@ -499,144 +560,78 @@ BEGIN
   
   FOR h FROM 1 TO 3 DO 
     PRINT("COMPUTING "+labels(h)+" EPHEMERIDES");
-	PRINT("------------------------------");
-	  
+    PRINT("------------------------------");
+      
     LOCAL ephTime;
-	
+    
     IF h<3 THEN
-	  IF (sunTimes(1,1)==0) AND (sunTimes(1,2)==0) THEN
-	    // No sunsets -- skip nautical twilight calcs
-	    ephTime:=-1;
-	  ELSE
+      IF (sunTimes(3,1)==0) AND (sunTimes(3,2)==0) THEN
+        // No nautical twilight -- skip nautical twilight calcs
+        ephTime:=-1;
+      ELSE
         LOCAL startTime:=IFTE(h==1,sunTimes(3,1),sunTimes(2,2));
         LOCAL endTime:=IFTE(h==1,sunTimes(2,1),sunTimes(3,2));
-    	// Nautical twilight ephemerides at midpoint of nautical
-		// twilight range
-		ephTime:=(startTime+endTime)/2;
-  	    
-		EXPR("Spreadsheet.A"+lin+":=\""+labels(h)+" NAUTICAL TWILIGHT\"");
+        // Nautical twilight ephemerides at midpoint of nautical
+        // twilight range
+        ephTime:=(startTime+endTime)/2;
+          
+        EXPR("Spreadsheet.A"+lin+":=\""+labels(h)+" NAUTICAL TWILIGHT\"");
         Spreadsheet.Cell(lin,1,7):=16753920;
-		lin:=lin+1;
-		EXPR("Spreadsheet.A"+lin+
-	      ":=\"("+HMS(LOCAL_TIME(startTime))
-	      +" to "+HMS(LOCAL_TIME(endTime))+")\"":=);
-        Spreadsheet.Cell(lin,1,7):=16753920;
-		
-		Spreadsheet.Cell(lin,2,1):="Azimuth";
-		Spreadsheet.Cell(lin,3,1):="Elev (Hc)";
-		Spreadsheet.Cell(lin,4,1):="Elev (HA)";
-		Spreadsheet.Cell(lin,5,1):="GHA";
-		Spreadsheet.Cell(lin,6,1):="Dec";
-		Spreadsheet.Cell(lin,7,1):="Semi D";
-		FOR i FROM 2 TO 8 DO Spreadsheet.Cell(7,i,7):=16753920; END;
-
-		lin:=lin+1;
-	  END;
-	ELSE
-	  EXPR("Spreadsheet.A"+lin+":=\"AT TIME SPECIFIED: "+HMS(LOCAL_TIME(time_))+"\"");
-	  Spreadsheet.Cell(lin,1,7):=16753920;
-	  
-      Spreadsheet.Cell(lin,2,1):="Azimuth";  
-	  Spreadsheet.Cell(lin,3,1):="Elev (Hc)";
-	  Spreadsheet.Cell(lin,4,1):="Elev (HA)";
-	  Spreadsheet.Cell(lin,5,1):="GHA";
-	  Spreadsheet.Cell(lin,6,1):="Dec";
-	  Spreadsheet.Cell(lin,7,1):="Semi D";
-	  FOR i FROM 2 TO 8 DO Spreadsheet.Cell(7,i,7):=16753920; END;
-
-      lin:=lin+1;
-	  
-	  PRINT("Computing sun");
-      c:=SunEphemeris(date_,time_,1);
-      lin:=lin+WRITELINE(lin,"Sun",c(1),c(2),c(4),
-           ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
-      ephTime:=time_;
-	END;
+        lin:=lin+1;
+        EXPR("Spreadsheet.A"+lin+
+          ":=\"("+HMS(LOCAL_TIME(startTime))
+          +" to "+HMS(LOCAL_TIME(endTime))+")\"");
   
-    IF ephTime<>-1 THEN
-      PRINT("Computing Moon");
-      c:=MoonEphemeris(date_,ephTime);
-      lin:=lin+WRITELINE(lin,"Moon",c(1),c(2),c(4),
-           ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
-
-      FOR i FROM 1 TO 4 DO        
-        c:=PlanetEphemeris(i,date_,ephTime,0,1);
-        lin:=lin+WRITELINE(lin,planets_(i),c(1),c(2),c(4),
-                           ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
+        lin:=OUTPUT_EPHEMERIDES(date_,time_,ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg,0,1,1,1,lin,1,1);
       END;
-  
-      PRINT("Computing stars");
-      d:=StarEphemerisAll(date_,ephTime);
-  
-      FOR i FROM 1 TO SIZE(d) DO      
-        c:=d(i);    
-        lin:=lin+WRITELINE(lin,navstar_(i,1),c(1),c(2),0,
-                         ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg);    
-      END;
-      lin:=lin+1;
+    ELSE
+      EXPR("Spreadsheet.A"+lin+":=\"AT TIME SPECIFIED: "+HMS(LOCAL_TIME(time_))+"\"");
+      lin:=OUTPUT_EPHEMERIDES(date_,time_,ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg,1,1,1,1,lin,1,1);
     END;
+    lin:=lin+1;
   END;
   
   //Use smaller font to fit more info
   FOR i FROM 1 TO lin DO
     FOR h FROM 1 TO 8 DO
-	  Spreadsheet.Cell(i,h,5):=0;
-	END;
+      Spreadsheet.Cell(i,h,5):=0;
+    END;
   END;
   //Center columns B-G
   FOR i FROM 1 TO lin DO
     Spreadsheet.Cell(i,2,8):=1;
-	Spreadsheet.Cell(i,3,8):=1;
-	Spreadsheet.Cell(i,4,8):=1;
-	Spreadsheet.Cell(i,5,8):=1;
-	Spreadsheet.Cell(i,6,8):=1;
-	Spreadsheet.Cell(i,7,8):=1;
+    Spreadsheet.Cell(i,3,8):=1;
+    Spreadsheet.Cell(i,4,8):=1;
+    Spreadsheet.Cell(i,5,8):=1;
+    Spreadsheet.Cell(i,6,8):=1;
+    Spreadsheet.Cell(i,7,8):=1;
   END;
-
-  PRINT("PRESS ANY KEY FOR RESULTS...");
   Spreadsheet.ColWidth(1):=160;
   FOR i FROM 2 TO 8 DO Spreadsheet.ColWidth(i):=55; END;
   Spreadsheet.Cursor:={1,1};
+
+  PRINT("PRESS ANY KEY FOR RESULTS...");
   STARTVIEW(2,1);
 
-END;
-
-LOCAL OUTPUT_EPHEMERIS(bodyName,eph,lat,lon)
-BEGIN
-  LOCAL c:=HC_AZ(eph(1),eph(2),lat,lon);  
-  
-  PRINT(bodyName);
-  PRINT("  GHA:"+→DMD(eph(1)));
-  PRINT("  DEC:"+→DMD(eph(2)));
-  PRINT("  HC :"+→DMD(c(1)));
-  PRINT("  AZ :"+→DMD(c(2)));  
 END;
 
 EXPORT EPHEMERIDES()
 BEGIN
   LOCAL date_:=Date;
   LOCAL time_:=GET_UTC_TIME();
-  LOCAL i;
+  LOCAL i,h,c;
   
   HAngle:=1;
   ephLat:=DRlat_default;
   ephLon:=DRlon_default;
   
   LOCAL c:=INPUT(
-    {date_,time_,ephLat,ephLon,
-    {ephStar(1),CAS("col(navstar_,1)")},
-    {ephStar(2),CAS("col(navstar_,1)")},
-    {ephStar(3),CAS("col(navstar_,1)")},
-    {ephStar(4),CAS("col(navstar_,1)")}},
-     "Ephemeris",
-    {"Date:","Time:","Latitude:","Longitude:","Star:","Star:","Star:","Star:"},
+    {date_,time_,ephLat,ephLon},
+     "Ephemerides",
+    {"Date:","Time:","Latitude:","Longitude:"},
     {"Date of ephemerides (YYYY.MMDD)",
      "UTC Time (HH°MM'DD\")",
-     "Latitude (°)","Longitude (°)",
-   "Star to include in results",
-     "Star to include in results",
-     "Star to include in results",
-     "Star to include in results"});
+     "Latitude (°)","Longitude (°)"});
    
   IF NOT c THEN RETURN "Canceled."; END;
 
@@ -647,32 +642,34 @@ BEGIN
   
   PRINT();
   
-  c:=SunEphemeris(date_,time_,0);
+  STARTAPP("Spreadsheet");
+  Spreadsheet.ClearCell();
+  Spreadsheet.A1:="Date:";
+  Spreadsheet.A2:="UTC Time:";
+  Spreadsheet.A3:="Latitude:";
+  Spreadsheet.A4:="Longitude:";
+  Spreadsheet.B1:=date_;
+  Spreadsheet.B2:=HMS(time_);
+  Spreadsheet.B3:=→DMD(ephLat);
+  Spreadsheet.B4:=→DMD(ephLon);
   
-  PRINT("Aries:");
-  PRINT("  GHA:"+→DMD(c(3)));
-  
-  OUTPUT_EPHEMERIS("Sun",c,ephLat,ephLon);
-  PRINT("  SD :"+c(4)+"\"");  
-  
-  OUTPUT_EPHEMERIS("Moon",MoonEphemeris(date_,time_),ephLat,ephLon);
-  
-  FOR i FROM 1 TO 4 DO
-    c:=PlanetEphemeris(i,date_,time_,0,0);
-    OUTPUT_EPHEMERIS(planets_(i),c,ephLat,ephLon);
-  // Output the semi-diameter of Mars and Venus
-  IF i<=2 THEN
-    PRINT("  SD :"+c(4)+"\"");
-  END;
+  c:=OUTPUT_EPHEMERIDES(date_,time_,ephLat,ephLon,-180,0,360,1,1,1,1,6,1,1);
+
+  //Use smaller font to fit more info
+  FOR i FROM 1 TO c DO
+    FOR h FROM 1 TO 8 DO
+      Spreadsheet.Cell(i,h,5):=0;
+      IF h>1 AND i>5 THEN Spreadsheet.Cell(i,h,8):=1; END;
+    END;
   END;
 
-  FOR i FROM 1 TO 4 DO
-    OUTPUT_EPHEMERIS(
-      navstar_(ephStar(i),1),
-    StarEphemeris(ephStar(i),date_,time_),
-    ephLat,
-    ephLon);
-  END;
+  Spreadsheet.ColWidth(1):=80;
+  FOR i FROM 2 TO 8 DO Spreadsheet.ColWidth(i):=55; END;
+  Spreadsheet.Cursor:={1,1};
+
+  PRINT("PRESS ANY KEY FOR RESULTS...");
+  STARTVIEW(2,1);
+
 END;
 
 LOP_EQUATION(index)
@@ -1047,6 +1044,8 @@ END;
 LOCAL REFRACTION(P,T,a)
 BEGIN
   LOCAL K:=273;  
+
+  IF a<0 THEN RETURN 0; END;
 
   // Based on Bennett, G. G., J. Inst. Nav., vol. 30, p. 255
   // From https://navlist.net/img/104673.refraction.pdf

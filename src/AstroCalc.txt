@@ -284,7 +284,7 @@ BEGIN
   
   IF showProgress THEN
     PRINT("Calculating ephemeris of "+planets_(planetId)); 
-	PRINT("Starting with position of the Sun:");
+    PRINT("Starting with position of the Sun:");
   END;
   
   TimeMeasures_();
@@ -1020,7 +1020,7 @@ BEGIN
   
  RETURN {RiseSetTime(lat,lon,0),
          RiseSetTime(lat,lon,6),
-		 RiseSetTime(lat,lon,12)};
+         RiseSetTime(lat,lon,12)};
 END;
 
 LOCAL SunComplete_()
