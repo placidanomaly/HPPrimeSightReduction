@@ -43,9 +43,10 @@ Follow these steps to download and install the HP Connectivity Kit and the HP Pr
 
 To install from the binaries, the *.hpprgm* files must be loaded into the Connectivity kit:
 
-1. Launch the *HP Connectivity Kit* program and ensure the **Content** window is displayed. If not, use the **Window->Content** menu to display it.
+1. Launch the *HP Connectivity Kit* program and ensure the **Content** window is displayed. If not, use the **Window->Content** menu to display it
 2. Drag all the *.hpprgm* files in the */bin* folder of the repository into the **Content** window of the *HP Connectivity Kit* program
 3. Drag all the files in the **Content** window of the *HP Connectivity Kit* program onto the calculator icon in the **Calculators** window
+4. Leave the calculator alone for about 2 minutes while programs are being loaded
 
 ## Installing from Source Files
 
@@ -70,7 +71,7 @@ To confirm that the installation was successful, perform the following verificat
 2. Select the **Sight Reduction** program <ins>using the arrows (the big round button) on the calculator</ins> (see note below), press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key on the screen, select **EPHEMERIDES** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. Fill out the form with a date, time, and location following the conventions in the next section and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. If everything was installed properly, the requested ephemerides will be displayed and you can scroll through them using the touchscreen. Check the values against an Almanac for accuracy.
 3. If anything fails, double-check that all the programs are installed, open each one of them using the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key and the <img alt="Check" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/check.png" valign="middle">  soft key per Step 9 in the *Installing from Source* section. If all else fails, contact the author at the address at the bottom of this document.
 
-> **NOTE**: if you inadvertently click on a program name on the touchscreen or press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> while a program name is highlighted, you will enter the source code view. This will erase all your sights. Press the **ESC** key to leave the source code view and re-run the **RESET_SIGHTS** program. So please make sure to use the arrows to navigate to a program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key to launch it.
+> **NOTE**: if you inadvertently click on a program name on the touchscreen or press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> while a program name is highlighted, you will enter the source code view where you can edit the program. IF YOU OPEN THE **SIGHT REDUCTION** PROGRAM FOR EDITING, IT WILL CLEAR ALL YOUR SIGHTS. Press the **ESC** key to leave the source code view]. Avoid touching the screen on the **Sight Reduction** program or pressing Enter while the **Sight Reduction** program is highlighted -- THIS WILL ERASE ALL YOUR SIGHTS. Use the arrows to navigate to a program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key to launch it.
 
 # Using the Program
 
@@ -98,15 +99,20 @@ Date values are represented using the native calculator format which is *YYYY.MM
 
 Time values are represented in 24-hour hours using the same format as position degrees, i.e. *HH°MM'SS"*, using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="abc" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/abc.png" valign="middle"> keys. For example 11:43:12pm is entered as `23°43'12"`.
 
-## Re-Initialization
-The program keeps data about sights in memory until either a program is open for editing or the **RESET_SIGHTS** function is called. Generally, **RESET_SIGHTS** should be executed prior to any new fix. The calculator's internal clock is used to time observations so its setting and timezone should be set and checked regularly. If you ever get an **Invalid Input** error, you need to run **RESET_SIGHTS**. To reset all variables:
+## Initialization
+
+### Clearing Memory
+
+The program keeps data about sights and lines of position in the calculator's memory, and that data is preserved when the calculator is turned off. Generally, you should clear the program's memory prior to any new fix. If you ever get an **Invalid Input** error, you likely inadvertently opened the **Sight Reduction** program for editing and need to clear the memory. To clear all program variables:
 
 1. Highlight the **Sight Reduction** program and press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key
 2. From the list of options, pick **RESET_SIGHTS** on the touchscreen or with the arrows and the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key, or press the <img alt="8" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/8.png" valign="middle"> key. Click any key to dismiss the confirmation message.
 
 ![Resetting variables](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightreductionprograms.png)
 
-To set the calculator's internal clock and timezone:
+### Setting the Time and Timezone
+
+The calculator has a pretty accurate internal clock that can be used to record the time of observations. It should be reset from time to time to ensure it is accurate. To set the calculator's internal clock and timezone:
 
 1. Run the **Sight Reduction** program and pick the **SET_TIME** function and set the calculator's local time clock and timezone:
 
@@ -131,7 +137,7 @@ It can be helpful to know which celestial bodies will be visible and where ahead
    * **Azimuth from**: the true heading in degrees of the beginning of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
    * **Clockwise to**: the true heading in degrees of the end of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
 
-3. The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include:
+3. It will take about 1-2 minutes to compute all the ephemerides. You will be prompted to press a key to show the results at the end of the calculation. The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include:
 * Sunrise, sunset, civil twilight, and nautical twilight times
 * List of observable bodies (i.e. meeting azimuth and altitude constraints entered on the first screen) with, for each, the azimuth, true altitude (Hc), apparent altitude (Ha) (i.e. the one that a sextant with no index error and no dip would read), Greenwhich Hour Angle (GHA), declination (dec), and the semi-diameter in arc seconds of the body (if applicable), at 3 different times:
   * Morning nautical twilight: from morning Nautical Twilight Time to Civil Twilight Time, with body positions calculated at the midpoint of the period
