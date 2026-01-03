@@ -253,4 +253,4 @@ The ephemeris calculations are usually accurate to within less than 0.1' of the 
 Instead of storing all sights as local data in the **Sight Reduction** program, we are considering making them global which would prevent their erasure when the program is open for editing. But that would mean that dozens of variables would pollute the global scope of the calculator. Comments on this would be welcome.
 
 # Contact
-This program was developed by [Charles Vaillancourt](mailto:charles.vaillancourt@gmail.com). I welcome comments and suggestions for improvement and will gladly review pull requests for inclusion in the program.
+This program was developed by [Charles Vaillancourt](mailto:charles.vaillancourt@gmail.com). I welcome comments and suggestions for improvement and will gladly review pull requests for inclusion into the program. And if you do try it, drop me a note to let me know how the installation and use of the program worked out for you, and if you were able to make a fix!
