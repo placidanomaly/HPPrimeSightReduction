@@ -9,9 +9,7 @@ The following functionality is provided:
 * Plotting of LOPs on a Cartesian plot from which a fix can easily be deduced
 * Determination of the index correction of a sextant from two simple observations of the Sun (useful when no horizon is visible)
 
-![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
-
-![HP Prime 48 G2 calculator](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/hp48g2.png)
+![HP Prime 48 G2 calculator](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/hp48g2.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Sample LOP plot" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png" valign="top">
 
 The astronomical calculations are derived from the incredible work of Henning Umland which he has been kind enough to share [on his web site](https://celnav.de/). The ephemerides are generally accurate to 0.1' (see **Future Improvements** section).
 
@@ -32,12 +30,13 @@ You can download a ZIP archive containing all the files in this repository from 
 
 ### *HP Connectivity Kit* and *HP Prime Virtual Calculator*
 
-Follow these steps to download and install the HP Connectivity Kit and the HP Prime Virtual Calculator program:
+Follow these steps to download and install the *HP Connectivity Kit* and the *HP Prime Virtual Calculator* programs:
 
 1. Download and install the *HP Connectivity Kit* program from this [link](https://updates.moravia-consulting.com/)
 2. If desired, download and install the *HP Prime Virtual Calculator* program from this [link](https://updates.moravia-consulting.com/)
 3. Launch the *HP Connectivity Kit* program
-4. Connect an HP Prime Calculator to the computer with a USB cable, or launch the *HP Prime Virtual Calculator* program, and confirm that the calculator appears in the **Calculators** window of the Connectivity Kit. NOTE: endpoint protection software like Windows Defender can interfere with the *HP Connectivity Kit* program. Try disabling any such software if you're having trouble connecting to the *HP Prime Virtual Calculator*.
+4. Connect an HP Prime Calculator to the computer with a USB cable, or launch the *HP Prime Virtual Calculator* program, and confirm that the calculator appears in the **Calculators** window of the Connectivity Kit.
+> **NOTE:** endpoint protection software like Windows Defender can interfere with the *HP Connectivity Kit* program. Try disabling any such software if you're having trouble connecting to the *HP Prime Virtual Calculator*.
 
 ## Installing from Binaries (RECOMMENDED)
 
@@ -71,7 +70,7 @@ To confirm that the installation was successful, perform the following verificat
 2. Select the **Sight Reduction** program <ins>using the arrows (the big round button) on the calculator</ins> (see note below), press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key on the screen, select **EPHEMERIDES** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. Fill out the form with a date, time, and location following the conventions in the next section and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. If everything was installed properly, the requested ephemerides will be displayed and you can scroll through them using the touchscreen. Check the values against an Almanac for accuracy.
 3. If anything fails, double-check that all the programs are installed, open each one of them using the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key and the <img alt="Check" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/check.png" valign="middle">  soft key per Step 9 in the *Installing from Source* section. If all else fails, contact the author at the address at the bottom of this document.
 
-> **NOTE**: if you inadvertently click on a program name on the touchscreen or press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> while a program name is highlighted, you will enter the source code view where you can edit the program. IF YOU OPEN THE **SIGHT REDUCTION** PROGRAM FOR EDITING, IT WILL CLEAR ALL YOUR SIGHTS. Press the **ESC** key to leave the source code view]. Avoid touching the screen on the **Sight Reduction** program or pressing Enter while the **Sight Reduction** program is highlighted -- THIS WILL ERASE ALL YOUR SIGHTS. Use the arrows to navigate to a program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key to launch it.
+> **NOTE**: if you inadvertently click on a program name on the touchscreen or press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> while a program name is highlighted, you will enter the source code view where you can edit the program. Press the **ESC** key to leave the source code view. IF YOU OPEN THE **SIGHT REDUCTION** PROGRAM FOR EDITING, IT WILL CLEAR ALL YOUR SIGHTS. Avoid touching the screen on the **Sight Reduction** program or pressing **Enter** while the **Sight Reduction** program is highlighted -- THIS WILL ERASE ALL YOUR SIGHTS. Use the arrows to navigate to a program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key to launch it.
 
 # Using the Program
 
@@ -97,7 +96,7 @@ Date values are represented using the native calculator format which is *YYYY.MM
 
 ### Time Format
 
-Time values are represented in 24-hour hours using the same format as position degrees, i.e. *HH°MM'SS"*, using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="abc" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/abc.png" valign="middle"> keys. For example 11:43:12pm is entered as `23°43'12"`.
+Time values are represented in 24-hour format using the same format as angle degrees, i.e. *HH°MM'SS"*, using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="abc" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/abc.png" valign="middle"> keys. For example 11:43:12pm is entered as `23°43'12"`.
 
 ## Initialization
 
@@ -110,14 +109,14 @@ The program keeps data about sights and lines of position in the calculator's me
 
 ![Resetting variables](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightreductionprograms.png)
 
-### Setting the Time and Timezone
+### Setting the Time and Time Zone
 
-The calculator has a pretty accurate internal clock that can be used to record the time of observations. It should be reset from time to time to ensure it is accurate. To set the calculator's internal clock and timezone:
+The calculator has a pretty accurate internal clock that can be used to automatically record the time of observations. It should be set to a reliable external time source from time to time to ensure it is accurate. To set the calculator's internal clock and timezone:
 
 1. Run the **Sight Reduction** program and pick the **SET_TIME** function and set the calculator's local time clock and timezone:
 
-   * **Local time**: the local time to which to set the calculator. Enter a time a few seconds in the future and click the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key when your watch reads the time entered
-   * **UTC Offset**: the number of hours ahead of or behind UTC. Use a positive value for locations West of Greenwhich and negative for East (e.g. -5 for New York standard time). Keep in mind that this offset changes with Daylight Savings Time (DST)
+   * **Local time**: the local time to which to set the calculator. Enter a time a few seconds in the future and click the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key when your time source reads the time entered
+   * **UTC Offset**: the number of hours ahead of or behind UTC. Use a positive value for locations East of Greenwhich and negative for West (e.g. -5 for New York standard time). Keep in mind that this offset changes with Daylight Savings Time (DST)
 
 ![Setting the time and timezone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
 
@@ -144,7 +143,7 @@ It can be helpful to know which celestial bodies will be visible and where ahead
   * Evening nautical twilight: from evening Civil Twilight Time to Nautical Twilight Time, with body positions calculated at the midpoint of the period, shown in parentheses
   * Time specified
  
-![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output.png) ![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output2.png)
+![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output2.png)
 
 ## Ephemerides
 The program can show the Greenwich Hour Angle (GHA) and declination of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the 58 celestial navigation stars for any point in time between 1800 and 2200, as well as the corresponding azimuth and altitude from a specified geographical location. The semi-diameter of certain bodies will also be shown. To use this feature:
@@ -158,9 +157,10 @@ The program can show the Greenwich Hour Angle (GHA) and declination of the Sun, 
    * **Time**: the UTC time of the ephemerides in HH°MM'SS" format
    * **Latitude**: the latitude in degrees to calculate azimuth and altitude
    * **Longitude**: the longitude in degrees to calculate azimuth and altitude
-3. The calculator will display the results in the Spreadsheet app:
 
-![Ephemerides input screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output.png)
+3. The calculator will display several astronomical calculations such as Delta T, mean and true obliquity of the ecliptic, true GHA Aries, Moon phase (illumination %), etc. along with the GHA, declination, azimuth and altitude of all the celestial bodies:
+
+![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output2.png)
 
 ## Calculating Index Correction from Sun diameter (OPTIONAL)
 
@@ -249,9 +249,9 @@ Once you've entered 2 or more sights in different LOP registers, you can make a 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
 
 # Future Improvements
-The ephemeris calculations are usually accurate to within less than 0.1' of the values in the Almanac for the period 1900-2200 (subject to Delta T adjustments), but errors of up to 0.3' are sometimes seen. This is sufficient for most practical cases of celestial navigation but perfect precision would be better. The differences are still being investigated because the same program in Javascript from Henning Umland's web site seems to always output the exact same numbers as the Almanac. The possibility of a discrepancy in the code is one theory but a more likely one is that the lower number of significant digits in the calculator vs. a regular computer introduces rounding errors that add up in the lengthy calculations, but that has yet to be proven.
+The ephemeris calculations are usually accurate to within less than 0.1' of the values in the Almanac for the period 1800-2200 (subject to Delta T adjustments), but errors of up to 0.3' are sometimes seen. This is sufficient for most practical cases of celestial navigation but perfect precision would be better. The differences are still being investigated because the same program in Javascript from Henning Umland's web site seems to always output the exact same numbers as the Almanac. The possibility of a discrepancy in the code is one theory but a more likely one is that the lower number of significant digits in the calculator vs. a regular computer introduces rounding errors that add up in the lengthy calculations, but that has yet to be proven.
 
 Instead of storing all sights as local data in the **Sight Reduction** program, we are considering making them global which would prevent their erasure when the program is open for editing. But that would mean that dozens of variables would pollute the global scope of the calculator. Comments on this would be welcome.
 
 # Contact
-This program was developed by [Charles Vaillancourt](mailto:charles.vaillancourt@gmail.com). I welcome comments and suggestions for improvement and will gladly review pull requests for inclusion in the program.
+This program was developed by [Charles Vaillancourt](mailto:charles.vaillancourt@gmail.com). I welcome comments and suggestions for improvement and will gladly review pull requests for inclusion into the program. And if you do try it, drop me a note to let me know how the installation and use of the program worked out for you, and if you were able to make a fix!
