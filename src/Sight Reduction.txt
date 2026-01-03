@@ -432,10 +432,68 @@ BEGIN
   RETURN 0;  
 END;
 
-OUTPUT_EPHEMERIDES(date,time,lat,lon,minElevAngle_deg,minAz_deg,maxAz_deg,
-  sunFlag,moonFlag,planetFlag,starFlag,haFlag, startingLine,includeHeading,showProgress)
+LOCAL WRITELINE(lin,body,azimuth,altitude,gha,dec,sd,haFlag)
+BEGIN
+    LOCAL i:=1;
+
+    Spreadsheet.Cell(lin,i,1):=body;
+    Spreadsheet.Cell(lin,i+1,1):=→DMD(azimuth);
+    Spreadsheet.Cell(lin,i+2,1):=→DMD(altitude);
+    IF haFlag THEN
+      Spreadsheet.Cell(lin,i+3,1):=→DMD(altitude+REFRACTION(1010,20,altitude)/60);
+    ELSE
+      i:=i-1;
+    END;
+    Spreadsheet.Cell(lin,i+4,1):=→DMD(gha);
+    Spreadsheet.Cell(lin,i+5,1):=→DMD(dec);
+    IF sd<>0 THEN Spreadsheet.Cell(lin,i+6,1):=ROUND(sd,1); END; 
+
+    RETURN 1;
+END;
+
+LOCAL LIST_APPEND(list,item)
+BEGIN
+  RETURN CONCAT(list,{item});
+END;
+
+LOCAL LIST_INSERT(list,index,item)
+BEGIN
+  IF index==1 THEN RETURN CONCAT({item}, list); END;
+  IF index>SIZE(list) THEN RETURN LIST_APPEND(list,item); END;
+  RETURN CONCAT(CONCAT(SUB(list, 1, index-1), {item}), SUB(list, index, (SIZE(list))));
+END;
+
+LOCAL LIST_SORT(list,col)
+// From https://www.hpmuseum.org/cgi-bin/archv021.cgi?read=255287
+BEGIN
+  LOCAL scan, result, db, fn, ml;
+  IF SIZE(list) > 0 THEN
+    result:= {list(1)};
+    FOR scan FROM 2 TO SIZE(list) DO
+      IF list(scan,col)<result(1,col) THEN result:=LIST_INSERT(result, 1, list(scan)); ELSE
+        IF list(scan,col)>=result(SIZE(result),col) THEN result:=LIST_APPEND(result, list(scan)); ELSE
+          db:= 2; fn:= SIZE(result)-1;
+          WHILE db <= fn DO
+            ml:= IP((db+fn)/2);
+            IF result(ml,col)<=list(scan,col) THEN db:=ml+1;
+            ELSE fn:=ml-1; END;
+          END;
+          result:=LIST_INSERT(result, db, list(scan));
+        END;
+      END;
+    END;
+  ELSE
+    result:= {};
+  END;
+  RETURN result;
+END;
+
+OUTPUT_EPHEMERIDES(date,time,lat,lon,minAltitude,minAz,maxAz,
+  sunFlag,moonFlag,planetFlag,starFlag,haFlag,startingLine,
+  includeHeading,showProgress)
 BEGIN
   LOCAL i,c,lin:=startingLine;
+  LOCAL result:={};
 
   IF includeHeading THEN
     c:=2;
@@ -455,23 +513,17 @@ BEGIN
 
   IF sunFlag THEN
     IF showProgress THEN PRINT("Computing sun"); END;
-    c:=SunEphemeris(date,time,showProgress);
-    lin:=lin+WRITELINE(lin,"Sun",c(1),c(2),c(4),
-          lat,lon,minElevAngle_deg,minAz_deg,maxAz_deg,haFlag);    
+    result:=LIST_APPEND(result,CONCAT({"Sun"},SunEphemeris(date,time,showProgress)));
   END;
   
   IF moonFlag THEN
     IF showProgress THEN PRINT("Computing Moon"); END;
-    c:=MoonEphemeris(date,time);
-    lin:=lin+WRITELINE(lin,"Moon",c(1),c(2),c(4),
-          lat,lon,minElevAngle_deg,minAz_deg,maxAz_deg,haFlag);    
+    result:=LIST_APPEND(result,CONCAT({"Moon"},MoonEphemeris(date,time)));
   END;
 
   IF planetFlag THEN
     FOR i FROM 1 TO 4 DO        
-      c:=PlanetEphemeris(i,date,time,1,showProgress);
-      lin:=lin+WRITELINE(lin,planets_(i),c(1),c(2),c(4),
-                          lat,lon,minElevAngle_deg,minAz_deg,maxAz_deg,haFlag);    
+      result:=LIST_APPEND(result,CONCAT({planets_(i)},PlanetEphemeris(i,date,time,1,showProgress)));
     END;
   END;
   
@@ -479,11 +531,50 @@ BEGIN
     IF showProgress THEN PRINT("Computing stars"); END;
     LOCAL d:=StarEphemerisAll(date,time);
 
-    FOR i FROM 1 TO SIZE(d) DO      
-      c:=d(i);    
-      lin:=lin+WRITELINE(lin,navstar_(i,1),c(1),c(2),0,
-                        lat,lon,minElevAngle_deg,minAz_deg,maxAz_deg,haFlag);    
+    FOR i FROM 1 TO SIZE(d) DO
+      d:=CONCAT(d,{0});
+      result:=LIST_APPEND(result,CONCAT({navstar_(i,1)},d(i)));      
     END;
+  END;
+
+  //Compute azimuth and elevation of all bodies
+  LOCAL r:={};
+  
+  FOR i FROM 1 TO SIZE(result) DO
+    LOCAL c:=HC_AZ(result(i,2),result(i,3),lat,lon);
+    LOCAL altitude:=c(1);
+    LOCAL azimuth:=c(2);
+    IF altitude>=minAltitude THEN
+      IF ((minAz<maxAz) AND (azimuth>=minAz) AND (azimuth<=maxAz))
+         OR ((minAz>maxAz) AND ((azimuth>=minAz) OR (azimuth<=maxAz))) THEN
+        c:={result(i,1),azimuth,altitude,result(i,2),result(i,3),result(i,4)};
+        r:=CONCAT(r,{c});
+      END;
+    END;
+  END;
+
+  //Sort by azimuth
+  result:=LIST_SORT(r,2);
+
+  // Adjust list if azimuth range crosses north
+  // to show all results in clockwise order
+  IF minAz>maxAz THEN
+    i:=1;
+    WHILE i<SIZE(result) DO
+      IF result(i,2)>=minAz THEN
+        IF i>1 THEN
+          result:=CONCAT(SUB(result,i,SIZE(result)),
+            SUB(result,1,i-1));
+        END;
+        BREAK;
+      END;
+      i:=i+1;
+    END;
+  END;
+
+  FOR i FROM 1 TO SIZE(result) DO  
+    lin:=lin+WRITELINE(lin,result(i,1),result(i,2),result(i,3),
+      result(i,4),result(i,5),result(i,6),haFlag);
   END;
 
   RETURN lin;
@@ -721,7 +812,6 @@ BEGIN
   IF i=10 THEN i:=0; END;
   EXPR("Function.F"+i+":=f");
 END;
-
 
 SELECT_LOP(default,prompt,askProgress)
 BEGIN

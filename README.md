@@ -137,11 +137,11 @@ It can be helpful to know which celestial bodies will be visible and where ahead
    * **Azimuth from**: the true heading in degrees of the beginning of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
    * **Clockwise to**: the true heading in degrees of the end of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
 
-3. It will take about 1-2 minutes to compute all the ephemerides. You will be prompted to press a key to show the results at the end of the calculation. The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include:
+3. It will take about 1-2 minutes to compute all the ephemerides. You will be prompted to press a key to show the results at the end of the calculation. The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include, in clockwise order of azimuth within the prescribed arc:
 * Sunrise, sunset, civil twilight, and nautical twilight times
 * List of observable bodies (i.e. meeting azimuth and altitude constraints entered on the first screen) with, for each, the azimuth, true altitude (Hc), apparent altitude (Ha) (i.e. the one that a sextant with no index error and no dip would read), Greenwhich Hour Angle (GHA), declination (dec), and the semi-diameter in arc seconds of the body (if applicable), at 3 different times:
-  * Morning nautical twilight: from morning Nautical Twilight Time to Civil Twilight Time, with body positions calculated at the midpoint of the period
-  * Evening nautical twilight: from evening Civil Twilight Time to Nautical Twilight Time, with body positions calculated at the midpoint of the period
+  * Morning nautical twilight: from morning Nautical Twilight Time to Civil Twilight Time, with body positions calculated at the midpoint of the period, shown in parentheses
+  * Evening nautical twilight: from evening Civil Twilight Time to Nautical Twilight Time, with body positions calculated at the midpoint of the period, shown in parentheses
   * Time specified
  
 ![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output.png) ![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output2.png)
