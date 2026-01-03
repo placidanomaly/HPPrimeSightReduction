@@ -30,7 +30,7 @@ You can download a ZIP archive containing all the files in this repository from 
 
 ### *HP Connectivity Kit* and *HP Prime Virtual Calculator*
 
-Follow these steps to download and install the HP Connectivity Kit and the HP Prime Virtual Calculator program:
+Follow these steps to download and install the *HP Connectivity Kit* and the *HP Prime Virtual Calculator* programs:
 
 1. Download and install the *HP Connectivity Kit* program from this [link](https://updates.moravia-consulting.com/)
 2. If desired, download and install the *HP Prime Virtual Calculator* program from this [link](https://updates.moravia-consulting.com/)
@@ -95,7 +95,7 @@ Date values are represented using the native calculator format which is *YYYY.MM
 
 ### Time Format
 
-Time values are represented in 24-hour hours using the same format as position degrees, i.e. *HH°MM'SS"*, using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="abc" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/abc.png" valign="middle"> keys. For example 11:43:12pm is entered as `23°43'12"`.
+Time values are represented in 24-hour format using the same format as angle degrees, i.e. *HH°MM'SS"*, using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="abc" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/abc.png" valign="middle"> keys. For example 11:43:12pm is entered as `23°43'12"`.
 
 ## Initialization
 
@@ -108,14 +108,14 @@ The program keeps data about sights and lines of position in the calculator's me
 
 ![Resetting variables](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightreductionprograms.png)
 
-### Setting the Time and Timezone
+### Setting the Time and Time Zone
 
-The calculator has a pretty accurate internal clock that can be used to record the time of observations. It should be reset from time to time to ensure it is accurate. To set the calculator's internal clock and timezone:
+The calculator has a pretty accurate internal clock that can be used to automatically record the time of observations. It should be set to a reliable external time source from time to time to ensure it is accurate. To set the calculator's internal clock and timezone:
 
 1. Run the **Sight Reduction** program and pick the **SET_TIME** function and set the calculator's local time clock and timezone:
 
-   * **Local time**: the local time to which to set the calculator. Enter a time a few seconds in the future and click the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key when your watch reads the time entered
-   * **UTC Offset**: the number of hours ahead of or behind UTC. Use a positive value for locations West of Greenwhich and negative for East (e.g. -5 for New York standard time). Keep in mind that this offset changes with Daylight Savings Time (DST)
+   * **Local time**: the local time to which to set the calculator. Enter a time a few seconds in the future and click the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key when your time source reads the time entered
+   * **UTC Offset**: the number of hours ahead of or behind UTC. Use a positive value for locations East of Greenwhich and negative for West (e.g. -5 for New York standard time). Keep in mind that this offset changes with Daylight Savings Time (DST)
 
 ![Setting the time and timezone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
 
