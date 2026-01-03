@@ -161,8 +161,7 @@ The program can show the Greenwich Hour Angle (GHA) and declination of the Sun, 
 
 3. The calculator will display several astronomical calculations such as Delta T, mean and true obliquity of the ecliptic, true GHA Aries, Moon phase (illumination %), etc. along with the GHA, declination, azimuth and altitude of all the celestial bodies:
 
-![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output.png)![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output2.png)
-
+![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output.png) ![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output2.png)
 
 ## Calculating Index Correction from Sun diameter (OPTIONAL)
 
