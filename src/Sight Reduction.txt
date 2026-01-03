@@ -367,6 +367,9 @@ BEGIN
   
   // Make sure x is not set  
   CAS("PURGE(x)");
+
+  //@TODO: Redo without EXPR -- see 
+  //AVERAGE_READINGS function for example
   f:="CAS(\"Function.F"+STRING(c)+"(x-dx)+dy\");";
   f:=STRING(EXPR(f));
 
@@ -564,7 +567,7 @@ BEGIN
   
   LOCAL labels:={"MORNING","EVENING","SPECIFIED"},h;
 
-  // Yeah this is ugly and should probably be refactored.
+  //@TODO: Yeah, this is ugly and should probably be refactored.
   // h=1 means morning nautical twilight
   // h=2 means evening nautical twilight
   // h=3 means at the time specified
@@ -586,18 +589,21 @@ BEGIN
         // twilight range
         ephTime:=(startTime+endTime)/2;
           
-        EXPR("Spreadsheet.A"+lin+":=\""+labels(h)+" NAUTICAL TWILIGHT\"");
+        Spreadsheet.Cell(lin,1,1):=labels(h)+" NAUTICAL TWILIGHT";
         Spreadsheet.Cell(lin,1,7):=16753920;
         lin:=lin+1;
-        EXPR("Spreadsheet.A"+lin+
-          ":=\"("+HMS(LOCAL_TIME(startTime))
-          +" to "+HMS(LOCAL_TIME(endTime))+")\"");
+        Spreadsheet.Cell(lin,1,1):=HMS(LOCAL_TIME(startTime))
+          +" to "+HMS(LOCAL_TIME(endTime))+" ("+HMS(LOCAL_TIME(ephTime))+")";
   
-        lin:=OUTPUT_EPHEMERIDES(date_,time_,ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg,0,1,1,1,1,lin,1,1);
+        lin:=OUTPUT_EPHEMERIDES(date_,ephTime,ephLat,ephLon,
+                                minElevAngle_deg,minAz_deg,
+                                maxAz_deg,0,1,1,1,1,lin,1,1);
       END;
     ELSE
-      EXPR("Spreadsheet.A"+lin+":=\"AT TIME SPECIFIED: "+HMS(LOCAL_TIME(time_))+"\"");
-      lin:=OUTPUT_EPHEMERIDES(date_,time_,ephLat,ephLon,minElevAngle_deg,minAz_deg,maxAz_deg,1,1,1,1,1,lin,1,1);
+      Spreadsheet.Cell(lin,1,1):="AT TIME SPECIFIED: "+HMS(LOCAL_TIME(time_));
+      lin:=OUTPUT_EPHEMERIDES(date_,time_,ephLat,ephLon,
+                              minElevAngle_deg,minAz_deg,
+                              maxAz_deg,1,1,1,1,1,lin,1,1);
     END;
     lin:=lin+1;
   END;
@@ -655,6 +661,9 @@ BEGIN
   
   STARTAPP("Spreadsheet");
   Spreadsheet.ClearCell();
+
+  c:=OUTPUT_EPHEMERIDES(date_,time_,ephLat,ephLon,-180,0,360,1,1,1,1,0,10,1,1);
+
   Spreadsheet.A1:="Date:";
   Spreadsheet.A2:="UTC Time:";
   Spreadsheet.A3:="Latitude:";
@@ -663,14 +672,30 @@ BEGIN
   Spreadsheet.B2:=HMS(time_);
   Spreadsheet.B3:=→DMD(ephLat);
   Spreadsheet.B4:=→DMD(ephLon);
-  
-  c:=OUTPUT_EPHEMERIDES(date_,time_,ephLat,ephLon,-180,0,360,1,1,1,1,0,6,1,1);
+
+  Spreadsheet.D1:="EoT:";
+  Spreadsheet.D2:="GHA Aries:";
+  Spreadsheet.D3:="Moon Ph.:";
+  Spreadsheet.D4:="ΔT:";
+  Spreadsheet.D5:="Δψ:";
+  Spreadsheet.D6:="Δε:";
+  Spreadsheet.D7:="Mean obl.:";
+  Spreadsheet.D8:="True obl.:";
+
+  Spreadsheet.E1:=EOT();
+  Spreadsheet.E2:=GHA_ARIES();
+  Spreadsheet.E3:=MOON_PHASE();
+  Spreadsheet.E4:=DELTA_T();
+  Spreadsheet.E5:=DELTA_PSI();
+  Spreadsheet.E6:=DELTA_EPSILON();
+  Spreadsheet.E7:=MEAN_OBLIQUITY();
+  Spreadsheet.E8:=TRUE_OBLIQUITY();
 
   //Use smaller font to fit more info
   FOR i FROM 1 TO c DO
     FOR h FROM 1 TO 7 DO
       Spreadsheet.Cell(i,h,5):=0;
-      IF h>1 AND i>5 THEN Spreadsheet.Cell(i,h,8):=1; END;
+      IF h>1 AND i>9 THEN Spreadsheet.Cell(i,h,8):=1; END;
     END;
   END;
 
