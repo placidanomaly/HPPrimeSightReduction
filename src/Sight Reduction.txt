@@ -489,11 +489,21 @@ BEGIN
 END;
 
 OUTPUT_EPHEMERIDES(date,time,lat,lon,minAltitude,minAz,maxAz,
-  sunFlag,moonFlag,planetFlag,starFlag,haFlag,startingLine,
-  includeHeading,showProgress)
+  flags,startingLine)
+  
 BEGIN
   LOCAL i,c,lin:=startingLine;
   LOCAL result:={};
+
+  // Parse flags
+  LOCAL sunFlag := flags(1);
+  LOCAL moonFlag := flags(2);
+  LOCAL planetFlag := flags(3);
+  LOCAL starFlag := flags(4);
+  LOCAL haFlag := flags(5);
+  LOCAL includeHeading := flags(6);
+  LOCAL showProgress := flags(7);
+  LOCAL sortFlag := flags(8);
 
   IF includeHeading THEN
     c:=2;
@@ -553,23 +563,27 @@ BEGIN
     END;
   END;
 
-  //Sort by azimuth
-  result:=LIST_SORT(r,2);
+  IF sortFlag THEN
+    //Sort by azimuth
+    result:=LIST_SORT(r,2);
 
-  // Adjust list if azimuth range crosses north
-  // to show all results in clockwise order
-  IF minAz>maxAz THEN
-    i:=1;
-    WHILE i<SIZE(result) DO
-      IF result(i,2)>=minAz THEN
-        IF i>1 THEN
-          result:=CONCAT(SUB(result,i,SIZE(result)),
-            SUB(result,1,i-1));
+    // Adjust list if azimuth range crosses north
+    // to show all results in clockwise order
+    IF minAz>maxAz THEN
+      i:=1;
+      WHILE i<SIZE(result) DO
+        IF result(i,2)>=minAz THEN
+          IF i>1 THEN
+            result:=CONCAT(SUB(result,i,SIZE(result)),
+              SUB(result,1,i-1));
+          END;
+          BREAK;
         END;
-        BREAK;
+        i:=i+1;
       END;
-      i:=i+1;
     END;
+  ELSE
+    result:=r;
   END;
 
   FOR i FROM 1 TO SIZE(result) DO  
@@ -616,43 +630,46 @@ BEGIN
   LOCAL sunTimes:=SunRiseSetTimes(ephLat,ephLon,date_);
   Spreadsheet.ClearCell();
   Spreadsheet.A1:="**ALL TIMES UTC"+IFTE(timeZone<0,"-","+")+ABS(timeZone)+"**";
-  Spreadsheet.B2:="Begin";
-  Spreadsheet.C2:="End";
-  Spreadsheet.Cell(2,2,7):=16753920;
-  Spreadsheet.Cell(2,3,7):=16753920;
+  Spreadsheet.B1:="Begin";
+  Spreadsheet.C1:="End";
+  Spreadsheet.Cell(1,2,7):=16753920;
+  Spreadsheet.Cell(1,3,7):=16753920;
 
-  Spreadsheet.A3:="Sunrise:";
-  Spreadsheet.A4:="Civil Twilight:";
-  Spreadsheet.A5:="Nautical Twilight:";
+  Spreadsheet.A2:="Sunrise:";
+  Spreadsheet.A3:="Civil Twilight:";
+  Spreadsheet.A4:="Nautical Twilight:";
+  
+  Spreadsheet.A6:="Meridian passage:";
+  Spreadsheet.B6:=HMS(LOCAL_TIME(12-EOT()/60-ephLon/15));
 
   IF (sunTimes(1,1)<>0) OR (sunTimes(1,2)<>0) THEN
-    Spreadsheet.B3:=HMS(LOCAL_TIME(sunTimes(1,1)));
-    Spreadsheet.C3:=HMS(LOCAL_TIME(sunTimes(1,2)));
+    Spreadsheet.B2:=HMS(LOCAL_TIME(sunTimes(1,1)));
+    Spreadsheet.C2:=HMS(LOCAL_TIME(sunTimes(1,2)));
   ELSE
     // No sunset at this location
+    Spreadsheet.B2:="-";
+    Spreadsheet.C2:="-";
+  END;
+  
+  IF (sunTimes(2,1)<>0) OR (sunTimes(2,2)<>0) THEN
+    Spreadsheet.B3:=HMS(LOCAL_TIME(sunTimes(2,1)));
+    Spreadsheet.C3:=HMS(LOCAL_TIME(sunTimes(2,2)));
+  ELSE
+    // No civil twilight at this location
     Spreadsheet.B3:="-";
     Spreadsheet.C3:="-";
   END;
   
-  IF (sunTimes(2,1)<>0) OR (sunTimes(2,2)<>0) THEN
-    Spreadsheet.B4:=HMS(LOCAL_TIME(sunTimes(2,1)));
-    Spreadsheet.C4:=HMS(LOCAL_TIME(sunTimes(2,2)));
+  IF (sunTimes(3,1)<>0) OR (sunTimes(3,2)<>0) THEN
+    Spreadsheet.B4:=HMS(LOCAL_TIME(sunTimes(3,1)));
+    Spreadsheet.C4:=HMS(LOCAL_TIME(sunTimes(3,2)));
   ELSE
-    // No civil twilight at this location
+    // No nautical twilight at this location
     Spreadsheet.B4:="-";
     Spreadsheet.C4:="-";
   END;
-  
-  IF (sunTimes(3,1)<>0) OR (sunTimes(3,2)<>0) THEN
-    Spreadsheet.B5:=HMS(LOCAL_TIME(sunTimes(3,1)));
-    Spreadsheet.C5:=HMS(LOCAL_TIME(sunTimes(3,2)));
-  ELSE
-    // No nautical twilight at this location
-    Spreadsheet.B5:="-";
-    Spreadsheet.C5:="-";
-  END;
           
-  lin:=7;  
+  lin:=8; 
 
   PRINT();
   
@@ -662,6 +679,7 @@ BEGIN
   // h=1 means morning nautical twilight
   // h=2 means evening nautical twilight
   // h=3 means at the time specified
+  LOCAL outputFlags:={0,1,1,1,1,1,1,1};
   
   FOR h FROM 1 TO 3 DO 
     PRINT("COMPUTING "+labels(h)+" EPHEMERIDES");
@@ -670,7 +688,7 @@ BEGIN
     LOCAL ephTime;
     
     IF h<3 THEN
-      IF (sunTimes(3,1)==0) AND (sunTimes(3,2)==0) THEN
+      IF (sunTimes(2,1)==0) AND (sunTimes(2,2)==0) THEN
         // No nautical twilight -- skip nautical twilight calcs
         ephTime:=-1;
       ELSE
@@ -686,17 +704,17 @@ BEGIN
         Spreadsheet.Cell(lin,1,1):=HMS(LOCAL_TIME(startTime))
           +" to "+HMS(LOCAL_TIME(endTime))+" ("+HMS(LOCAL_TIME(ephTime))+")";
   
-        lin:=OUTPUT_EPHEMERIDES(date_,ephTime,ephLat,ephLon,
+        lin:=1+OUTPUT_EPHEMERIDES(date_,ephTime,ephLat,ephLon,
                                 minElevAngle_deg,minAz_deg,
-                                maxAz_deg,0,1,1,1,1,lin,1,1);
+                                maxAz_deg,outputFlags,lin);
       END;
     ELSE
       Spreadsheet.Cell(lin,1,1):="AT TIME SPECIFIED: "+HMS(LOCAL_TIME(time_));
-      lin:=OUTPUT_EPHEMERIDES(date_,time_,ephLat,ephLon,
+	  outputFlags(1):=1;	  
+      lin:=1+OUTPUT_EPHEMERIDES(date_,time_,ephLat,ephLon,
                               minElevAngle_deg,minAz_deg,
-                              maxAz_deg,1,1,1,1,1,lin,1,1);
-    END;
-    lin:=lin+1;
+                              maxAz_deg,outputFlags,lin);							
+    END;   
   END;
   
   //Use smaller font to fit more info
@@ -753,7 +771,8 @@ BEGIN
   STARTAPP("Spreadsheet");
   Spreadsheet.ClearCell();
 
-  c:=OUTPUT_EPHEMERIDES(date_,time_,ephLat,ephLon,-180,0,360,1,1,1,1,0,10,1,1);
+  LOCAL flags:={1,1,1,1,0,1,1,0};
+  c:=OUTPUT_EPHEMERIDES(date_,time_,ephLat,ephLon,-180,0,360,flags,10);
 
   Spreadsheet.A1:="Date:";
   Spreadsheet.A2:="UTC Time:";
@@ -764,6 +783,9 @@ BEGIN
   Spreadsheet.B3:=→DMD(ephLat);
   Spreadsheet.B4:=→DMD(ephLon);
 
+  Spreadsheet.A6:="Mer. passage:";
+  Spreadsheet.B6:=HMS(12-EOT()/60-ephLon/15);
+  
   Spreadsheet.D1:="EoT:";
   Spreadsheet.D2:="GHA Aries:";
   Spreadsheet.D3:="Moon Ph.:";
