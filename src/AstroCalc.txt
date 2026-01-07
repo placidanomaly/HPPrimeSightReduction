@@ -1015,14 +1015,14 @@ END;
 
 
 //Civil and nautical twilight calculations
-LOCAL RiseSetTime(lat,lon,zenithOffset)
+EXPORT RiseSetTime(lat,lon,dec,offset)
 BEGIN
   oldHA:=HAngle;
   HAngle:=1;
   
-  LOCAL z:=90+zenithOffset;
+  LOCAL z:=90+offset;
 
-  LOCAL cosH:=((COS(z)-SIN(lat)*SIN(SunDec_))/(COS(lat)*COS(SunDec_)));
+  LOCAL cosH:=((COS(z)-SIN(lat)*SIN(dec))/(COS(lat)*COS(dec)));
 
   // If cosH>1 or <-1 then there is no sunset
   // at this latitude at this time of the year
@@ -1058,9 +1058,9 @@ BEGIN
   //  {Nautical twilight begin, nautical twilight end}}
   // Returns {0,0} if no sunset at the location
   
- RETURN {RiseSetTime(lat,lon,0),
-         RiseSetTime(lat,lon,6),
-         RiseSetTime(lat,lon,12)};
+  RETURN {RiseSetTime(lat,lon,SunDec_,0.833),
+          RiseSetTime(lat,lon,SunDec_,6),
+          RiseSetTime(lat,lon,SunDec_,12)};
 END;
 
 LOCAL SunComplete_()
