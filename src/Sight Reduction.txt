@@ -407,34 +407,18 @@ END;
 LOCAL ephLat,ephLon,ephStar:={1,15,30,45};
 LOCAL minElevAngle_deg:=15,minAz_deg:=0,maxAz_deg:=360;
 
-LOCAL WRITELINE(lin,body,gha,dec,sd,lat,lon,minElevAngle,minAz,maxAz,haFlag)
-BEGIN
-  LOCAL c:=HC_AZ(gha,dec,lat,lon),i:=1;
-  
-  IF c(1)>=minElevAngle THEN
-    IF ((minAz<maxAz) AND (c(2)>=minAz) AND (c(2)<=maxAz))
-       OR ((minAz>maxAz) AND ((c(2)>=minAz) OR (c(2)<=maxAz))) THEN
-
-      Spreadsheet.Cell(lin,i,1):=body;
-      Spreadsheet.Cell(lin,i+1,1):=→DMD(c(2));
-      Spreadsheet.Cell(lin,i+2,1):=→DMD(c(1));
-      IF haFlag THEN
-        Spreadsheet.Cell(lin,i+3,1):=→DMD(c(1)+REFRACTION(1010,20,c(1))/60);
-      ELSE
-        i:=i-1;
-      END;
-      Spreadsheet.Cell(lin,i+4,1):=→DMD(gha);
-      Spreadsheet.Cell(lin,i+5,1):=→DMD(dec);
-      IF sd<>0 THEN Spreadsheet.Cell(lin,i+6,1):=ROUND(sd,1); END; 
-      RETURN 1;
-    END;
-  END;
-  RETURN 0;  
-END;
-
-LOCAL WRITELINE(lin,body,azimuth,altitude,gha,dec,sd,haFlag)
+LOCAL WRITELINE(lin,data,haFlag,riseSetFlag)
 BEGIN
     LOCAL i:=1;
+	LOCAL body:=data(1);
+	LOCAL azimuth:=data(2);
+	LOCAL altitude:=data(3);
+	LOCAL gha:=data(4);
+	LOCAL dec:=data(5);
+	LOCAL sd:=data(6);
+	LOCAL rise:=data(8);
+	LOCAL set:=data(9);
+ 
 
     Spreadsheet.Cell(lin,i,1):=body;
     Spreadsheet.Cell(lin,i+1,1):=→DMD(azimuth);
@@ -447,7 +431,17 @@ BEGIN
     Spreadsheet.Cell(lin,i+4,1):=→DMD(gha);
     Spreadsheet.Cell(lin,i+5,1):=→DMD(dec);
     IF sd<>0 THEN Spreadsheet.Cell(lin,i+6,1):=ROUND(sd,1); END; 
-
+	
+	IF riseSetFlag THEN
+	  IF (rise>0) AND (set>0) THEN
+	    Spreadsheet.Cell(lin,i+7,1):=HMS(rise);
+        Spreadsheet.Cell(lin,i+8,1):=HMS(set);
+	  ELSE
+	    Spreadsheet.Cell(lin,i+7,1):="-";
+        Spreadsheet.Cell(lin,i+8,1):="-";
+	  END;	  
+	END;
+	
     RETURN 1;
 END;
 
@@ -492,7 +486,7 @@ OUTPUT_EPHEMERIDES(date,time,lat,lon,minAltitude,minAz,maxAz,
   flags,startingLine)
   
 BEGIN
-  LOCAL i,c,lin:=startingLine;
+  LOCAL i,c,lin:=startingLine,r;
   LOCAL result:={};
 
   // Parse flags
@@ -504,36 +498,48 @@ BEGIN
   LOCAL includeHeading := flags(6);
   LOCAL showProgress := flags(7);
   LOCAL sortFlag := flags(8);
+  LOCAL riseSetFlag := flags(9);
 
   IF includeHeading THEN
     c:=2;
     Spreadsheet.Cell(lin,c,1):="Azimuth";  
-    Spreadsheet.Cell(lin,c+1,1):="Elev (Hc)";
+    Spreadsheet.Cell(lin,c+1,1):="Alt. (Hc)";
     IF haFlag THEN
-      Spreadsheet.Cell(lin,c+2,1):="Elev (HA)";
+      Spreadsheet.Cell(lin,c+2,1):="App Alt (HA)";
     ELSE
       c:=c-1;
     END;
     Spreadsheet.Cell(lin,c+3,1):="GHA";
     Spreadsheet.Cell(lin,c+4,1):="Dec";
     Spreadsheet.Cell(lin,c+5,1):="Semi D";
-    FOR i FROM 1 TO 6+haFlag DO Spreadsheet.Cell(lin,i,7):=16753920; END;  
+	IF riseSetFlag THEN
+	  Spreadsheet.Cell(lin,c+6,1):="Rise";
+      Spreadsheet.Cell(lin,c+7,1):="Set";
+	END;
+	
+    FOR i FROM 1 TO 8+haFlag DO Spreadsheet.Cell(lin,i,7):=16753920; END;  
     lin:=lin+1;
   END;
 
   IF sunFlag THEN
     IF showProgress THEN PRINT("Computing sun"); END;
-    result:=LIST_APPEND(result,CONCAT({"Sun"},SunEphemeris(date,time,showProgress)));
+	r:=SunEphemeris(date,time,showProgress);	
+	r:=CONCAT(r,RiseSetTime(lat,lon,r(2),0.833));
+    result:=LIST_APPEND(result,CONCAT({"Sun"},r));	
   END;
   
   IF moonFlag THEN
     IF showProgress THEN PRINT("Computing Moon"); END;
-    result:=LIST_APPEND(result,CONCAT({"Moon"},MoonEphemeris(date,time)));
+	r:=MoonEphemeris(date,time);
+	r:=CONCAT(r,RiseSetTime(lat,lon,r(2),-0.125));
+    result:=LIST_APPEND(result,CONCAT({"Moon"},r));	
   END;
 
   IF planetFlag THEN
     FOR i FROM 1 TO 4 DO        
-      result:=LIST_APPEND(result,CONCAT({planets_(i)},PlanetEphemeris(i,date,time,1,showProgress)));
+	  r:=SUB(PlanetEphemeris(i,date,time,1,showProgress),1,4);
+      r:=CONCAT(r,RiseSetTime(lat,lon,r(2),0.5667));
+      result:=LIST_APPEND(result,CONCAT({planets_(i)},r));	  
     END;
   END;
   
@@ -541,13 +547,15 @@ BEGIN
     IF showProgress THEN PRINT("Computing stars"); END;
     LOCAL d:=StarEphemerisAll(date,time);
 
-    FOR i FROM 1 TO SIZE(d) DO
-      d:=CONCAT(d,{0});
-      result:=LIST_APPEND(result,CONCAT({navstar_(i,1)},d(i)));      
+    FOR i FROM 1 TO SIZE(d) DO      
+	  r:=CONCAT(SUB(d(i),1,2),{0,0});
+	  r:=CONCAT(r,RiseSetTime(lat,lon,r(2),0.5667));
+      result:=LIST_APPEND(result,CONCAT({navstar_(i,1)},r));	  
     END;
   END;
 
   //Compute azimuth and elevation of all bodies
+  //and rise/set times if required
   LOCAL r:={};
   
   FOR i FROM 1 TO SIZE(result) DO
@@ -557,8 +565,9 @@ BEGIN
     IF altitude>=minAltitude THEN
       IF ((minAz<maxAz) AND (azimuth>=minAz) AND (azimuth<=maxAz))
          OR ((minAz>maxAz) AND ((azimuth>=minAz) OR (azimuth<=maxAz))) THEN
-        c:={result(i,1),azimuth,altitude,result(i,2),result(i,3),result(i,4)};
-        r:=CONCAT(r,{c});
+        c:={result(i,1),azimuth,altitude,result(i,2),result(i,3),
+		    result(i,4),result(i,5),result(i,6),result(i,7)};
+		r:=CONCAT(r,{c});
       END;
     END;
   END;
@@ -587,8 +596,7 @@ BEGIN
   END;
 
   FOR i FROM 1 TO SIZE(result) DO  
-    lin:=lin+WRITELINE(lin,result(i,1),result(i,2),result(i,3),
-      result(i,4),result(i,5),result(i,6),haFlag);
+    lin:=lin+WRITELINE(lin,result(i),haFlag,riseSetFlag);
   END;
 
   RETURN lin;
@@ -679,7 +687,7 @@ BEGIN
   // h=1 means morning nautical twilight
   // h=2 means evening nautical twilight
   // h=3 means at the time specified
-  LOCAL outputFlags:={0,1,1,1,1,1,1,1};
+  LOCAL outputFlags:={0,1,1,1,1,1,1,1,0};
   
   FOR h FROM 1 TO 3 DO 
     PRINT("COMPUTING "+labels(h)+" EPHEMERIDES");
@@ -771,7 +779,7 @@ BEGIN
   STARTAPP("Spreadsheet");
   Spreadsheet.ClearCell();
 
-  LOCAL flags:={1,1,1,1,0,1,1,0};
+  LOCAL flags:={1,1,1,1,0,1,1,0,1};
   c:=OUTPUT_EPHEMERIDES(date_,time_,ephLat,ephLon,-180,0,360,flags,10);
 
   Spreadsheet.A1:="Date:";
@@ -806,14 +814,14 @@ BEGIN
 
   //Use smaller font to fit more info
   FOR i FROM 1 TO c DO
-    FOR h FROM 1 TO 7 DO
+    FOR h FROM 1 TO 9 DO
       Spreadsheet.Cell(i,h,5):=0;
       IF h>1 AND i>9 THEN Spreadsheet.Cell(i,h,8):=1; END;
     END;
   END;
 
   Spreadsheet.ColWidth(1):=80;
-  FOR i FROM 2 TO 7 DO Spreadsheet.ColWidth(i):=55; END;
+  FOR i FROM 2 TO 9 DO Spreadsheet.ColWidth(i):=55; END;
   Spreadsheet.Cursor:={1,1};
 
   PRINT("PRESS ANY KEY FOR RESULTS...");
