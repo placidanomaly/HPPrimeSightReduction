@@ -410,14 +410,14 @@ LOCAL minElevAngle_deg:=15,minAz_deg:=0,maxAz_deg:=360;
 LOCAL WRITELINE(lin,data,haFlag,riseSetFlag)
 BEGIN
     LOCAL i:=1;
-	LOCAL body:=data(1);
-	LOCAL azimuth:=data(2);
-	LOCAL altitude:=data(3);
-	LOCAL gha:=data(4);
-	LOCAL dec:=data(5);
-	LOCAL sd:=data(6);
-	LOCAL rise:=data(8);
-	LOCAL set:=data(9);
+    LOCAL body:=data(1);
+    LOCAL azimuth:=data(2);
+    LOCAL altitude:=data(3);
+    LOCAL gha:=data(4);
+    LOCAL dec:=data(5);
+    LOCAL sd:=data(6);
+    LOCAL rise:=data(8);
+    LOCAL set:=data(9);
  
 
     Spreadsheet.Cell(lin,i,1):=body;
@@ -431,23 +431,86 @@ BEGIN
     Spreadsheet.Cell(lin,i+4,1):=→DMD(gha);
     Spreadsheet.Cell(lin,i+5,1):=→DMD(dec);
     IF sd<>0 THEN Spreadsheet.Cell(lin,i+6,1):=ROUND(sd,1); END; 
-	
-	IF riseSetFlag THEN
-	  IF (rise>0) AND (set>0) THEN
-	    Spreadsheet.Cell(lin,i+7,1):=HMS(rise);
+    
+    IF riseSetFlag THEN
+      IF (rise>0) AND (set>0) THEN
+        Spreadsheet.Cell(lin,i+7,1):=HMS(rise);
         Spreadsheet.Cell(lin,i+8,1):=HMS(set);
-	  ELSE
-	    Spreadsheet.Cell(lin,i+7,1):="-";
+      ELSE
+        Spreadsheet.Cell(lin,i+7,1):="-";
         Spreadsheet.Cell(lin,i+8,1):="-";
-	  END;	  
-	END;
-	
+      END;      
+    END;
+    
     RETURN 1;
 END;
 
+EXPORT bodiesList;
+
+CALCULATE_BODIES(date,time,lat,lon,flags)
+BEGIN
+  LOCAL result:={};
+  LOCAL r,i;
+
+  // Parse flags
+  LOCAL sunFlag := flags(1);
+  LOCAL moonFlag := flags(2);
+  LOCAL planetFlag := flags(3);
+  LOCAL starFlag := flags(4);
+  LOCAL haFlag := flags(5);
+  LOCAL includeHeading := flags(6);
+  LOCAL showProgress := flags(7);
+  LOCAL sortFlag := flags(8);
+  LOCAL riseSetFlag := flags(9);
+
+  IF sunFlag THEN
+    IF showProgress THEN PRINT("Computing sun"); END;
+    r:=SunEphemeris(date,time,showProgress);    
+    r:=CONCAT(r,RiseSetTime(lat,lon,r(2),0.833));
+    result:=CONCAT(result,{CONCAT({"Sun"},r)});    
+  END;
+
+  IF moonFlag THEN
+    IF showProgress THEN PRINT("Computing Moon"); END;
+    r:=MoonEphemeris(date,time);
+    r:=CONCAT(r,RiseSetTime(lat,lon,r(2),-0.125));
+    result:=CONCAT(result,{CONCAT({"Moon"},r)});
+  END;
+
+  IF planetFlag THEN
+    FOR i FROM 1 TO 4 DO        
+      r:=SUB(PlanetEphemeris(i,date,time,1,showProgress),1,4);
+      r:=CONCAT(r,RiseSetTime(lat,lon,r(2),0.5667));
+      result:=CONCAT(result,{CONCAT({planets_(i)},r)});      
+    END;
+  END;
+
+  IF starFlag THEN
+    IF showProgress THEN PRINT("Computing stars"); END;
+    LOCAL d:=StarEphemerisAll(date,time);
+
+    FOR i FROM 1 TO SIZE(d) DO      
+      r:=CONCAT(SUB(d(i),1,2),{0,0});
+      r:=CONCAT(r,RiseSetTime(lat,lon,r(2),0.5667));
+      result:=CONCAT(result,{CONCAT({navstar_(i,1)},r)});      
+    END;
+  END;
+
+  // Calculate azimuth and elevation of all bodies
+  FOR i FROM 1 TO SIZE(result) DO
+    LOCAL c:=HC_AZ(result(i,2),result(i,3),lat,lon);
+    LOCAL altitude:=c(1);
+    LOCAL azimuth:=c(2);
+    result(i):={result(i,1),azimuth,altitude,result(i,2),result(i,3),result(i,4),result(i,5),result(i,6),result(i,7)};
+  END;
+
+  bodiesList:=result;
+  RETURN result;
+END;
+
+
 OUTPUT_EPHEMERIDES(date,time,lat,lon,minAltitude,minAz,maxAz,
   flags,startingLine)
-  
 BEGIN
   LOCAL i,c,lin:=startingLine,r;
   LOCAL result:={};
@@ -475,63 +538,28 @@ BEGIN
     Spreadsheet.Cell(lin,c+3,1):="GHA";
     Spreadsheet.Cell(lin,c+4,1):="Dec";
     Spreadsheet.Cell(lin,c+5,1):="Semi D";
-	IF riseSetFlag THEN
-	  Spreadsheet.Cell(lin,c+6,1):="Rise";
+    IF riseSetFlag THEN
+      Spreadsheet.Cell(lin,c+6,1):="Rise";
       Spreadsheet.Cell(lin,c+7,1):="Set";
-	END;
-	
+    END;
+    
     FOR i FROM 1 TO IFTE(riseSetFlag,8,6)+haFlag DO Spreadsheet.Cell(lin,i,7):=16753920; END;  
     lin:=lin+1;
   END;
 
-  IF sunFlag THEN
-    IF showProgress THEN PRINT("Computing sun"); END;
-	r:=SunEphemeris(date,time,showProgress);	
-	r:=CONCAT(r,RiseSetTime(lat,lon,r(2),0.833));
-    result:=CONCAT(result,CONCAT({"Sun"},r));	
-  END;
-  
-  IF moonFlag THEN
-    IF showProgress THEN PRINT("Computing Moon"); END;
-	r:=MoonEphemeris(date,time);
-	r:=CONCAT(r,RiseSetTime(lat,lon,r(2),-0.125));
-    result:=CONCAT(result,CONCAT({"Moon"},r));
-  END;
+  LOCAL result:=CALCULATE_BODIES(date,time,lat,lon,flags);
 
-  IF planetFlag THEN
-    FOR i FROM 1 TO 4 DO        
-	  r:=SUB(PlanetEphemeris(i,date,time,1,showProgress),1,4);
-      r:=CONCAT(r,RiseSetTime(lat,lon,r(2),0.5667));
-      result:=CONCAT(result,CONCAT({planets_(i)},r));	  
-    END;
-  END;
-  
-  IF starFlag THEN
-    IF showProgress THEN PRINT("Computing stars"); END;
-    LOCAL d:=StarEphemerisAll(date,time);
-
-    FOR i FROM 1 TO SIZE(d) DO      
-	  r:=CONCAT(SUB(d(i),1,2),{0,0});
-	  r:=CONCAT(r,RiseSetTime(lat,lon,r(2),0.5667));
-      result:=CONCAT(result,CONCAT({navstar_(i,1)},r));	  
-    END;
-  END;
-
-  //Compute azimuth and elevation of all bodies
-  //and rise/set times if required
+  //Restrict azimuth and elevation of all bodies
   LOCAL r:={};
   
   FOR i FROM 1 TO SIZE(result) DO
-    LOCAL c:=HC_AZ(result(i,2),result(i,3),lat,lon);
-    LOCAL altitude:=c(1);
-    LOCAL azimuth:=c(2);
-debug();
+    LOCAL altitude:=result(i,3);
+    LOCAL azimuth:=result(i,2);
+
     IF altitude>=minAltitude THEN
       IF ((minAz<maxAz) AND (azimuth>=minAz) AND (azimuth<=maxAz))
          OR ((minAz>maxAz) AND ((azimuth>=minAz) OR (azimuth<=maxAz))) THEN
-        c:={result(i,1),azimuth,altitude,result(i,2),result(i,3),
-		    result(i,4),result(i,5),result(i,6),result(i,7)};
-		r:=CONCAT(r,{c});
+        r:=CONCAT(r,{result(i)});
       END;
     END;
   END;
@@ -682,10 +710,10 @@ BEGIN
       END;
     ELSE
       Spreadsheet.Cell(lin,1,1):="AT TIME SPECIFIED: "+HMS(LOCAL_TIME(time_));
-	  outputFlags(1):=1;	  
+      outputFlags(1):=1;      
       lin:=1+OUTPUT_EPHEMERIDES(date_,time_,ephLat,ephLon,
                               minElevAngle_deg,minAz_deg,
-                              maxAz_deg,outputFlags,lin);							
+                              maxAz_deg,outputFlags,lin);                            
     END;   
   END;
   
@@ -791,6 +819,216 @@ BEGIN
   PRINT("PRESS ANY KEY FOR RESULTS...");
   STARTVIEW(2,1);
 
+END;
+
+
+// Project celestial bodies on a perspective view
+// for an observer looking at a given azimuth and
+// altitude.
+LOCAL CELESTIALTOSCREEN(bodies, viewAz, viewAlt, fov)
+BEGIN
+  LOCAL result := {};
+  LOCAL i, body, name, az, alt;
+  LOCAL camX, camY, camZ;
+  LOCAL screenX, screenY;
+  LOCAL tanHalfFov;
+  
+  // Calculate tangent of half FOV (degrees mode)
+  tanHalfFov := TAN(fov / 2);
+  
+  // Process each celestial body
+  FOR i FROM 1 TO SIZE(bodies) DO
+    body := bodies(i);
+    name := body(1);
+    az := body(2);    // Already in degrees
+    alt := body(3);   // Already in degrees
+    
+    // Calculate relative position from viewer direction
+    // Subtract viewer azimuth to rotate horizontally
+    // Subtract viewer altitude for vertical adjustment
+    az := az - viewAz;
+    alt := alt - viewAlt;
+    
+    // Convert relative angles to camera-space coordinates
+    // Camera looks along -Y axis, with X=right, Y=forward, Z=up
+    camX := COS(alt) * SIN(az);
+    camY := -COS(alt) * COS(az);  // Negative because camera looks along -Y
+    camZ := SIN(alt);
+    
+    // Only project if object is in front of camera (negative Y in camera space)
+    IF camY < 0 THEN
+      // Perspective projection
+      // Project onto a plane at distance 1 from camera
+      screenX := camX / (-camY * tanHalfFov);
+      screenY := camZ / (-camY * tanHalfFov);
+      
+      // Check if within field of view (|screenX| <= 1 and |screenY| <= 1)
+      IF ABS(screenX) <= 1 AND ABS(screenY) <= 1 THEN
+        // Convert from [-1, 1] to [0, 1] screen coordinates
+        // Y is inverted because screen Y increases downward
+        screenX := (screenX + 1) / 2;
+        screenY := (1 - screenY) / 2;
+        
+        // Add to result list
+        result := CONCAT(result, {{name, screenX, screenY,az,alt}});
+      END;
+    END;
+  END;
+  
+  RETURN result;
+END;
+
+// Plots the output of the CELESTIALTOSCREEN function
+// on the calculator screen
+LOCAL PLOTCELESTIALVIEW(screenCoords)
+BEGIN
+  LOCAL i, body, name, screenX, screenY, color;
+  LOCAL pixelX, pixelY;
+  LOCAL screenWidth := 320;   // HP Prime screen width
+  LOCAL screenHeight := 240;  // HP Prime screen height
+  
+  // Clear the screen
+  RECT();
+  
+  // Draw each celestial body
+  FOR i FROM 1 TO SIZE(screenCoords) DO
+    body := screenCoords(i);
+    name := body(1);
+    screenX := body(2);
+    screenY := body(3);
+    color:=IFTE(body(5)<0,#FF0000,0);
+
+    // Convert from [0,1] coordinates to screen coordinates
+    pixelX := screenX * screenWidth;
+    pixelY := screenY * screenHeight;
+    
+    // Draw a 3-pixel wide dot
+    PIXON_P(pixelX - 1, pixelY - 1,color);
+    PIXON_P(pixelX, pixelY - 1,color);
+    PIXON_P(pixelX + 1, pixelY - 1,color);
+    PIXON_P(pixelX - 1, pixelY,color);
+    PIXON_P(pixelX, pixelY,color);
+    PIXON_P(pixelX + 1, pixelY,color);
+    PIXON_P(pixelX - 1, pixelY + 1,color);
+    PIXON_P(pixelX, pixelY + 1,color);
+    PIXON_P(pixelX + 1, pixelY + 1,color);
+    
+    // Draw the label to the right in small font
+    TEXTOUT_P(name, pixelX + 5, pixelY - 3, 1);
+  END;
+END;
+
+// Plots the sky and processes user input to
+// tilt and pan the view using keys or the mouse
+LOCAL PLOTSKY(bodies,viewAz,viewAlt,viewFov)
+BEGIN
+  LOCAL az:=viewAz;
+  LOCAL alt:=viewAlt;
+  LOCAL fov:=viewFov;
+  LOCAL i,k;
+  LOCAL validKeys:={2,7,8,12,4,45,50,46};
+  LOCAL oldX:=-1, oldY:=-1,mx,my,dx,dy;
+  
+  REPEAT
+    LOCAL screenCoords := CELESTIALTOSCREEN(bodies,az,alt,fov);
+    PLOTCELESTIALVIEW(screenCoords);
+    TEXTOUT_P("Az:"+az+"°  Alt:"+alt+"°   FOV:"+fov+"°",2,220,1);
+    FREEZE;
+    k:=-1;
+    WHILE k==-1 DO
+      WAIT(0.05);
+      // Check whether a key is pressed
+      FOR i FROM 1 TO SIZE(validKeys) DO
+        IF ISKEYDOWN(validKeys(i)) THEN
+          k:=validKeys(i);
+          BREAK;
+        END;
+      END;
+
+      // Check if the mouse is being dragged
+      LOCAL mouse:=MOUSE();
+      mouse:=mouse(1);
+      IF SIZE(mouse)>0 THEN
+        mx:=mouse(1);
+        my:=mouse(2);
+        IF oldX<>-1 THEN
+          dx:=mx-oldX;
+          dy:=my-oldY;
+          // If drag values are non-null, pan and tilt
+          // the view by a factor corresponding to the
+          // drag values
+          alt:=alt+dy/5;
+          az:=az-dx/5;
+          k:=0;
+        ELSE
+          dx:=0;
+          dy:=0;
+        END;
+        oldX:=mx;
+        oldY:=my;
+      ELSE
+        oldX:=-1;
+        oldY:=-1;
+        dx:=0;
+        dy:=0;
+      END;
+    END;
+
+    // React to arrow and + or - key presses
+    CASE
+      // Arrows cause viewer azimuth and altitude
+      // to change
+      IF k=2 THEN alt:=alt+5; END;
+      IF k=12 THEN alt:=alt-2; END;
+      IF k=8 THEN az:=az+5; END;
+      IF k=7 THEN az:=az-5; END;
+
+      // + and - keys cause FOV to change
+      IF k=50 THEN fov:=fov-5; END;
+      IF k=45 THEN fov:=fov+5; END;
+    END;
+    
+    IF az > 360 THEN az := az - 360; ELSE
+    IF az < 0 THEN az := az + 360; END; END;
+    IF alt > 90 THEN alt := 90; ELSE
+    IF alt < -90 THEN alt := -90; END; END;
+    IF fov > 90 THEN fov:=90; ELSE
+    IF fov < 20 THEN fov:=20; END; END;
+  END;
+
+  // Exit if On or Esc is pressed
+  UNTIL k==4 OR k==46;
+END;
+
+EXPORT STARFINDER()
+BEGIN
+  LOCAL date_:=Date;
+  LOCAL time_:=GET_UTC_TIME();
+  LOCAL i,h,c;
+  
+  HAngle:=1;
+  ephLat:=DRlat_default;
+  ephLon:=DRlon_default;
+  
+  LOCAL c:=INPUT(
+    {date_,time_,ephLat,ephLon},
+     "Star Finder Parameters",
+    {"Date:","Time:","Latitude:","Longitude:"},
+    {"Date of ephemerides (YYYY.MMDD)",
+     "UTC Time (HH°MM'DD\")",
+     "Latitude (°)","Longitude (°)"});
+   
+  IF NOT c THEN RETURN "Canceled."; END;
+
+  ephLon:=NORMALIZE_LONGITUDE(ephLon);
+  
+  DRlat_default:=ephLat;
+  DRlon_default:=ephLon;
+
+  LOCAL bodies:=CALCULATE_BODIES(date_,time_,ephLat,ephLon,{1,1,1,1,0,0,1,0,0});
+  
+  PLOTSKY(bodies,270,0,90);
+  
 END;
 
 LOP_EQUATION(index)
