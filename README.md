@@ -159,7 +159,7 @@ The program can show the Greenwich Hour Angle (GHA) and declination of the Sun, 
    * **Latitude**: the latitude in degrees to calculate azimuth and altitude
    * **Longitude**: the longitude in degrees to calculate azimuth and altitude
 
-3. The calculator will display several astronomical calculations such as Delta T, mean and true obliquity of the ecliptic, true GHA Aries, Moon phase (illumination %), UTC time of Meridian passage at the specified longitude, etc. along with the GHA, declination, azimuth and altitude of all the celestial bodies:
+3. The calculator will display several astronomical calculations such as Delta T, mean and true obliquity of the ecliptic, true GHA Aries, Moon phase (illumination %), UTC time of Meridian passage at the specified longitude, etc. along with the GHA, declination, azimuth, altitude, semi-diameter, rise and set times of all the celestial bodies:
 
 ![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output2.png)
 
