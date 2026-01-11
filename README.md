@@ -3,6 +3,7 @@ This repository contains a set of programs written in Prime Programming Language
 
 The following functionality is provided:
 * Astronomical calculations of the ephemerides of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the usual 58 stars used in celestial navication, valid from 1800 to 2200, and related calculations of Equation of Time, sunrise/sunset times, semi-diameters, centroid corrections for the partial illumination of Venus and Mars, etc.
+* Starfinder plot of celestial bodies at a given location
 * Observation planning by listing all observable bodies (i.e. meeting user-specified altitude and azimuth constraints) during morning and evening nautical twilight and at any time of the day with their respective GHA, declination, azimuth, true altitude, apparent altitude, and semi-diameter
 * Sight reduction of sextant observations of any of those celestial bodies to Lines of Position (LOPs)
 * Running fix calculations through translation of lines of position by a certain distance on a given bearing
@@ -105,7 +106,7 @@ Time values are represented in 24-hour format using the same format as angle deg
 The program keeps data about sights and lines of position in the calculator's memory, and that data is preserved when the calculator is turned off. Generally, you should clear the program's memory prior to any new fix. If you ever get an **Invalid Input** error, you likely inadvertently opened the **Sight Reduction** program for editing and need to clear the memory (see the **NOTE** in the [Confirming that Everything Works](#confirming-that-everything-works) section). To clear all program variables:
 
 1. Highlight the **Sight Reduction** program and press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key
-2. From the list of options, pick **RESET_SIGHTS** on the touchscreen or with the arrows and the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key, or press the <img alt="8" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/8.png" valign="middle"> key. Click any key to dismiss the confirmation message.
+2. From the list of options, pick **RESET_SIGHTS** on the touchscreen or with the arrows and the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key, or press the `9` key. Click any key to dismiss the confirmation message.
 
 ![Resetting variables](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightreductionprograms.png)
 
@@ -162,6 +163,17 @@ The program can show the Greenwich Hour Angle (GHA) and declination of the Sun, 
 3. The calculator will display several astronomical calculations such as Delta T, mean and true obliquity of the ecliptic, true GHA Aries, Moon phase (illumination %), UTC time of Meridian passage at the specified longitude, etc. along with the GHA, declination, azimuth, altitude, semi-diameter, rise and set times of all the celestial bodies:
 
 ![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output2.png)
+
+## Star Finder
+A plot of the sky with the 58 celestial bodies based on the ephemerides can be displayed by using the **STARFINDER** function of the **Sight Reduction** program. The input screen is the same as for the **EPHEMERIDES** function (see previous section) and the output looks like this:
+
+![Star Finder](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/starfinder.png)
+
+The stars and planets are shown as black dots if above the horizon or red dots if below the horizon. The center of the screen corresponds to the azimuth and altitude of the viewer and is displayed at the bottom of the screen. The following keys can be used to navigate the plot:
+   * **Up/Down Arrows**: tilt view up/down
+   * **Left/Right Arrows**: pan view left/right
+   * **Mouse drag**: you can drag the view using the touchscreen drag gesture
+   * **ESC** or **On**: exit the program
 
 ## Calculating Index Correction from Sun diameter (OPTIONAL)
 
