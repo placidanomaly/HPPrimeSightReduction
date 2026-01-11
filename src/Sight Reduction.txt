@@ -462,6 +462,8 @@ BEGIN
   LOCAL showProgress := flags(7);
   LOCAL sortFlag := flags(8);
   LOCAL riseSetFlag := flags(9);
+  
+  IF showProgress THEN PRINT(); END;
 
   IF sunFlag THEN
     IF showProgress THEN PRINT("Computing sun"); END;
@@ -993,18 +995,12 @@ BEGIN
   LOCAL az:=viewAz;
   LOCAL alt:=viewAlt;
   LOCAL fov:=viewFov;
-  LOCAL i,k;
+  LOCAL i,k:=0;
   LOCAL validKeys:={2,7,8,12,4,45,50,46};
   LOCAL oldX:=-1, oldY:=-1,mx,my,dx,dy;
-  
-  REPEAT
-    //Draw stars and gridlines
-    RECT();
-    PLOTSKYGRID(az,alt,fov,15,10,fov/30,#0A0A0A);
-    PLOTBODIES(CELESTIALTOSCREEN(bodies,az,alt,fov));
-    TEXTOUT_P("Az:"+az+"° Alt:"+alt+"° FOV:"+fov+"°",2,220,1);
-    FREEZE;
+  LOCAL redrawRequired:=1;
 
+  REPEAT
     //Monitor key and mouse inputs in a loop
     //Exit loop if a key is pressed or the mouse
     //is dragged
@@ -1018,6 +1014,20 @@ BEGIN
           k:=validKeys(i);
           BREAK;
         END;
+      END;
+
+      //Draw stars and gridlines
+      IF redrawRequired THEN
+        RECT();
+        LOCAL m:=MOUSE();
+        // Only redraw gridlines if panning has stopped
+        IF SIZE(m(1))==0 AND k==-1 THEN
+          PLOTSKYGRID(az,alt,fov,15,10,fov/30,#CCCCCC);
+          redrawRequired:=0;
+        END;
+        PLOTBODIES(CELESTIALTOSCREEN(bodies,az,alt,fov));
+        TEXTOUT_P("Az:"+az+"° Alt:"+alt+"° FOV:"+fov+"°",2,230,1);
+        FREEZE;
       END;
 
       // Check if the mouse is being dragged
@@ -1035,9 +1045,7 @@ BEGIN
           // drag values
           alt:=alt+dy/5;
           az:=az-dx/5;
-
-          // Set k so we exit this loop and 
-          // cause a redraw
+          redrawRequired:=1;
           k:=0;
         ELSE
           dx:=0;
@@ -1060,14 +1068,14 @@ BEGIN
     CASE
       // Arrows cause viewer azimuth and altitude
       // to change
-      IF k=2 THEN alt:=alt+5; END;
-      IF k=12 THEN alt:=alt-2; END;
-      IF k=8 THEN az:=az+5; END;
-      IF k=7 THEN az:=az-5; END;
+      IF k=2 THEN alt:=alt+5; redrawRequired:=1; END;
+      IF k=12 THEN alt:=alt-2; redrawRequired:=1; END;
+      IF k=8 THEN az:=az+5; redrawRequired:=1; END;
+      IF k=7 THEN az:=az-5; redrawRequired:=1; END;
 
       // + and - keys cause FOV to change
-      IF k=50 THEN fov:=fov-5; END;
-      IF k=45 THEN fov:=fov+5; END;
+      IF k=50 THEN fov:=fov-5; redrawRequired:=1; END;
+      IF k=45 THEN fov:=fov+5; redrawRequired:=1; END;
     END;
     
     // Check that values remain within bounds
