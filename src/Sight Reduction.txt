@@ -603,6 +603,15 @@ BEGIN
   LOCAL i,d;
   LOCAL lin:=3;
   
+  IF time_>24 THEN
+    time_:=time_-24;
+    date_:=DATEADD(date_,1);
+  END;
+  IF time_<0 THEN
+    time_:=time_+24;
+    date_:=DATEADD(date_,-1);
+  END;
+
   HAngle:=1;
   
   ephLat:=DRlat_default;
@@ -752,6 +761,15 @@ BEGIN
   HAngle:=1;
   ephLat:=DRlat_default;
   ephLon:=DRlon_default;
+  
+  IF time_>24 THEN
+    time_:=time_-24;
+    date_:=DATEADD(date_,1);
+  END;
+  IF time_<0 THEN
+    time_:=time_+24;
+    date_:=DATEADD(date_,-1);
+  END;
   
   LOCAL c:=INPUT(
     {date_,time_,ephLat,ephLon},
@@ -1095,7 +1113,16 @@ BEGIN
   LOCAL date_:=Date;
   LOCAL time_:=GET_UTC_TIME();
   LOCAL i,h,c;
-  
+
+  IF time_>24 THEN
+    time_:=time_-24;
+    date_:=DATEADD(date_,1);
+  END;
+  IF time_<0 THEN
+    time_:=time_+24;
+    date_:=DATEADD(date_,-1);
+  END;
+
   HAngle:=1;
   ephLat:=DRlat_default;
   ephLon:=DRlon_default;
@@ -1340,8 +1367,14 @@ BEGIN
   IF tempDate=0 THEN tempDate:=date_default; END;
   IF tempTime=0 THEN 
     tempTime:=GET_UTC_TIME();
-    IF tempTime>24 THEN tempTime:=tempTime-24; END;
-    IF tempTime<0 THEN tempTime:=tempTime+24; END;
+    IF tempTime>24 THEN 
+      tempTime:=tempTime-24;
+      tempDate:=DATEADD(tempDate,1);
+    END;
+    IF tempTime<0 THEN 
+      tempTime:=tempTime+24;
+      tempDate:=DATEADD(tempDate,-1);
+    END;
   END;
 
 
@@ -1706,8 +1739,11 @@ BEGIN
   IF NOT c THEN RETURN "Canceled."; END;
   
   Time:=time;
-  
-  RETURN "Local time:"+Time+" UTC Time:"+GET_UTC_TIME();
+  c:=GET_UTC_TIME();
+  IF c>24 THEN c:=c-24; END;
+  IF c<0 THEN c:=c+24; END;
+
+  RETURN "Local time:"+Time+" UTC Time:"+c;
 END;
 
 EXPORT RESET_SIGHTS()
