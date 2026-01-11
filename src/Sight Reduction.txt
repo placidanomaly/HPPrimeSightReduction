@@ -821,6 +821,40 @@ BEGIN
 
 END;
 
+LOCAL AZALT2SCREENSPACE(az,alt,fov)
+BEGIN
+  LOCAL screenWidth := 320;   // HP Prime screen width
+  LOCAL screenHeight := 240;  // HP Prime screen height
+
+  LOCAL screenX, screenY,camX,camY,camZ;
+  // Calculate tangent of half FOV (degrees mode)
+  LOCAL tanHalfFov := TAN(fov / 2);
+
+  // Convert relative angles to camera-space coordinates
+  // Camera looks along -Y axis, with X=right, Y=forward, Z=up
+  camX := COS(alt) * SIN(az);
+  camY := -COS(alt) * COS(az);  // Negative because camera looks along -Y
+  camZ := SIN(alt);
+  
+  // Only project if object is in front of camera (negative Y in camera space)
+  IF camY < 0 THEN
+    // Perspective projection
+    // Project onto a plane at distance 1 from camera
+    screenX := camX / (-camY * tanHalfFov);
+    screenY := camZ / (-camY * tanHalfFov);
+    
+    // Check if within field of view (|screenX| <= 1 and |screenY| <= 1)
+    IF ABS(screenX) <= 1 AND ABS(screenY) <= 1 THEN
+      // Convert from [-1, 1] to [0, 1] screen coordinates
+      // Y is inverted because screen Y increases downward
+      screenX := (screenX + 1) / 2;
+      screenY := (1 - screenY) / 2;
+
+      RETURN {screenX*screenWidth, screenY*screenHeight};
+    END;
+  END;
+  RETURN {-1,-1};
+END;
 
 // Project celestial bodies on a perspective view
 // for an observer looking at a given azimuth and
@@ -832,10 +866,7 @@ BEGIN
   LOCAL camX, camY, camZ;
   LOCAL screenX, screenY;
   LOCAL tanHalfFov;
-  
-  // Calculate tangent of half FOV (degrees mode)
-  tanHalfFov := TAN(fov / 2);
-  
+    
   // Process each celestial body
   FOR i FROM 1 TO SIZE(bodies) DO
     body := bodies(i);
@@ -849,59 +880,96 @@ BEGIN
     az := az - viewAz;
     alt := alt - viewAlt;
     
-    // Convert relative angles to camera-space coordinates
-    // Camera looks along -Y axis, with X=right, Y=forward, Z=up
-    camX := COS(alt) * SIN(az);
-    camY := -COS(alt) * COS(az);  // Negative because camera looks along -Y
-    camZ := SIN(alt);
+    LOCAL r:=AZALT2SCREENSPACE(az,alt,fov);
     
-    // Only project if object is in front of camera (negative Y in camera space)
-    IF camY < 0 THEN
-      // Perspective projection
-      // Project onto a plane at distance 1 from camera
-      screenX := camX / (-camY * tanHalfFov);
-      screenY := camZ / (-camY * tanHalfFov);
-      
-      // Check if within field of view (|screenX| <= 1 and |screenY| <= 1)
-      IF ABS(screenX) <= 1 AND ABS(screenY) <= 1 THEN
-        // Convert from [-1, 1] to [0, 1] screen coordinates
-        // Y is inverted because screen Y increases downward
-        screenX := (screenX + 1) / 2;
-        screenY := (1 - screenY) / 2;
-        
-        // Add to result list
-        result := CONCAT(result, {{name, screenX, screenY,az,alt}});
-      END;
+    IF NOT(r(1)=-1 AND r(2)=-1) THEN 
+      // Add to result list
+      result := CONCAT(result, {{name,r(1),r(2),body(2),body(3)}});
     END;
   END;
   
   RETURN result;
 END;
 
+LOCAL PLOTSKYGRID(az,alt,fov,azStep,altStep,density,color)
+BEGIN
+  LOCAL i,j;
+    
+  //Plot lines of constant azimuth which span
+  //the entire field of view
+  LOCAL start:=FLOOR((az-fov/2)/15)*15;
+  LOCAL end:=CEILING((az+fov/2)/15)*15;
+  LOCAL mid:=FLOOR((end+start)/2/15)*15;
+
+
+  //Find out the first visible altitude line to
+  //determine where azimuth labels will be
+  //printed
+  LOCAL altLabels:=-90,coords;
+  REPEAT
+    altLabels:=altLabels+altStep;
+    coords:=AZALT2SCREENSPACE(start+azStep-az,altLabels-alt,fov);
+  UNTIL coords(1)<>-1 OR altLabels>=90;
+
+  FOR i FROM start TO end STEP azStep DO
+    LOCAL coords,screenX,screenY;
+    coords:=AZALT2SCREENSPACE(i-az,altLabels-alt,fov);
+    screenX:=coords(1);
+    screenY:=coords(2);
+
+    IF screenX<>-1 THEN
+      LINE_P(screenX,0,screenX,240,color);
+      TEXTOUT_P(i,screenX+5,screenY-12,1);
+    END;
+  END;
+  
+  // Plot lines of constant altitude
+  FOR i FROM -90 TO 90 STEP altStep DO
+    LOCAL coords,screenX,screenY,prevX:=-1,prevY:=-1;
+    LOCAL labelPrinted:=0;
+    FOR j FROM start TO end STEP density DO
+      coords:=AZALT2SCREENSPACE(j-az,i-alt,fov);
+      screenX:=coords(1);
+      screenY:=coords(2);
+    
+      IF NOT(screenX==-1 AND screenY==-1) THEN
+        IF NOT(prevX==-1 AND prevY==-1) THEN
+          LINE_P(prevX,prevY,screenX,screenY,color);
+          IF i==0 THEN
+            LINE_P(prevX,prevY-1,screenX,screenY-1,color);
+            LINE_P(prevX,prevY+1,screenX,screenY+1,color);
+          END;
+          IF (NOT labelPrinted) AND j>mid THEN
+            coords:=AZALT2SCREENSPACE(mid-az,i-alt,fov);
+            LOCAL labelX:=coords(1);
+            coords:=AZALT2SCREENSPACE(mid+azStep-az,i-alt,fov);
+            labelX:=(labelX+coords(1))/2-10;
+            TEXTOUT_P(i,labelX,screenY-10,1);
+            labelPrinted:=1;
+          END;
+        END;
+      END;
+      prevX:=screenX;
+      prevY:=screenY;
+    END;
+  END;
+END;
+
 // Plots the output of the CELESTIALTOSCREEN function
 // on the calculator screen
-LOCAL PLOTCELESTIALVIEW(screenCoords)
+LOCAL PLOTBODIES(screenCoords)
 BEGIN
   LOCAL i, body, name, screenX, screenY, color;
   LOCAL pixelX, pixelY;
-  LOCAL screenWidth := 320;   // HP Prime screen width
-  LOCAL screenHeight := 240;  // HP Prime screen height
-  
-  // Clear the screen
-  RECT();
   
   // Draw each celestial body
   FOR i FROM 1 TO SIZE(screenCoords) DO
     body := screenCoords(i);
     name := body(1);
-    screenX := body(2);
-    screenY := body(3);
-    color:=IFTE(body(5)<0,#FF0000,0);
+    pixelX := body(2);
+    pixelY := body(3);
+    color:=IFTE(body(5)<0,#FF0000,#3037FF);
 
-    // Convert from [0,1] coordinates to screen coordinates
-    pixelX := screenX * screenWidth;
-    pixelY := screenY * screenHeight;
-    
     // Draw a 3-pixel wide dot
     PIXON_P(pixelX - 1, pixelY - 1,color);
     PIXON_P(pixelX, pixelY - 1,color);
@@ -930,13 +998,20 @@ BEGIN
   LOCAL oldX:=-1, oldY:=-1,mx,my,dx,dy;
   
   REPEAT
-    LOCAL screenCoords := CELESTIALTOSCREEN(bodies,az,alt,fov);
-    PLOTCELESTIALVIEW(screenCoords);
-    TEXTOUT_P("Az:"+az+"°  Alt:"+alt+"°   FOV:"+fov+"°",2,220,1);
+    //Draw stars and gridlines
+    RECT();
+    PLOTSKYGRID(az,alt,fov,15,10,fov/30,#0A0A0A);
+    PLOTBODIES(CELESTIALTOSCREEN(bodies,az,alt,fov));
+    TEXTOUT_P("Az:"+az+"° Alt:"+alt+"° FOV:"+fov+"°",2,220,1);
     FREEZE;
+
+    //Monitor key and mouse inputs in a loop
+    //Exit loop if a key is pressed or the mouse
+    //is dragged
     k:=-1;
     WHILE k==-1 DO
       WAIT(0.05);
+
       // Check whether a key is pressed
       FOR i FROM 1 TO SIZE(validKeys) DO
         IF ISKEYDOWN(validKeys(i)) THEN
@@ -954,11 +1029,15 @@ BEGIN
         IF oldX<>-1 THEN
           dx:=mx-oldX;
           dy:=my-oldY;
+
           // If drag values are non-null, pan and tilt
           // the view by a factor corresponding to the
           // drag values
           alt:=alt+dy/5;
           az:=az-dx/5;
+
+          // Set k so we exit this loop and 
+          // cause a redraw
           k:=0;
         ELSE
           dx:=0;
@@ -974,7 +1053,10 @@ BEGIN
       END;
     END;
 
-    // React to arrow and + or - key presses
+    // If we're here, a key was pressed or the
+    // mouse was dragged
+
+    // Respond to arrow and + or - key presses
     CASE
       // Arrows cause viewer azimuth and altitude
       // to change
@@ -988,14 +1070,14 @@ BEGIN
       IF k=45 THEN fov:=fov+5; END;
     END;
     
+    // Check that values remain within bounds
     IF az > 360 THEN az := az - 360; ELSE
     IF az < 0 THEN az := az + 360; END; END;
     IF alt > 90 THEN alt := 90; ELSE
     IF alt < -90 THEN alt := -90; END; END;
-    IF fov > 90 THEN fov:=90; ELSE
+    IF fov > 135 THEN fov:=135; ELSE
     IF fov < 20 THEN fov:=20; END; END;
-  END;
-
+    
   // Exit if On or Esc is pressed
   UNTIL k==4 OR k==46;
 END;
@@ -1027,7 +1109,7 @@ BEGIN
 
   LOCAL bodies:=CALCULATE_BODIES(date_,time_,ephLat,ephLon,{1,1,1,1,0,0,1,0,0});
   
-  PLOTSKY(bodies,270,0,90);
+  PLOTSKY(bodies,0,20,55);
   
 END;
 
