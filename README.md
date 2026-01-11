@@ -10,7 +10,8 @@ The following functionality is provided:
 * Plotting of LOPs on a Cartesian plot from which a fix can easily be deduced
 * Determination of the index correction of a sextant from two simple observations of the Sun (useful when no horizon is visible)
 
-![HP Prime 48 G2 calculator](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/hp48g2.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Sample LOP plot" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png" valign="top">
+<img alt="Sample LOP plot" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png" valign="top">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Sample LOP plot" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/starfinder.png" valign="top">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+![HP Prime 48 G2 calculator](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/hp48g2.png)
 
 The astronomical calculations are derived from the incredible work of Henning Umland which he has been kind enough to share [on his web site](https://celnav.de/). The ephemerides are generally accurate to 0.1' (see **Future Improvements** section).
 
