@@ -2,8 +2,8 @@
 This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and requires no updates until 2200. It can also be used on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program and it does not require an Internet connection to run.
 
 The following functionality is provided:
-* Astronomical calculations of the ephemerides of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the usual 58 stars used in celestial navication, valid from 1800 to 2200, and related calculations of Equation of Time, sunrise/sunset times, semi-diameters, centroid corrections for the partial illumination of Venus and Mars, etc.
-* Interactive star finder plot of celestial bodies at a given location and time
+* Astronomical calculations of the ephemerides of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the usual 58 stars used in celestial navication, and related calculations of Equation of Time, sunrise/sunset times, semi-diameters, centroid corrections for the partial illumination of Venus and Mars, etc.
+* Interactive stereographic star finder plot of celestial bodies at a given location and time
 * Observation planning by listing all observable bodies (i.e. meeting user-specified altitude and azimuth constraints) during morning and evening nautical twilight and at any time of the day with their respective GHA, declination, azimuth, true altitude, apparent altitude, and semi-diameter
 * Sight reduction of sextant observations of any of those celestial bodies to Lines of Position (LOPs)
 * Running fix calculations through translation of lines of position by a certain distance on a given bearing
@@ -14,7 +14,7 @@ The following functionality is provided:
 
 ![HP Prime 48 G2 calculator](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/hp48g2.png)
 
-The astronomical calculations are derived from the incredible work of Henning Umland which he has been kind enough to share [on his web site](https://celnav.de/). The ephemerides are generally accurate to 0.1' (see **Future Improvements** section).
+The astronomical calculations are derived from the incredible work of Henning Umland which is available [on his web site](https://celnav.de/). The ephemerides are generally accurate to 0.1' from 19th to 22nd centuries inclusively (1800-2200) (see **Future Improvements** section).
 
 The sight reduction formulas used in this program were derived from many sources that are usually provided in the comments within the source code.
 
@@ -167,11 +167,11 @@ The program can show the Greenwich Hour Angle (GHA) and declination of the Sun, 
 ![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output2.png)
 
 ## Star Finder
-A plot of the sky with the 58 celestial bodies based on their ephemerides can be displayed by using the **STARFINDER** function of the **Sight Reduction** program. The input screen is the same as for the [ephemerides function](#ephemerides), with additional fields to specify the initial center of the star finder view and the initial field of view:
+A plot of the sky with the 58 celestial bodies based on their ephemerides can be displayed by using the **STARFINDER** function of the **Sight Reduction** program. The input screen is the same as for the [ephemerides function](#ephemerides), with additional fields to specify the observer's gaze: initial center of the star finder view in terms of azimuth and altitude, and the initial field of view (which is the inverse of a zoom level):
 
 ![Star Finder](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/starfinder_input.png)
 
-The stars and planets are shown as blue dots if above the horizon or red dots if below the horizon. The center of the screen corresponds to the azimuth and altitude of the viewer and is displayed at the bottom of the screen. The following keys can be used to navigate the plot:
+Upon submitting the form, the calculator will perform the ephemerides calculation for the selected date and time. At the end of the calculation, a graphical representation of the sky will be displayed. The view is a stereographic projection of the sky which preserves the angles between the celestial bodies and the shapes of constellations. The stars and planets are shown as blue dots if above the horizon or red dots if below the horizon. The center of the screen corresponds to the azimuth and altitude of the viewer and is displayed at the bottom of the screen. The following keys can be used to navigate the plot:
    * **Up/Down Arrows**: tilt view up/down
    * **Left/Right Arrows**: pan view left/right
    * **Touchscreen drag**: you can drag the view using the touchscreen drag gesture
