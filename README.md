@@ -21,14 +21,15 @@ The sight reduction formulas used in this program were derived from many sources
 For an excellent textbook on celestial navigation and the process of sight reduction, refer to [*Celestial Navigation: A Complete Home Study Course*](https://starpath.com/catalog/books/1887.htm) by David Burch and Tobias Burch. The calculations in this program follow the sight reduction process described in the book.
 
 # Table of Contents
-* [Installing the Program](#installing_the_program)
+* [**Installing the Program**](#installing_the_program)
   * [Prerequisites](prerequisites)
     * [Downloading this repository](downloading-this-repository)
     * [*HP Connectivity Kit* and *HP Prime Virtual Calculator*](#hp-connectivity-kit-and-hp-prime-virtual-calculator)
   * [Installing from Binaries](#installing-from-binaries)
   * [Installing from Source Files](#installing-from-source-files)
   * [Confirming that Everything Works](#confirming-that-everything-works)
-* [Using the Program](#using-the-program)
+    
+* [**Using the Program**](#using-the-program)
   * [Units and Conventions](#units-and-conventions)
   * [Initialization](#initialization)
   * [Planning Observations](#planning-observations)
