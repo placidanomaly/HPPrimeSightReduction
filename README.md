@@ -20,6 +20,24 @@ The sight reduction formulas used in this program were derived from many sources
 
 For an excellent textbook on celestial navigation and the process of sight reduction, refer to [*Celestial Navigation: A Complete Home Study Course*](https://starpath.com/catalog/books/1887.htm) by David Burch and Tobias Burch. The calculations in this program follow the sight reduction process described in the book.
 
+# Table of Contents
+* [Installing the Program](#installing_the_program)
+  * [Prerequisites](prerequisites)
+    * [Downloading this repository](downloading-this-repository)
+    * [*HP Connectivity Kit* and *HP Prime Virtual Calculator*](#hp-connectivity-kit-and-hp-prime-virtual-calculator)
+  * [Installing from Binaries](#installing-from-binaries)
+  * [Installing from Source Files](#installing-from-source-files)
+  * [Confirming that Everything Works](#confirming-that-everything-works)
+* [Using the Program](#using-the-program)
+  * [Units and Conventions](#units-and-conventions)
+  * [Initialization](#initialization)
+  * [Planning Observations](#planning-observations)
+  * [Reducing Sights](#reducing-sights)
+  * [Making a Fix](#making-a-fix)
+  * [Ephemerides](#ephemerides)
+  * [Star Finder](#star-finder)
+  * [Calculating Index Correction from Sun diameter](#calculating-index-correction-from-sun-diameter)
+
 # Installing the Program
 The program can be installed on an HP Prime calculator or on a PC or Mac running the [HP Prime Virtual Calculator](https://www.hpcalc.org/details/8939) from the source files in the */src* folder of this repository or from the binary files in the */bin* folder.
 
@@ -149,54 +167,6 @@ It can be helpful to know which celestial bodies will be visible and where ahead
  
 ![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output2.png)
 
-## Ephemerides
-The program can show the Greenwich Hour Angle (GHA) and declination of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the 58 celestial navigation stars for any point in time between 1800 and 2200, as well as the corresponding azimuth and altitude from a specified geographical location. The semi-diameter of certain bodies will also be shown. A graphical representation of the ephemerides is available through the [Star Finder function](#star-finder) which is covered in the next section. To use this feature:
-
-1. From the programs screen of the calculator, select the **Sight Reduction** program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key and click on the **EPHEMERIDES** function. An input screen will appear:
-
-![Ephemerides input screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_input.png)
-  
-2. Fill in the required information:
-   * **Date**: the date of the ephemerides in YYYY.MMDD format
-   * **Time**: the UTC time of the ephemerides in HH°MM'SS" format
-   * **Latitude**: the latitude in degrees to calculate azimuth and altitude
-   * **Longitude**: the longitude in degrees to calculate azimuth and altitude
-
-3. The calculator will display several astronomical calculations such as Delta T, mean and true obliquity of the ecliptic, true GHA Aries, Moon phase (illumination %), UTC time of Meridian passage at the specified longitude, etc. along with the GHA, declination, azimuth, altitude, semi-diameter, rise and set times of all the celestial bodies:
-
-![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output2.png)
-
-## Star Finder
-A plot of the sky with the 58 celestial bodies based on their ephemerides can be displayed by using the **STARFINDER** function of the **Sight Reduction** program. The input screen is the same as for the [ephemerides function](#ephemerides), with additional fields to specify the observer's gaze: initial center of the star finder view in terms of azimuth and altitude, and the initial field of view (which is the inverse of a zoom level):
-
-![Star Finder](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/starfinder_input.png)
-
-Upon submitting the form, the calculator will perform the ephemerides calculation for the selected date and time. At the end of the calculation, a graphical representation of the sky will be displayed. The view is a stereographic projection of the sky which preserves the angles between the celestial bodies and the shapes of constellations. The stars and planets are shown as blue dots if above the horizon or red dots if below the horizon. The center of the screen corresponds to the azimuth and altitude of the viewer and is displayed at the bottom of the screen. The following keys can be used to navigate the plot:
-   * **Up/Down Arrows**: tilt view up/down
-   * **Left/Right Arrows**: pan view left/right
-   * **Touchscreen drag**: you can drag the view using the touchscreen drag gesture
-   * **ESC** or **On**: exit the program
-
-![Star Finder](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/starfinder.png)
-
-While dragging or holding a key down, only the stars and planets will be redrawn. The grid lines will be redrawn when the keys and the touchscreen are released.
-
-## Calculating Index Correction from Sun diameter (OPTIONAL)
-
-The program contains a function to apply the index correction method described in [this document](https://www.starpath.com/online/celestial/solar_ic.pdf). After running this program, the default value for the index correction in the sight reduction forms will be set to the value calculated by this procedure (otherwise the default index correction value will be zero). To run the program, highlight the **Sight Reduction** program, press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key, and hit the <img alt="6" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/6.png" valign="middle"> key to run the **SOLAR_IC** program. The program briefly describes the measurements that need to be taken:
-
-![Solar IC intro](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_intro.png)
-
-Values for the *Below* and *Above* observations as read on the sextant, in arc minutes, can be entered in the input form. Do NOT correct the off scale *Below* reading by subtracting it from 60, the program will do that for you. Use the value directly read on the instrument.
-
-![Solar IC input](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_input.png)
-
-The program will display the calculated index correction result as well as the implied semi-diameter of the sun, which is then compared with the actual semi-diameter of the sun at the current time. This allows validating the inputs used before applying the calculated index correction to future sights.
-
-![Solar IC output](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_output.png)
-
-After pressing a key, the program prompts whether to accept or reject the calculated index correction. If accepted, the value will be applied to all sights that did not have a manually entered index correction and will be used as the default value for new sights.
-
 ## Reducing Sights
 Performing a sight reduction is a straightforward process: 
 
@@ -266,6 +236,54 @@ Performing a sight reduction is a straightforward process:
 Once you've entered 2 or more sights in different LOP registers, you can make a fix from a graphical representation of the LOPs on a Cartesian plane. To do that, run the **Sight Reduction** program and select **PLOT LOPs**. This will open the calculator's Function app and a line of position will be plotted for each LOP defined in the **SIGHT** program. The calculator functions can then be used to calculate the intersection of LOPs, etc., and the cursor can be used to manually find the centroid or some other position in the "cocked hat" to make a fix. In order to determine which line color corresponds to which LOP, use the **Symb** key to view the color coding and the corresponding LOP equations, and use the **Plot** key to go back to the graph.
 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
+
+## Ephemerides
+The program can show the Greenwich Hour Angle (GHA) and declination of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the 58 celestial navigation stars for any point in time between 1800 and 2200, as well as the corresponding azimuth and altitude from a specified geographical location. The semi-diameter of certain bodies will also be shown. A graphical representation of the ephemerides is available through the [Star Finder function](#star-finder) which is covered in the next section. To use this feature:
+
+1. From the programs screen of the calculator, select the **Sight Reduction** program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key and click on the **EPHEMERIDES** function. An input screen will appear:
+
+![Ephemerides input screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_input.png)
+  
+2. Fill in the required information:
+   * **Date**: the date of the ephemerides in YYYY.MMDD format
+   * **Time**: the UTC time of the ephemerides in HH°MM'SS" format
+   * **Latitude**: the latitude in degrees to calculate azimuth and altitude
+   * **Longitude**: the longitude in degrees to calculate azimuth and altitude
+
+3. The calculator will display several astronomical calculations such as Delta T, mean and true obliquity of the ecliptic, true GHA Aries, Moon phase (illumination %), UTC time of Meridian passage at the specified longitude, etc. along with the GHA, declination, azimuth, altitude, semi-diameter, rise and set times of all the celestial bodies:
+
+![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output2.png)
+
+## Star Finder
+A plot of the sky with the 58 celestial bodies based on their ephemerides can be displayed by using the **STARFINDER** function of the **Sight Reduction** program. The input screen is the same as for the [ephemerides function](#ephemerides), with additional fields to specify the observer's gaze: initial center of the star finder view in terms of azimuth and altitude, and the initial field of view (which is the inverse of a zoom level):
+
+![Star Finder](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/starfinder_input.png)
+
+Upon submitting the form, the calculator will perform the ephemerides calculation for the selected date and time. At the end of the calculation, a graphical representation of the sky will be displayed. The view is a stereographic projection of the sky which preserves the angles between the celestial bodies and the shapes of constellations. The stars and planets are shown as blue dots if above the horizon or red dots if below the horizon. The center of the screen corresponds to the azimuth and altitude of the viewer and is displayed at the bottom of the screen. The following keys can be used to navigate the plot:
+   * **Up/Down Arrows**: tilt view up/down
+   * **Left/Right Arrows**: pan view left/right
+   * **Touchscreen drag**: you can drag the view using the touchscreen drag gesture
+   * **ESC** or **On**: exit the program
+
+![Star Finder](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/starfinder.png)
+
+While dragging or holding a key down, only the stars and planets will be redrawn. The grid lines will be redrawn when the keys and the touchscreen are released.
+
+## Calculating Index Correction from Sun diameter
+
+The program contains a function to apply the index correction method described in [this document](https://www.starpath.com/online/celestial/solar_ic.pdf). After running this program, the default value for the index correction in the sight reduction forms will be set to the value calculated by this procedure (otherwise the default index correction value will be zero). To run the program, highlight the **Sight Reduction** program, press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key, and hit the <img alt="6" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/6.png" valign="middle"> key to run the **SOLAR_IC** program. The program briefly describes the measurements that need to be taken:
+
+![Solar IC intro](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_intro.png)
+
+Values for the *Below* and *Above* observations as read on the sextant, in arc minutes, can be entered in the input form. Do NOT correct the off scale *Below* reading by subtracting it from 60, the program will do that for you. Use the value directly read on the instrument.
+
+![Solar IC input](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_input.png)
+
+The program will display the calculated index correction result as well as the implied semi-diameter of the sun, which is then compared with the actual semi-diameter of the sun at the current time. This allows validating the inputs used before applying the calculated index correction to future sights.
+
+![Solar IC output](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_output.png)
+
+After pressing a key, the program prompts whether to accept or reject the calculated index correction. If accepted, the value will be applied to all sights that did not have a manually entered index correction and will be used as the default value for new sights.
 
 # Future Improvements
 The ephemeris calculations are usually accurate to within less than 0.1' of the values in the Almanac for the period 1800-2200 (subject to Delta T adjustments), but errors of up to 0.3' are sometimes seen. This is sufficient for most practical cases of celestial navigation but perfect precision would be better. The differences are still being investigated because the same program in Javascript from Henning Umland's web site seems to always output the exact same numbers as the Almanac. The possibility of a discrepancy in the code is one theory but a more likely one is that the lower number of significant digits in the calculator vs. a regular computer introduces rounding errors that add up in the lengthy calculations, but that has yet to be proven.
