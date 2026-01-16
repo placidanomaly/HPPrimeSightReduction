@@ -31,6 +31,10 @@ For an excellent textbook on celestial navigation and the process of sight reduc
     
 * [**Using the Program**](#using-the-program)
   * [Units and Conventions](#units-and-conventions)
+    * [Negative Numbers](#negative-numbers)
+    * [Position and Angle Format](#position-and-angle-format)
+    * [Date Format](#date-format)
+    * [Time Format](#time-format)
   * [Initialization](#initialization)
   * [Planning Observations](#planning-observations)
   * [Reducing Sights](#reducing-sights)
