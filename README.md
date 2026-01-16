@@ -167,15 +167,17 @@ The program can show the Greenwich Hour Angle (GHA) and declination of the Sun, 
 ![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output2.png)
 
 ## Star Finder
-A plot of the sky with the 58 celestial bodies based on their ephemerides can be displayed by using the **STARFINDER** function of the **Sight Reduction** program. The input screen is the same as for the [ephemerides function](#ephemerides) and the output looks like this:
+A plot of the sky with the 58 celestial bodies based on their ephemerides can be displayed by using the **STARFINDER** function of the **Sight Reduction** program. The input screen is the same as for the [ephemerides function](#ephemerides), with additional fields to specify the initial center of the star finder view and the initial field of view:
 
-![Star Finder](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/starfinder.png)
+![Star Finder](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/starfinder_input.png)
 
 The stars and planets are shown as blue dots if above the horizon or red dots if below the horizon. The center of the screen corresponds to the azimuth and altitude of the viewer and is displayed at the bottom of the screen. The following keys can be used to navigate the plot:
    * **Up/Down Arrows**: tilt view up/down
    * **Left/Right Arrows**: pan view left/right
    * **Touchscreen drag**: you can drag the view using the touchscreen drag gesture
    * **ESC** or **On**: exit the program
+
+![Star Finder](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/starfinder.png)
 
 While dragging or holding a key down, only the stars and planets will be redrawn. The grid lines will be redrawn when the keys and the touchscreen are released.
 
