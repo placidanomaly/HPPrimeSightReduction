@@ -838,6 +838,7 @@ BEGIN
 
 END;
 
+LOCAL prevViewAz:=9999,prevViewAlt:=9999,COSviewAz,SINviewAz,COSviewAlt,SINviewAlt;
 
 LOCAL AZALT2SCREENSPACE(az, alt, viewAz, viewAlt_, fov)
 BEGIN
@@ -855,20 +856,28 @@ BEGIN
   y_:=COS(az)*COS(alt);
   z_:=SIN(alt);
 
+  IF viewAz<>prevViewAz OR viewAlt<>prevViewAlt THEN
+    COSviewAz:=COS(viewAz);
+    SINviewAz:=SIN(viewAz);
+    COSviewAlt:=COS(viewAlt);
+    SINviewAlt:=SIN(viewAlt);
+	prevViewAz:=viewAz;
+	prevViewAlt:=viewAlt;
+  END;
+
   // Rotate to align with observer gaze
-  xp:=x_*COS(viewAz)-y_*SIN(viewAz);
-  p_:=x_*SIN(viewAz)+y_*COS(viewAz);
-  yp:=-1*(p_*COS(viewAlt)-z_*SIN(viewAlt));
-  zp:=p_*SIN(viewAlt)+z_*COS(viewAlt);
+  xp:=x_*COSviewAz-y_*SINviewAz;
+  p_:=x_*SINviewAz+y_*COSviewAz;
+  yp:=-1*(p_*COSviewAlt-z_*SINviewAlt);
+  zp:=p_*SINviewAlt+z_*COSviewAlt;
   
-  // Apply the stereographic projection
-  
+  // Apply the stereographic projection  
   IF zp <> -1 THEN
     // Calculate zoom factor to display desired FOV
     z_:=COT(fov/4);
     x_:=xp/(1+zp)*z_;
 	y_:=yp/(1+zp)*z_;
-	IF ABS(x_)<1.2 AND ABS(y_)<1.2 THEN
+	IF ABS(x_)<1.5 AND ABS(y_)<1.5 THEN
       RETURN {(x_+1)/2*screenWidth,(1-y_)/2*screenHeight};
 	END;
   END;
@@ -906,13 +915,26 @@ BEGIN
   RETURN result;
 END;
 
-LOCAL PLOTSKYGRID(viewAz,viewAlt,fov,azStep,altStep,density,color)
+LOCAL PLOTSKYGRID(viewAz,viewAlt,fov,azStep,altStep,density_,color)
 BEGIN
   LOCAL i,j;
     
-  LOCAL start:=FLOOR((viewAz-fov/2)/15)*15;
-  LOCAL end:=CEILING((viewAz+fov/2)/15)*15;
-  LOCAL mid:=FLOOR((end+start)/2/15)*15;
+  LOCAL start:=FLOOR((viewAz-fov/2)/azStep)*azStep;
+  LOCAL end:=CEILING((viewAz+fov/2)/azStep)*azStep;
+  LOCAL mid:=FLOOR((end+start)/2/azStep)*azStep;
+
+  //Adjust density based on FOV
+  i:=1;
+  IF fov<40 THEN 
+    i:=1/2;
+	IF fov<20 THEN
+	  i:=1/4;
+	  IF fov<10 THEN
+	    i:=1/8;
+	  END;
+	END;
+  END;
+  LOCAL density:=density_*i;
 
   //Find out the first visible altitude line to
   //determine where azimuth labels will be
@@ -926,7 +948,7 @@ BEGIN
   LOCAL coords,screenX,screenY,prevX:=-1,prevY:=-1,labelPrinted;
  
   // Plot lines of constant azimuth
-  FOR i FROM 0 TO 180 STEP azStep DO
+  FOR i FROM 0 TO 179 STEP azStep DO
     prevX:=-1; prevY:=-1;
     FOR j FROM 0 to 360+density STEP density DO
       LOCAL coords,screenX,screenY;
@@ -946,10 +968,16 @@ BEGIN
 	IF coords(1)<>-1 THEN
       TEXTOUT_P(i,coords(1)+2,coords(2)-10,1);
 	END;
+	IF i<180 THEN
+      coords:=AZALT2SCREENSPACE(i+180,0,viewAz,viewAlt,fov);
+	  IF coords(1)<>-1 THEN
+        TEXTOUT_P(i+180,coords(1)+2,coords(2)-10,1);
+	  END;
+	END;
   END;
   
   // Plot lines of constant altitude
-  FOR i FROM -90 TO 90 STEP altStep DO
+  FOR i FROM -90+altStep TO 90-altStep STEP altStep DO
     prevX:=-1; prevY:=-1;
     labelPrinted:=0;
     FOR j FROM 0 TO 360+density STEP density DO
@@ -1020,7 +1048,7 @@ BEGIN
   LOCAL fov:=viewFov;
   LOCAL i,k:=0;
   LOCAL validKeys:={2,7,8,12,4,45,50,46};
-  LOCAL oldX:=-1, oldY:=-1,mx,my,dx,dy;
+  LOCAL oldX:=-1,oldY:=-1,mx,my,dx,dy;
   LOCAL redrawRequired:=1;
 
   REPEAT
@@ -1043,13 +1071,15 @@ BEGIN
       IF redrawRequired THEN
         RECT();
         LOCAL m:=MOUSE();
+		TEXTOUT_P("Az:"+az+"° Alt:"+alt+"° FOV:"+fov+"°",2,230,1);
+        PLOTBODIES(CELESTIALTOSCREEN(bodies,az,alt,fov));        
         // Only redraw gridlines if panning has stopped
         IF SIZE(m(1))==0 AND k==-1 THEN
-          PLOTSKYGRID(az,alt,fov,15,10,fov/10,#CCCCCC);
+          PLOTSKYGRID(az,alt,fov,15,10,15,#CCCCCC);
+		  // Redraw bodies in case they were covered by grid lines
+		  PLOTBODIES(CELESTIALTOSCREEN(bodies,az,alt,fov));        
           redrawRequired:=0;
         END;
-        PLOTBODIES(CELESTIALTOSCREEN(bodies,az,alt,fov));
-        TEXTOUT_P("Az:"+az+"° Alt:"+alt+"° FOV:"+fov+"°",2,230,1);
         FREEZE;
       END;
 
@@ -1113,6 +1143,8 @@ BEGIN
   UNTIL k==4 OR k==46;
 END;
 
+LOCAL starFinderAz:=0,starFinderAlt:=40,starFinderFov:=100;
+
 EXPORT STARFINDER()
 BEGIN
   LOCAL date_,time_;
@@ -1127,12 +1159,16 @@ BEGIN
   ephLon:=DRlon_default;
   
   LOCAL c:=INPUT(
-    {date_,time_,ephLat,ephLon},
+    {date_,time_,ephLat,ephLon,starFinderAz,starFinderAlt,starFinderFov},
      "Star Finder Parameters",
-    {"Date:","Time:","Latitude:","Longitude:"},
+    {"Date:","Time:","Latitude:","Longitude:","Azimuth:","Altitude:","FOV"},
     {"Date of ephemerides (YYYY.MMDD)",
      "UTC Time (HH°MM'DD\")",
-     "Latitude (°)","Longitude (°)"});
+     "Latitude (°)","Longitude (°)",
+	 "Azimuth of center of view (°)",
+	 "Altitude of center of view (°)",
+     "Field of View (°)"	 
+	 });
    
   IF NOT c THEN RETURN "Canceled."; END;
 
@@ -1143,7 +1179,7 @@ BEGIN
 
   LOCAL bodies:=CALCULATE_BODIES(date_,time_,ephLat,ephLon,{1,1,1,1,0,0,1,0,0});
   
-  PLOTSKY(bodies,0,20,55);
+  PLOTSKY(bodies,starFinderAz,starFinderAlt,starFinderFov);
   
 END;
 
