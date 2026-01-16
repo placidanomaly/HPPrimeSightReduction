@@ -598,19 +598,13 @@ END;
 
 EXPORT SIGHT_PLANNING()
 BEGIN
-  LOCAL date_:=Date;
-  LOCAL time_:=GET_UTC_TIME();
+  LOCAL date_,time_;
   LOCAL i,d;
   LOCAL lin:=3;
   
-  IF time_>24 THEN
-    time_:=time_-24;
-    date_:=DATEADD(date_,1);
-  END;
-  IF time_<0 THEN
-    time_:=time_+24;
-    date_:=DATEADD(date_,-1);
-  END;
+  i:=GET_UTC_DATETIME();
+  date_:=i(1);
+  time_:=i(2);
 
   HAngle:=1;
   
@@ -754,9 +748,12 @@ END;
 
 EXPORT EPHEMERIDES()
 BEGIN
-  LOCAL date_:=Date;
-  LOCAL time_:=GET_UTC_TIME();
+  LOCAL date_,time_;
   LOCAL i,h,c;
+
+  i:=GET_UTC_DATETIME();
+  date_:=i(1);
+  time_:=i(2);
   
   HAngle:=1;
   ephLat:=DRlat_default;
@@ -841,39 +838,43 @@ BEGIN
 
 END;
 
-LOCAL AZALT2SCREENSPACE(az,alt,fov)
+
+LOCAL AZALT2SCREENSPACE(az, alt, viewAz, viewAlt_, fov)
 BEGIN
-  LOCAL screenWidth := 320;   // HP Prime screen width
-  LOCAL screenHeight := 240;  // HP Prime screen height
+  LOCAL screenWidth := 320; 
+  LOCAL screenHeight := 240;
 
-  LOCAL screenX, screenY,camX,camY,camZ;
-  // Calculate tangent of half FOV (degrees mode)
-  LOCAL tanHalfFov := TAN(fov / 2);
-
-  // Convert relative angles to camera-space coordinates
-  // Camera looks along -Y axis, with X=right, Y=forward, Z=up
-  camX := COS(alt) * SIN(az);
-  camY := -COS(alt) * COS(az);  // Negative because camera looks along -Y
-  camZ := SIN(alt);
+  LOCAL x_, y_, z_, p_;
+  LOCAL xp, yp, zp, p_;
   
-  // Only project if object is in front of camera (negative Y in camera space)
-  IF camY < 0 THEN
-    // Perspective projection
-    // Project onto a plane at distance 1 from camera
-    screenX := camX / (-camY * tanHalfFov);
-    screenY := camZ / (-camY * tanHalfFov);
-    
-    // Check if within field of view (|screenX| <= 1 and |screenY| <= 1)
-    IF ABS(screenX) <= 1 AND ABS(screenY) <= 1 THEN
-      // Convert from [-1, 1] to [0, 1] screen coordinates
-      // Y is inverted because screen Y increases downward
-      screenX := (screenX + 1) / 2;
-      screenY := (1 - screenY) / 2;
+  LOCAL viewAlt:=90-viewAlt_;
+  
+  // Convert relative azimuth and altitude to
+  // 3D points on a unit sphere
+  x_:=SIN(az)*COS(alt);
+  y_:=COS(az)*COS(alt);
+  z_:=SIN(alt);
 
-      RETURN {screenX*screenWidth, screenY*screenHeight};
-    END;
+  // Rotate to align with observer gaze
+  xp:=x_*COS(viewAz)-y_*SIN(viewAz);
+  p_:=x_*SIN(viewAz)+y_*COS(viewAz);
+  yp:=-1*(p_*COS(viewAlt)-z_*SIN(viewAlt));
+  zp:=p_*SIN(viewAlt)+z_*COS(viewAlt);
+  
+  // Apply the stereographic projection
+  
+  IF zp <> -1 THEN
+    // Calculate zoom factor to display desired FOV
+    z_:=COT(fov/4);
+    x_:=xp/(1+zp)*z_;
+	y_:=yp/(1+zp)*z_;
+	IF ABS(x_)<1.2 AND ABS(y_)<1.2 THEN
+      RETURN {(x_+1)/2*screenWidth,(1-y_)/2*screenHeight};
+	END;
   END;
+  
   RETURN {-1,-1};
+  
 END;
 
 // Project celestial bodies on a perspective view
@@ -894,14 +895,8 @@ BEGIN
     az := body(2);    // Already in degrees
     alt := body(3);   // Already in degrees
     
-    // Calculate relative position from viewer direction
-    // Subtract viewer azimuth to rotate horizontally
-    // Subtract viewer altitude for vertical adjustment
-    az := az - viewAz;
-    alt := alt - viewAlt;
-    
-    LOCAL r:=AZALT2SCREENSPACE(az,alt,fov);
-    
+    LOCAL r:=AZALT2SCREENSPACE(az,alt,viewAz,viewAlt,fov);
+
     IF NOT(r(1)=-1 AND r(2)=-1) THEN 
       // Add to result list
       result := CONCAT(result, {{name,r(1),r(2),body(2),body(3)}});
@@ -911,16 +906,13 @@ BEGIN
   RETURN result;
 END;
 
-LOCAL PLOTSKYGRID(az,alt,fov,azStep,altStep,density,color)
+LOCAL PLOTSKYGRID(viewAz,viewAlt,fov,azStep,altStep,density,color)
 BEGIN
   LOCAL i,j;
     
-  //Plot lines of constant azimuth which span
-  //the entire field of view
-  LOCAL start:=FLOOR((az-fov/2)/15)*15;
-  LOCAL end:=CEILING((az+fov/2)/15)*15;
+  LOCAL start:=FLOOR((viewAz-fov/2)/15)*15;
+  LOCAL end:=CEILING((viewAz+fov/2)/15)*15;
   LOCAL mid:=FLOOR((end+start)/2/15)*15;
-
 
   //Find out the first visible altitude line to
   //determine where azimuth labels will be
@@ -928,27 +920,40 @@ BEGIN
   LOCAL altLabels:=-90,coords;
   REPEAT
     altLabels:=altLabels+altStep;
-    coords:=AZALT2SCREENSPACE(start+azStep-az,altLabels-alt,fov);
+    coords:=AZALT2SCREENSPACE(start+azStep,altLabels,viewAz,viewAlt,fov);
   UNTIL coords(1)<>-1 OR altLabels>=90;
 
-  FOR i FROM start TO end STEP azStep DO
-    LOCAL coords,screenX,screenY;
-    coords:=AZALT2SCREENSPACE(i-az,altLabels-alt,fov);
-    screenX:=coords(1);
-    screenY:=coords(2);
+  LOCAL coords,screenX,screenY,prevX:=-1,prevY:=-1,labelPrinted;
+ 
+  // Plot lines of constant azimuth
+  FOR i FROM 0 TO 180 STEP azStep DO
+    prevX:=-1; prevY:=-1;
+    FOR j FROM 0 to 360+density STEP density DO
+      LOCAL coords,screenX,screenY;
+      coords:=AZALT2SCREENSPACE(i,j,viewAz,viewAlt,fov);
+      screenX:=coords(1);
+      screenY:=coords(2);
 
-    IF screenX<>-1 THEN
-      LINE_P(screenX,0,screenX,240,color);
-      TEXTOUT_P(i,screenX+5,screenY-12,1);
-    END;
+      IF NOT(screenX==-1 AND screenY==-1) THEN
+        IF NOT(prevX==-1 AND prevY==-1) THEN
+          LINE_P(prevX,prevY,screenX,screenY,color);
+		END;
+      END;
+	  prevX:=screenX;
+      prevY:=screenY;
+	END;	
+	coords:=AZALT2SCREENSPACE(i,0,viewAz,viewAlt,fov);
+	IF coords(1)<>-1 THEN
+      TEXTOUT_P(i,coords(1)+2,coords(2)-10,1);
+	END;
   END;
   
   // Plot lines of constant altitude
   FOR i FROM -90 TO 90 STEP altStep DO
-    LOCAL coords,screenX,screenY,prevX:=-1,prevY:=-1;
-    LOCAL labelPrinted:=0;
-    FOR j FROM start TO end STEP density DO
-      coords:=AZALT2SCREENSPACE(j-az,i-alt,fov);
+    prevX:=-1; prevY:=-1;
+    labelPrinted:=0;
+    FOR j FROM 0 TO 360+density STEP density DO
+      coords:=AZALT2SCREENSPACE(j,i,viewAz,viewAlt,fov);
       screenX:=coords(1);
       screenY:=coords(2);
     
@@ -960,9 +965,9 @@ BEGIN
             LINE_P(prevX,prevY+1,screenX,screenY+1,color);
           END;
           IF (NOT labelPrinted) AND j>mid THEN
-            coords:=AZALT2SCREENSPACE(mid-az,i-alt,fov);
+            coords:=AZALT2SCREENSPACE(mid,i,viewAz,viewAlt,fov);
             LOCAL labelX:=coords(1);
-            coords:=AZALT2SCREENSPACE(mid+azStep-az,i-alt,fov);
+            coords:=AZALT2SCREENSPACE(mid+azStep,i,viewAz,viewAlt,fov);
             labelX:=(labelX+coords(1))/2-10;
             TEXTOUT_P(i,labelX,screenY-10,1);
             labelPrinted:=1;
@@ -1040,7 +1045,7 @@ BEGIN
         LOCAL m:=MOUSE();
         // Only redraw gridlines if panning has stopped
         IF SIZE(m(1))==0 AND k==-1 THEN
-          PLOTSKYGRID(az,alt,fov,15,10,fov/30,#CCCCCC);
+          PLOTSKYGRID(az,alt,fov,15,10,fov/10,#CCCCCC);
           redrawRequired:=0;
         END;
         PLOTBODIES(CELESTIALTOSCREEN(bodies,az,alt,fov));
@@ -1102,7 +1107,7 @@ BEGIN
     IF alt > 90 THEN alt := 90; ELSE
     IF alt < -90 THEN alt := -90; END; END;
     IF fov > 135 THEN fov:=135; ELSE
-    IF fov < 20 THEN fov:=20; END; END;
+    IF fov < 5 THEN fov:=5; END; END;
     
   // Exit if On or Esc is pressed
   UNTIL k==4 OR k==46;
@@ -1110,18 +1115,12 @@ END;
 
 EXPORT STARFINDER()
 BEGIN
-  LOCAL date_:=Date;
-  LOCAL time_:=GET_UTC_TIME();
+  LOCAL date_,time_;
   LOCAL i,h,c;
 
-  IF time_>24 THEN
-    time_:=time_-24;
-    date_:=DATEADD(date_,1);
-  END;
-  IF time_<0 THEN
-    time_:=time_+24;
-    date_:=DATEADD(date_,-1);
-  END;
+  i:=GET_UTC_DATETIME();
+  date_:=i(1);
+  time_:=i(2);
 
   HAngle:=1;
   ephLat:=DRlat_default;
@@ -1197,7 +1196,7 @@ BEGIN
   RETURN SELECT_LOP(default,"Select LOP register");
 END;
 
-AVERAGE_READINGS()
+AVERAGE_READINGS(deltaUTCTime)
 BEGIN  
   LOCAL i:=1,more:=1,c,t,r;
   LOCAL hs:={},hourOffset:=0,scalingFactor:=10000;
@@ -1211,6 +1210,7 @@ BEGIN
     WAIT(-1);
   
     t:=GET_UTC_TIME();
+	t:=t+deltaUTCTime;
     
     r:=0;
     c:=INPUT({r,t},"Observation #"+i,
@@ -1286,7 +1286,7 @@ BEGIN
   LOCAL avgTime,avgHs;
       
   REPEAT
-    // Determine interpolated sight. If
+  // Determine interpolated sight. If
   // the regression function has an extremum
   // within our observed time range, use that
   // extremum as our interpolated point.
@@ -1354,6 +1354,8 @@ END;
 
 INPUT_HS_AND_BODY()
 BEGIN
+  LOCAL deltaUTCTime:=0;
+  
   LOCAL c:=SELECT_LOP(current,"Select LOP register",1);
   IF NOT c THEN RETURN c; END;
 
@@ -1369,10 +1371,12 @@ BEGIN
     tempTime:=GET_UTC_TIME();
     IF tempTime>24 THEN 
       tempTime:=tempTime-24;
+	  deltaUTCTime:=-24;
       tempDate:=DATEADD(tempDate,1);
     END;
     IF tempTime<0 THEN 
       tempTime:=tempTime+24;
+	  deltaUTCTime:=24;
       tempDate:=DATEADD(tempDate,-1);
     END;
   END;
@@ -1468,7 +1472,7 @@ BEGIN
   // OBSERVATION READINGS
 
   IF avgReadings=1 THEN
-    c:=AVERAGE_READINGS();
+    c:=AVERAGE_READINGS(deltaUTCTime);
     IF SIZE(c)>0 THEN
       tempTime:=c(1);
       IF tempTime>24 THEN
@@ -1885,6 +1889,24 @@ END;
 LOCAL ATAN2(y, x)
 BEGIN
   RETURN ARG(x + i*y);
+END;
+
+LOCAL GET_UTC_DATETIME()
+BEGIN
+  LOCAL d:=Date;
+  LOCAL t:=GET_UTC_TIME();
+  
+  IF t>24 THEN
+    t:=t-24;
+	d:=DATEADD(d,1);
+  ELSE 
+    IF t<0 THEN
+      t:=t+24;
+	  d:=DATEADD(d,-1);
+	END;
+  END;
+  
+  RETURN {d,→HMS(t)};
 END;
 
 LOCAL GET_UTC_TIME()
