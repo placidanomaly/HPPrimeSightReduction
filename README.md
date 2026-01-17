@@ -14,7 +14,7 @@ The following functionality is provided:
 
 ![HP Prime 48 G2 calculator](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/hp48g2.png)
 
-The astronomical calculations are derived from the incredible work of Henning Umland which is available [on his web site](https://celnav.de/). The ephemerides are generally accurate to 0.1' from 19th to 22nd centuries inclusively (1800-2200) (see **Future Improvements** section).
+The astronomical calculations are derived from [the incredible work of Henning Umland](https://celnav.de/). The ephemerides are generally accurate to 0.1' from the 19th to 22nd centuries inclusively (1800-2200) (see **Future Improvements** section).
 
 The sight reduction formulas used in this program were derived from many sources that are usually provided in the comments within the source code.
 
@@ -206,21 +206,7 @@ Performing a sight reduction is a straightforward process:
 
 ![Basic observation data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input2.png)  ![Selecting celestial body](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input2b.png)
 
-6. If the **Average** option was selected, the program will prompt the user to enter sextant observations as they are made. It will show a screen asking to press any key when an observation is made and pause there until a key is pressed. (It might be useful to extend the Auto-OFF delay of hte calculator by setting the value of the *TOff* system variable to a longer delay. See [this link](https://www.hpmuseum.org/forum/thread-5664.html)):
-
-![Press any key](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc1.png)
-
-7. As soon as you've aligned the observed body with the horizon, hit any key or touch the touchscreen. This will note the time of the observation (hence why it is important to run **SET_TIME** regularly) and a screen prompting to enter the sextant reading will appear. **IMPORTANT: do not halve observations made on an artificial horizon and do not apply any dip or index corrections to the sextant reading, these corrections will be entered later.**
-
-![Enter sextant reading](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc2.png)
-
-8. The program will return to step 6 and allows entering as many observations of the same body as desired. When no more observations are needed, hit *Cancel* or enter `0` in the HS field and click *Ok*. If only one observation was entered, the program will skip directly to step 10 and use the time and sextant altitude values entered in Observation #1
-  
-9. If multiple observations were entered, the observations entered will be plotted on a Cartesian graph with time as the horizontal axis and sextant altitude as the vertical axis. The plot allows choosing the among various best fit curves to choose the one best approximating the path of the celestial body in the sky using the soft keys at the bottom of the graph: linear or quadratic regressions if 3 or fewer observations were made, and cubic or trigonometric regression if 4 or more observations were entered. A red marker indicates a chosen value on the interpolated curve, which is at the midpoint of time range on the regression curve unless an extremum exists within the time range, in which case that extremum is chosen. When done, hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key to confirm the selected interpolated point.
-
-![Plot observations](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc3.png)![Plot observations](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc4.png)
-
-10. On the next screen, enter the observation conditions which will be used to compute sextant altitude corrections:
+6. On the next screen, enter the observation conditions which will be used to compute sextant altitude corrections:
    * **IC**: the index correction of the sextant in arc minutes, negative values for "on-scale" correction and positive for "off-scale"
    * **HE**: eye height from the horizon in feet (for dip correction)
    * **Dip short**: distance in nautical miles (nm) from observer where the horizon ends (e.g. the other side of a large lake), or zero if an infinite horizon is used as reference for the observation
@@ -229,7 +215,21 @@ Performing a sight reduction is a straightforward process:
 
 ![Observation correction data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input3.png)
 
-11. The next screen shows the actual observation data. If the observation averaging was used, this merely serves to confirm the computed values from the process. Otherwise, enter the values for observation time and sextant altitude.
+7. If the **Average** option was selected, the program will prompt the user to enter sextant observations as they are made. It will show a screen asking to press any key when an observation is made and pause there until a key is pressed. (It might be useful to extend the Auto-OFF delay of hte calculator by setting the value of the *TOff* system variable to a longer delay. See [this link](https://www.hpmuseum.org/forum/thread-5664.html)):
+
+![Press any key](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc1.png)
+
+8. As soon as you've aligned the observed body with the horizon, hit any key or touch the touchscreen. This will note the time of the observation (hence why it is important to run **SET_TIME** regularly) and a screen prompting to enter the sextant reading will appear. **IMPORTANT: do not halve observations made on an artificial horizon and do not apply any dip or index corrections to the sextant reading, these corrections will be entered later.**
+
+![Enter sextant reading](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc2.png)
+
+9. The program will return to step 6 and allows entering as many observations of the same body as desired. When no more observations are needed, hit *Cancel* or enter `0` in the HS field and click *Ok*. If only one observation was entered, the program will skip directly to step 10 and use the time and sextant altitude values entered in Observation #1
+  
+10. If multiple observations were entered, the observations entered will be plotted on a Cartesian graph with time as the horizontal axis and sextant altitude as the vertical axis. The plot allows choosing the among various best fit curves to choose the one best approximating the path of the celestial body in the sky using the soft keys at the bottom of the graph: linear or quadratic regressions if 3 or fewer observations were made, and cubic or trigonometric regression if 4 or more observations were entered. A red marker indicates a chosen value on the interpolated curve, which is at the midpoint of time range on the regression curve unless an extremum exists within the time range, in which case that extremum is chosen. When done, hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key to confirm the selected interpolated point.
+
+![Plot observations](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc3.png)![Plot observations](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc4.png)
+
+11. The next input screen captures the time of the observation and the actual sextant altitude for the sight. If the observation averaging process was used, the fields will be pre-populated with the averaged values for time and angle and you can just click <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> to confirm it. Otherwise, enter the values for observation time and sextant altitude (and remember NOT to halve the sextant altitude if an artificial horizon was used). 
 
 ![More input data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input4.png)
 
@@ -237,11 +237,11 @@ Performing a sight reduction is a straightforward process:
 
 ![Calculation results](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output1.png)
 
-11. The calculator will then display the usual 4 parameters of the line of position: LOP register, distance *a* from the LOP either *TOWARD* or *AWAY* from the body, azimuth *Zn* to the body, and the DR position latitude and longitude as entered (no correction of DR position to an assumed position is necessary here because the calculator can easily handle fractional LHA and Zn). These parameters enable plotting of the line of position.
+13. The calculator will then display the usual 4 parameters of the line of position: LOP register, distance *a* from the LOP either *TOWARD* or *AWAY* from the body, azimuth *Zn* to the body, and the DR position latitude and longitude as entered (no correction of DR position to an assumed position is necessary here because the calculator can easily handle fractional LHA and Zn). These parameters enable plotting of the line of position.
 
 ![LOP parameters](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output2.png)
 
-12. Lastly, the calculator displays the equation for the line of position in a longitude (x) and latitude (y) Cartesian plane which can be used to plot it in a program. That equation is stored in the `F` register of the Function app of the calculator corresponding to the LOP register selected, e.g. LOP 1 will be stored in `F1`, which means they can be plotted using the calculator's Function app.
+14. Lastly, the calculator displays the equation for the line of position in a longitude (x) and latitude (y) Cartesian plane which can be used to plot it in a program. That equation is stored in the `F` register of the Function app of the calculator corresponding to the LOP register selected, e.g. LOP 1 will be stored in `F1`, which means they can be plotted using the calculator's Function app. (This step will be removed in a future version, it was originally used for debugging purposes.)
 
 ![LOP Equation](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output3.png)
 
