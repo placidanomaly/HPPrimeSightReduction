@@ -947,10 +947,14 @@ BEGIN
 END;
 
 //Calculations for the Sun
+LOCAL lastSunTau_:=-1;
 LOCAL SunComplete_(showProgress)
 BEGIN
    oldHA:=HAngle;
    HAngle:=0;
+   
+   IF Tau_=lastSunTau_ THEN RETURN; END;
+   lastSunTau_:=Tau_;
    
    //Mean longitude of the Sun
    LOCAL Lsun_mean := (280.4664567+360007.6982779*Tau_+0.03032028*Tau2_+Tau3_/49931-Tau4_/15299-Tau5_/1988000) MOD 360;
