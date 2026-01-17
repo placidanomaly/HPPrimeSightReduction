@@ -35,6 +35,7 @@ For an excellent textbook on celestial navigation and the process of sight reduc
     * [Position and Angle Format](#position-and-angle-format)
     * [Date Format](#date-format)
     * [Time Format](#time-format)
+    * [Dark Mode](#dark-mode)
   * [Initialization](#initialization)
   * [Planning Observations](#planning-observations)
   * [Reducing Sights](#reducing-sights)
@@ -123,6 +124,14 @@ Date values are represented using the native calculator format which is *YYYY.MM
 ### Time Format
 
 Time values are represented in 24-hour format using the same format as angle degrees, i.e. *HH°MM'SS"*, using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="abc" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/abc.png" valign="middle"> keys. For example 11:43:12pm is entered as `23°43'12"`.
+
+### Dark Mode
+
+The color theme used by the calculator can be set to Light or Dark mode on page 2 of the Settings menu. The program will adjust its display based on the theme set. When making observations during twilight hours, it is preferable to set the calculator to a Dark theme to preserve night vision. The screens below illustrate the display in dark mode.
+
+![Dark mode example 1](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/darkmode0.png)&nbsp;&nbsp;&nbsp;
+![Dark mode example 2](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/darkmode1.png)&nbsp;&nbsp;&nbsp;
+![Dark mode example 3](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/darkmode2.png)
 
 ## Initialization
 
