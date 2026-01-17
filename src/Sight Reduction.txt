@@ -1312,12 +1312,11 @@ BEGIN
   
   // Select linear regression if 3 or fewer
   // data points, cubic otherwise
-  //@TODO: Check if a trigonometric regression
-  //wouldn't be better
   IF SIZE(Statistics_2Var.C1)<4 THEN r:=1; ELSE r:=9; END;
   
   Statistics_2Var.Fit:=1;
-  Statistics_2Var.S1:={"C1","C2","",r,"",#FF,4,0};
+  Statistics_2Var.S1:={"C1","C2","",r,"",
+    IFTE(Theme(1)==1,#FF,6545151),4,IFTE(Theme(1)==1,0,1675320)};
   Statistics_2Var.CHECK(1);
   
   // Compute graph zoom factors
@@ -1369,16 +1368,18 @@ BEGIN
     avgTime:=Statistics_2Var.C1(1)+(Statistics_2Var.C1(0)-Statistics_2Var.C1(1))/2;
   END;
   avgHs:=PredY(avgTime);
-    Statistics_2Var.C3:={avgTime,avgTime};
-    Statistics_2Var.C4:={avgHs,avgHs};
-    Statistics_2Var.S2:={"C3","C4","",13,"",#FF0000,2,#FF0000};
-    Statistics_2Var.CHECK(2);  
+
+  Statistics_2Var.C3:={avgTime,avgTime};
+  Statistics_2Var.C4:={avgHs,avgHs};
+  Statistics_2Var.S2:={"C3","C4","",13,"",
+    IFTE(Theme(1)==1,#FF,6545151),2,#FF0000};
+  Statistics_2Var.CHECK(2);
     
   // Show graph and results
   STARTVIEW(1,1);
-  TEXTOUT_P("Review results and click Ok to continue",G0,1,10,1,RGB(1,0,0));
+  TEXTOUT_P("Review results and click Ok to continue",G0,1,10,1,IFTE(Theme(1)==1,0,#FFFFFF));
     TEXTOUT_P("Interpolated values: "+HMS(avgTime/scalingFactor+hourOffset)+" - "+→DMD(avgHs)
-    +IFTE(extremumFlag," (extremum)"," (midpoint)"),G0,1,25,1,RGB(1,0,0));
+    +IFTE(extremumFlag," (extremum)"," (midpoint)"),G0,1,25,1,IFTE(Theme(1)==1,0,#FFFFFF));
     
   // Monitor soft keys and include
   // indicator next to currently
@@ -1392,7 +1393,8 @@ BEGIN
   END;
   IF c>0 AND c<5 THEN
     IF fitOptions(c)<>"" THEN
-      Statistics_2Var.S1:={"C1","C2","",fitTypes(c),"",#FF,4,0};
+      Statistics_2Var.S1:={"C1","C2","",fitTypes(c),"",
+        IFTE(Theme(1)==1,#FF,6545151),4,IFTE(Theme(1)==1,0,1675320)};
         Statistics_2Var.CHECK(1);
       STARTVIEW(1,1);        
     END;
