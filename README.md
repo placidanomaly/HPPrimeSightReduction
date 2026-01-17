@@ -174,10 +174,10 @@ It can be helpful to know which celestial bodies will be visible and where ahead
 3. It will take about 1-2 minutes to compute all the ephemerides. You will be prompted to press a key to show the results at the end of the calculation. The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include, in clockwise order of azimuth within the prescribed arc:
 * Sunrise, sunset, civil twilight, and nautical twilight times
 * Local time of Meridian passage at the specified longitude
-* List of observable bodies (i.e. meeting azimuth and altitude constraints entered on the first screen) with, for each, the azimuth, true altitude (Hc), apparent altitude (Ha) (i.e. the one that a sextant with no index error and no dip would read), Greenwhich Hour Angle (GHA), declination (dec), and the semi-diameter in arc seconds of the body (if applicable), at up to 3 different times:
+* List of observable bodies (i.e. meeting azimuth and altitude constraints entered on the first screen) with, for each, the azimuth, true altitude (Hc), apparent altitude (Ha) (i.e. the one that a sextant with no index error and no dip would read), Greenwhich Hour Angle (GHA), declination (dec), semi-diameter in arc seconds of the body (if applicable), and rise and set times (if applicable), at 3 different times:
   * Morning nautical twilight: from morning Nautical Twilight Time to Civil Twilight Time (if there is a sunrise at that location), with body positions calculated at the midpoint of the twilight period, shown in parentheses
   * Evening nautical twilight: from evening Civil Twilight Time to Nautical Twilight Time (if there is a sunset at that location), with body positions calculated at the midpoint of the twilight period, shown in parentheses
-  * The time specified
+  * The time specified in the input form
  
 ![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![List of bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_output2.png)
 
