@@ -22,7 +22,6 @@ LOCAL GHAsun_, SDsun_, HPsun_, EOT_;
 LOCAL RAsun_, SHAsun_, lambda_;
 
 // Global variables (part 6)
-
 LOCAL dtr_:=Pi/180;
 LOCAL oldHA;
 EXPORT rtd_:=180/Pi;
@@ -950,71 +949,72 @@ END;
 LOCAL lastSunTau_:=-1;
 LOCAL SunComplete_(showProgress)
 BEGIN
-   oldHA:=HAngle;
-   HAngle:=0;
    
-   IF Tau_=lastSunTau_ THEN RETURN; END;
-   lastSunTau_:=Tau_;
-   
-   //Mean longitude of the Sun
-   LOCAL Lsun_mean := (280.4664567+360007.6982779*Tau_+0.03032028*Tau2_+Tau3_/49931-Tau4_/15299-Tau5_/1988000) MOD 360;
+  IF Tau_=lastSunTau_ THEN RETURN; END;
+  lastSunTau_:=Tau_;
 
-   //Heliocentric longitude of the Earth
-   //NOTE: using EXPR to call planetary
-   //calculation programs in order to minimize
-   //hard dependencies between programs
-   IF showProgress THEN PRINT("  Heliocentric longitude"); END;
-   Le_ := EXPR("Learth(Tau_)");
+  oldHA:=HAngle;
+  HAngle:=0;
+ 
+  //Mean longitude of the Sun
+  LOCAL Lsun_mean := (280.4664567+360007.6982779*Tau_+0.03032028*Tau2_+Tau3_/49931-Tau4_/15299-Tau5_/1988000) MOD 360;
 
-   //Correction Longitude FK5
-   LOCAL Lsun_prime := (Le_+180-1.397*TE_-0.00031*TE2_) MOD 360;
+  //Heliocentric longitude of the Earth
+  //NOTE: using EXPR to call planetary
+  //calculation programs in order to minimize
+  //hard dependencies between programs
+  IF showProgress THEN PRINT("  Heliocentric longitude"); END;
+  Le_ := EXPR("Learth(Tau_)");
 
-   //Geocentric longitude of the Sun
-   Lsun_true_ := (Le_+180-0.09033/3600) MOD 360;
+  //Correction Longitude FK5
+  LOCAL Lsun_prime := (Le_+180-1.397*TE_-0.00031*TE2_) MOD 360;
 
-   //Heliocentric latitude of Earth
-   IF showProgress THEN PRINT("  Heliocentric latitude"); END;
-   Be_ := EXPR("Bearth(Tau_)");
+  //Geocentric longitude of the Sun
+  Lsun_true_ := (Le_+180-0.09033/3600) MOD 360;
 
-   //Geocentric latitude of the Sun
-   LOCAL beta := (-Be_) MOD 360;
+  //Heliocentric latitude of Earth
+  IF showProgress THEN PRINT("  Heliocentric latitude"); END;
+  Be_ := EXPR("Bearth(Tau_)");
 
-   //Correction Latitude FK5
-   beta := beta+0.03916*(cosd_(Lsun_prime)-sind_(Lsun_prime))/3600;
+  //Geocentric latitude of the Sun
+  LOCAL beta := (-Be_) MOD 360;
 
-   //Distance Earth-Sun
-   IF showProgress THEN PRINT("  Distance Earth-Sun"); END;
-   Re_ := EXPR("Rearth(Tau_)");
-   LOCAL dES := 149597870.691*Re_;
+  //Correction Latitude FK5
+  beta := beta+0.03916*(cosd_(Lsun_prime)-sind_(Lsun_prime))/3600;
 
-   //Apparent longitude of the Sun
-   lambda_ := (Lsun_true_+delta_psi_-0.005691611/Re_) MOD 360;
+  //Distance Earth-Sun
+  IF showProgress THEN PRINT("  Distance Earth-Sun"); END;
+  Re_ := EXPR("Rearth(Tau_)");
+  LOCAL dES := 149597870.691*Re_;
 
-   //Right ascension of the Sun, apparent
-   RAsun_ := rtd_*(ATAN2_(sind_(lambda_)*cosd_(eps_)-tand_(beta)*sind_(eps_),cosd_(lambda_)) MOD (2*PI));
-   
-   //Declination of the Sun, apparent
-   LOCAL DECsun := rtd_*asin(sind_(beta)*cosd_(eps_)+cosd_(beta)*sind_(eps_)*sind_(lambda_));
-   LOCAL DECsunDD := DECsun;
-   SunDec_ := DECsun;
+  //Apparent longitude of the Sun
+  lambda_ := (Lsun_true_+delta_psi_-0.005691611/Re_) MOD 360;
 
-   //GHA of the Sun
-   GHAsun_ := (GHAAtrue_-RAsun_) MOD 360;
-   LOCAL GHAsunDD := GHAsun_;
+  //Right ascension of the Sun, apparent
+  RAsun_ := rtd_*(ATAN2_(sind_(lambda_)*cosd_(eps_)-tand_(beta)*sind_(eps_),cosd_(lambda_)) MOD (2*PI));
+  
+  //Declination of the Sun, apparent
+  LOCAL DECsun := rtd_*asin(sind_(beta)*cosd_(eps_)+cosd_(beta)*sind_(eps_)*sind_(lambda_));
+  LOCAL DECsunDD := DECsun;
+  SunDec_ := DECsun;
 
-   //Semidiameter of the Sun
-   SDsun_ := 959.63/Re_;
+  //GHA of the Sun
+  GHAsun_ := (GHAAtrue_-RAsun_) MOD 360;
+  LOCAL GHAsunDD := GHAsun_;
 
-   //Horizontal parallax of the Sun
-   HPsun_ := 8.794/Re_;
+  //Semidiameter of the Sun
+  SDsun_ := 959.63/Re_;
 
-   //Equation of time in minutes
-   //EOT := 4*(Lsun_mean-0.0057183-0.0008-RAsun_+delta_psi_*cosd_(eps_));
-   EOT_ := 4*GHAsun_+720-1440*dayfraction_;
-   IF EOT_>20 THEN EOT_:=EOT_-1440; END;
-   IF EOT_<-20 THEN EOT_:=EOT_+1440; END;
-   
-   HAngle:=oldHA;
+  //Horizontal parallax of the Sun
+  HPsun_ := 8.794/Re_;
+
+  //Equation of time in minutes
+  //EOT := 4*(Lsun_mean-0.0057183-0.0008-RAsun_+delta_psi_*cosd_(eps_));
+  EOT_ := 4*GHAsun_+720-1440*dayfraction_;
+  IF EOT_>20 THEN EOT_:=EOT_-1440; END;
+  IF EOT_<-20 THEN EOT_:=EOT_+1440; END;
+  
+  HAngle:=oldHA;
 END;
 
 
