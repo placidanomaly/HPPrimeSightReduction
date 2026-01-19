@@ -1752,8 +1752,8 @@ BEGIN
   LOCAL c:=INPUT({on_scale,off_scale},
     "Solar Index Correction Calc",
   {"Below:","Above:"},
-  {"Reflected sun below actual sun (')",
-   "Reflected sun above actual sun (')"});
+  {"Reflected sun below in MM.m (positive) (')",
+   "Reflected sun above in MM.m (positive)  (')"});
   
   IF NOT c THEN RETURN("Canceled."); END;
   

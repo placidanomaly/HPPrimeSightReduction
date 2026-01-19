@@ -42,7 +42,9 @@ For an excellent textbook on celestial navigation and the process of sight reduc
   * [Making a Fix](#making-a-fix)
   * [Ephemerides](#ephemerides)
   * [Star Finder](#star-finder)
-  * [Calculating Index Correction from Sun diameter](#calculating-index-correction-from-sun-diameter)
+  * [Setting Default Index Correction](#setting-default-index-correction)
+    *[Direct Entry](#direct-entry)
+	*[Calculation from Sun diameter measurement][(#calculation-from-sun-diameter-measurement)
 
 # Installing the Program
 The program can be installed on an HP Prime calculator or on a PC or Mac running the [HP Prime Virtual Calculator](https://www.hpcalc.org/details/8939) from the source files in the */src* folder of this repository or from the binary files in the */bin* folder.
@@ -283,13 +285,27 @@ Upon submitting the form, the calculator will perform the ephemerides calculatio
 
 While dragging or holding a key down, only the stars and planets will be redrawn. The grid lines will be redrawn when the keys and the touchscreen are released.
 
+## Setting Default Index Correction
+
+Whenever a new sight is entered, a value for the index correction of the sextant must be specified. A default value for the index correction can be defined using the *INDEX_CORRECTION* program. The value of the default index correction can either be entered directly or it can be calculated based on a measurement of the diameter of the Sun.
+
+Start by launching the *INDEX_CORRECTION* program and choose either the *Direct* or the *Solar* method using the soft keys. At the end of the procedure, the value of the index correction for all sights that have no sextant angle entered will be set to the new default index correction value (i.e. the index correction of existing sights will not be changed).
+
+![Index Correction options](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/index_correction.png)
+
+### Direct Entry
+
+When selecting the Direct soft key, the following input screen appears. Enter the default index correction in the field in decimal minutes (MM.m), with a negative value for an on-scale correction and a positive value for an off-scale correction.
+
+![Direct Entry](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/index_correction_input.png)
+
 ## Calculating Index Correction from Sun diameter
 
-The program contains a function to apply the index correction method described in [this document](https://www.starpath.com/online/celestial/solar_ic.pdf). After running this program, the default value for the index correction in the sight reduction forms will be set to the value calculated by this procedure (otherwise the default index correction value will be zero). To run the program, highlight the **Sight Reduction** program, press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key, and hit the <img alt="6" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/6.png" valign="middle"> key to run the **SOLAR_IC** program. The program briefly describes the measurements that need to be taken:
+Calculating the index correction from a measurement of the diameter of the Sun is accomplished by following the procedure described in [this document](https://www.starpath.com/online/celestial/solar_ic.pdf). The procedure assumes that the index correction is small enough such that the top measurement is on-scale and the bottom measurement is off-scale. The program briefly describes the measurements that need to be taken:
 
 ![Solar IC intro](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_intro.png)
 
-Values for the *Below* and *Above* observations as read on the sextant, in arc minutes, can be entered in the input form. Do NOT correct the off scale *Below* reading by subtracting it from 60, the program will do that for you. Use the value directly read on the instrument.
+Values for the *Below* and *Above* observations as read on the sextant, in decimal arc minutes (MM.m), can be entered in the input form. Do NOT correct the off scale *Below* reading by subtracting it from 60, the program will do that for you. Use the value directly read on the instrument.
 
 ![Solar IC input](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_input.png)
 
@@ -297,7 +313,7 @@ The program will display the calculated index correction result as well as the i
 
 ![Solar IC output](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_output.png)
 
-After pressing a key, the program prompts whether to accept or reject the calculated index correction. If accepted, the value will be applied to all sights that did not have a manually entered index correction and will be used as the default value for new sights.
+After pressing a key, the program prompts whether to accept or reject the calculated index correction.
 
 # Future Improvements
 The ephemeris calculations are usually accurate to within less than 0.1' of the values in the Almanac for the period 1800-2200 (subject to Delta T adjustments), but errors of up to 0.3' are sometimes seen. This is sufficient for most practical cases of celestial navigation but perfect precision would be better. The differences are still being investigated because the same program in Javascript from Henning Umland's web site seems to always output the exact same numbers as the Almanac. The possibility of a discrepancy in the code is one theory but a more likely one is that the lower number of significant digits in the calculator vs. a regular computer introduces rounding errors that add up in the lengthy calculations, but that has yet to be proven.
