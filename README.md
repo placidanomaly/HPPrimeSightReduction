@@ -302,6 +302,8 @@ After pressing a key, the program prompts whether to accept or reject the calcul
 # Future Improvements
 The ephemeris calculations are usually accurate to within less than 0.1' of the values in the Almanac for the period 1800-2200 (subject to Delta T adjustments), but errors of up to 0.3' are sometimes seen. This is sufficient for most practical cases of celestial navigation but perfect precision would be better. The differences are still being investigated because the same program in Javascript from Henning Umland's web site seems to always output the exact same numbers as the Almanac. The possibility of a discrepancy in the code is one theory but a more likely one is that the lower number of significant digits in the calculator vs. a regular computer introduces rounding errors that add up in the lengthy calculations, but that has yet to be proven.
 
+Instead of entering a DR position manually for each sight, we will add the ability to enter the last DR position or fix and a boat speed and true heading. Then the DR positions associated with each sight will be calculated based on an instant DR position calculated at the time of the sight. This will avoid the errors introduced by using an outdated DR position.
+
 Instead of storing all sights as local data in the **Sight Reduction** program, we are considering making them global which would prevent their erasure when the program is open for editing. But that would mean that dozens of variables would pollute the global scope of the calculator. Comments on this would be welcome.
 
 # Contact
