@@ -1084,6 +1084,7 @@ BEGIN
         LOCAL m:=MOUSE();
         IF SIZE(m(1))==0 AND k==-1 THEN
           PLOTSKYGRID(az,alt,fov,15,10,15,IFTE(Theme(1)==1,#CCCCCC,#555555));
+          TEXTOUT_P("Az:"+az+"° Alt:"+alt+"° FOV:"+fov+"°",2,230,1);
           // Redraw bodies in case they were covered by grid lines
           PLOTBODIES(CELESTIALTOSCREEN(bodies,az,alt,fov));        
           redrawRequired:=0;
@@ -1257,13 +1258,18 @@ BEGIN
   LOCAL hs:={},hourOffset:=0,scalingFactor:=10000;
   
   WHILE more DO
-    PRINT();
-    PRINT("OBSERVATION #"+i);
-    PRINT("Press any key to record the time");
-    PRINT("when the observation is made and");
-    PRINT("enter the sextant reading.");
-    WAIT(-1);
-  
+    RECT();
+    TEXTOUT_P("OBSERVATION #"+i,0,20,0);
+    TEXTOUT_P("Press any key to record the time",0,155,1);
+    TEXTOUT_P("when the observation is made and",0,170,1);
+    TEXTOUT_P("enter the sextant reading.",0,185,1);
+    REPEAT
+      TEXTOUT_P(HMS(GET_UTC_TIME()),120,80,7,#FFFFFF,320,0);
+      WAIT(0.25);  
+    UNTIL GETKEY()<>-1;
+
+    RECT();
+
     t:=GET_UTC_TIME();
     t:=t+deltaUTCTime;
     
@@ -1769,21 +1775,25 @@ BEGIN
   PRINT("Measured sun semi-diameter: "+STRING(sd,2,1)+"'");
   PRINT("Actual sun semi-diameter: "+STRING(d(4)/60,2,2)+"'");
   PRINT("Difference: "+STRING(sd-d(4)/60,2,2)+"'");
-  PRINT(" ");
-  PRINT("Press any key to continue...");
-  WAIT(-1);
+  c:=GET_SOFTKEY({"","","","","Reject","Accept"},{0,0,0,0,0,0});
   
-  CHOOSE(c,"Accept results?",
-         "Accept","Reject");
-     
-  IF c==1 THEN
+  PRINT();
+
+  IF c==6 THEN
+    IF TYPE(IC_min)==0 THEN
+      RESET_SIGHTS();
+    END;
     LOCAL i;
     FOR i FROM 1 TO 10 DO
-    IF IC_min(i)==0 THEN IC_min(i):=ic; END;
+      IF IC_min(i)==0 THEN IC_min(i):=ic; END;
+    END;
+    PRINT("Index correction set.");
+  ELSE
+    PRINT("Index correction canceled.");
   END;
-  RETURN "Index correction set.";
-  END;
-  RETURN "Canceled.";
+  PRINT("  ");
+  PRINT("Press ESC to exit.");
+  STARTVIEW(-7,1);
 END;
 
 EXPORT SET_TIME()
