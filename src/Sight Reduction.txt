@@ -1263,8 +1263,14 @@ BEGIN
     TEXTOUT_P("Press any key to record the time",0,155,1);
     TEXTOUT_P("when the observation is made and",0,170,1);
     TEXTOUT_P("enter the sextant reading.",0,185,1);
+
+    // We use TICKS() instead of reading the Time
+    // variable because the Time variable sometimes
+    // skips seconds
+    LOCAL startTicks:=TICKS();
+    LOCAL startTime:=GET_UTC_TIME();
     REPEAT
-      TEXTOUT_P(HMS(GET_UTC_TIME()),120,80,7,#FFFFFF,320,0);
+      TEXTOUT_P(HMS(startTime+(TICKS()-startTicks)/3600000),120,80,7,#FFFFFF,320,0);
       WAIT(0.5);  
     UNTIL GETKEY()<>-1;
 
