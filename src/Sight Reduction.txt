@@ -1265,7 +1265,7 @@ BEGIN
     TEXTOUT_P("enter the sextant reading.",0,185,1);
     REPEAT
       TEXTOUT_P(HMS(GET_UTC_TIME()),120,80,7,#FFFFFF,320,0);
-      WAIT(0.25);  
+      WAIT(0.5);  
     UNTIL GETKEY()<>-1;
 
     RECT();
@@ -1362,11 +1362,11 @@ BEGIN
     // Check that they fall within our time range
     IF SIZE(r)>0 THEN
       FOR i FROM 1 TO SIZE(r) DO
-      IF (r(i)>Statistics_2Var.C1(1)) AND (r(i)<Statistics_2Var.C1(0)) THEN
-        extremumFlag:=1;
-        avgTime:=r(i);
+        IF (r(i)>Statistics_2Var.C1(1)) AND (r(i)<Statistics_2Var.C1(0)) THEN
+          extremumFlag:=1;
+          avgTime:=r(i);
+        END;
       END;
-    END;
     ELSE
       avgTime:=Statistics_2Var.C1(1)+(Statistics_2Var.C1(0)-Statistics_2Var.C1(1))/2;
       END;
@@ -2002,9 +2002,10 @@ BEGIN
     // Check if we have a keyboard or
     // mouse event
     IF TYPE(r)=0 THEN
-      // We have a keyboard event. Check that
+      // We have a keyboard event. Check if
       // either ESC or ON was pressed and
-      // return or do nothing
+      // return 0 if so, and ignore any
+      // other key
       IF r=4 OR r=46 THEN
         RETURN 0;
       END;
