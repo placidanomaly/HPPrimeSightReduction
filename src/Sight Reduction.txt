@@ -1764,15 +1764,15 @@ BEGIN
   LOCAL c:=INPUT({on_scale,off_scale},
     "Solar Index Correction Calc",
   {"Below:","Above:"},
-  {"Reflected sun below actual sun (')",
-   "Reflected sun above actual sun (')"});
+  {"Reflected sun below direct sun (on-scale ')",
+   "Reflected sun above direct sun (off-scale ')"});
   
   IF NOT c THEN RETURN("Canceled."); END;
   
-  off_scale:=60-off_scale;
+  off_scale:=60-ABS(off_scale);
   LOCAL ic:=ABS((on_scale-off_scale)/2);
   
-  IF on_scale>off_scale THEN ic:=-1*ic; END;
+  IF on_scale>ABS(off_scale) THEN ic:=-1*ic; END;
   
   PRINT();  
   LOCAL d:=SunEphemeris(Date,Time,1);
