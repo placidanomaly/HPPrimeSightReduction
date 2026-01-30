@@ -166,7 +166,7 @@ The calculator has a pretty accurate internal clock that can be used to automati
 ![Setting the time and timezone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
 
 ## Planning Observations
-It can be helpful to know which celestial bodies will be visible and where ahead of an observation session with the sextant so that the bodies to be observed can be selected ahead of time based on whether they meet certain a criteria for visibility based on their altitude and azimuth. The program shows, for a given date, all the bodies that meet the visibility criteria at morning and evening nautical twilight, as well as at a specified time during that day. Here's how it works:
+It can be helpful to know which celestial bodies will be visible and where ahead of an observation session with the sextant so that the bodies to be observed can be selected based on whether they meet certain a criteria for visibility according to their altitude and azimuth. The program will show a table containing, for a given date, all the bodies that meet the visibility criteria at morning and evening nautical twilight, as well as at a specified time during that day. Here's how it works:
 
 1. From the programs screen of the calculator, select the **Sight Reduction** program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key and click on the **SIGHT_PLANNING** function. An input screen will appear:
 
