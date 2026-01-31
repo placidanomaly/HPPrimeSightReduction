@@ -295,9 +295,9 @@ While dragging or holding a key down, only the stars and planets will be redrawn
 
 ## Setting Default Index Correction
 
-Whenever a new sight is entered, a value for the index correction of the sextant must be specified. A default value for the index correction can be defined using the *INDEX_CORRECTION* program. The value of the default index correction can either be entered directly or it can be calculated based on a measurement of the diameter of the Sun.
+Whenever a new sight is entered, a value for the index correction of the sextant must be specified. A default value for the index correction can be defined using the **INDEX_CORRECTION** program. The value of the default index correction can either be entered directly or it can be calculated based on a measurement of the diameter of the Sun.
 
-Start by launching the *INDEX_CORRECTION* program and choose either the *Direct* or the *Solar* method using the soft keys. At the end of the procedure, the value of the index correction for all sights that have no sextant angle entered will be set to the new default index correction value (i.e. the index correction of existing sights will not be changed).
+Start by launching the **INDEX_CORRECTION** program and choose either the *Direct* or the *Solar* method using the soft keys. At the end of the procedure, the value of the index correction for all sights that have no sextant angle entered will be set to the new default index correction value (i.e. the index correction of existing sights will not be changed).
 
 ![Index Correction options](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/index_correction.png)
 
