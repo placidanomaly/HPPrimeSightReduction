@@ -18,7 +18,7 @@ LOCAL rfDist_nm,rfBrg_deg;
 LOCAL starId,SHA_deg;
 
 // Default values for subsequent sights
-LOCAL IC_default, DRlat_default:=45, DRlon_default:=-73,HE_default;
+LOCAL IC_default, DRlat_default:=45, DRlon_default:=-73,HE_default,artificial_default:=0;
 LOCAL date_default,temp_default,press_default;
 
 //Moon sight variables
@@ -39,7 +39,7 @@ BEGIN
   // Check that our variables are initialized
   IF TYPE(obs_UTC)=0 THEN RESET_SIGHTS(); END;
 
-  IF NOT INPUT_HS_AND_BODY() THEN RETURN "Canceled."; END;
+  IF NOT INPUT_HS_AND_BODY() THEN RETURN "CANCELED"; END;
   
   LOCAL c;
   
@@ -55,18 +55,18 @@ BEGIN
       // As the name implies, this is a pre-calculated
       // sight so no need to continue with the HC
       // and LOP calculations.
-      IF NOT c THEN RETURN "Canceled."; ELSE RETURN; END;
+      IF NOT c THEN RETURN "CANCELED"; ELSE RETURN; END;
     END;
   END;
   
-  IF NOT c THEN RETURN "Canceled."; END;
+  IF NOT c THEN RETURN "CANCELED"; END;
   
-  IF NOT HC_CALC(current) THEN RETURN "Canceled."; END;
+  IF NOT HC_CALC(current) THEN RETURN "CANCELED"; END;
 
-  IF NOT VIEW_LOP_PARAMETERS(current) THEN RETURN "Canceled."; END;
+  IF NOT VIEW_LOP_PARAMETERS(current) THEN RETURN "CANCELED"; END;
   
   LOP_EQUATION(current);
-
+    
 END;
 
 LOCAL SUN_SIGHT()
@@ -1084,6 +1084,7 @@ BEGIN
         LOCAL m:=MOUSE();
         IF SIZE(m(1))==0 AND k==-1 THEN
           PLOTSKYGRID(az,alt,fov,15,10,15,IFTE(Theme(1)==1,#CCCCCC,#555555));
+          TEXTOUT_P("Az:"+az+"° Alt:"+alt+"° FOV:"+fov+"°",2,230,1);
           // Redraw bodies in case they were covered by grid lines
           PLOTBODIES(CELESTIALTOSCREEN(bodies,az,alt,fov));        
           redrawRequired:=0;
@@ -1257,13 +1258,24 @@ BEGIN
   LOCAL hs:={},hourOffset:=0,scalingFactor:=10000;
   
   WHILE more DO
-    PRINT();
-    PRINT("OBSERVATION #"+i);
-    PRINT("Press any key to record the time");
-    PRINT("when the observation is made and");
-    PRINT("enter the sextant reading.");
-    WAIT(-1);
-  
+    RECT();
+    TEXTOUT_P("OBSERVATION #"+i,0,20,0);
+    TEXTOUT_P("Press any key to record the time",0,155,1);
+    TEXTOUT_P("when the observation is made and",0,170,1);
+    TEXTOUT_P("enter the sextant reading.",0,185,1);
+
+    // We use TICKS() instead of reading the Time
+    // variable because the Time variable sometimes
+    // skips seconds
+    LOCAL startTicks:=TICKS();
+    LOCAL startTime:=GET_UTC_TIME();
+    REPEAT
+      TEXTOUT_P(HMS(startTime+(TICKS()-startTicks)/3600000),120,80,7,#FFFFFF,320,0);
+      WAIT(0.5);  
+    UNTIL GETKEY()<>-1;
+
+    RECT();
+
     t:=GET_UTC_TIME();
     t:=t+deltaUTCTime;
     
@@ -1356,11 +1368,11 @@ BEGIN
     // Check that they fall within our time range
     IF SIZE(r)>0 THEN
       FOR i FROM 1 TO SIZE(r) DO
-      IF (r(i)>Statistics_2Var.C1(1)) AND (r(i)<Statistics_2Var.C1(0)) THEN
-        extremumFlag:=1;
-        avgTime:=r(i);
+        IF (r(i)>Statistics_2Var.C1(1)) AND (r(i)<Statistics_2Var.C1(0)) THEN
+          extremumFlag:=1;
+          avgTime:=r(i);
+        END;
       END;
-    END;
     ELSE
       avgTime:=Statistics_2Var.C1(1)+(Statistics_2Var.C1(0)-Statistics_2Var.C1(1))/2;
       END;
@@ -1438,9 +1450,9 @@ BEGIN
     END;
   END;
 
-
   IF DRlat_deg(current)=0 THEN DRlat_deg(current):=DRlat_default; END;
   IF DRlong_deg(current)=0 THEN DRlong_deg(current):=DRlon_default; END;  
+  IF HS_deg(current)=0 THEN artificial(current):=artificial_default; END;
 
   // If we already have a value for HS, set
   // default to not go through the observation
@@ -1492,7 +1504,8 @@ BEGIN
   obsDate(current):=tempDate;
   date_default:=obsDate(current);
   DRlat_default:=DRlat_deg(current);
-  DRlon_default:=DRlong_deg(current);  
+  DRlon_default:=DRlong_deg(current);
+  artificial_default:=artificial(current);
   
   // If the pre-calculated option was selected,
   // skip the corrections and sextant altitude screens
@@ -1871,8 +1884,7 @@ BEGIN
   HO_deg            := init;
   HA_deg            := init;   
   DRlat_deg         := init;
-  DRlong_deg        := init;
-  IC_min            := init;
+  DRlong_deg        := init;  
   altCorr_min       := init;
   obsDate           := init;
   obs_UTC           := init;
@@ -1905,6 +1917,12 @@ BEGIN
   sightType         := init;
   bodyItem          := init1;
 
+  // Leave index correction alone if
+  // the variable is already initialized
+  // (we want index correction to carry
+  // over between fixes)
+  IF TYPE(IC_min)==0 THEN IC_min:=init; END;
+  
   date_default:=Date;
   IF GET_UTC_TIME()>24 THEN
     date_default:=DATEADD(date_default,1);
@@ -2044,9 +2062,10 @@ BEGIN
     // Check if we have a keyboard or
     // mouse event
     IF TYPE(r)=0 THEN
-      // We have a keyboard event. Check that
+      // We have a keyboard event. Check if
       // either ESC or ON was pressed and
-      // return or do nothing
+      // return 0 if so, and ignore any
+      // other key
       IF r=4 OR r=46 THEN
         RETURN 0;
       END;
