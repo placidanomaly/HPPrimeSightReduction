@@ -303,7 +303,7 @@ Start by launching the *INDEX_CORRECTION* program and choose either the *Direct*
 
 ### Direct Entry
 
-When selecting the Direct soft key, the following input screen appears. Enter the default index correction in the field in decimal minutes (MM.m), with a negative value for an on-scale correction and a positive value for an off-scale correction.
+When selecting the Direct soft key, the following input screen appears. Enter the default index correction in the field in decimal minutes (*MM.m*), with a negative value for an on-scale correction and a positive value for an off-scale correction.
 
 ![Direct Entry](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/index_correction_input.png)
 
@@ -313,7 +313,7 @@ Calculating the index correction from a measurement of the diameter of the Sun i
 
 ![Solar IC intro](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_intro.png)
 
-Values for the *Below* and *Above* observations as read on the sextant, in decimal arc minutes (MM.m), can be entered in the input form. Do NOT correct the off scale *Below* reading by subtracting it from 60, the program will do that for you. Use the value directly read on the instrument.
+Values for the *Below* and *Above* observations as read on the sextant, in decimal arc minutes (*MM.m*), can be entered in the input form. **Do NOT correct the off scale *Below* reading by subtracting it from 60, the program will do that for you. Use the value directly read on the instrument.**
 
 ![Solar IC input](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_input.png)
 
