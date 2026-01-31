@@ -2,13 +2,21 @@
 This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and requires no updates until 2200. It can also be used on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program.
 
 The following functionality is provided:
-* Astronomical calculations of the ephemerides of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the usual 58 stars used in celestial navication, and related calculations of Equation of Time, sunrise/sunset times, semi-diameters, centroid corrections for the partial illumination of Venus and Mars, etc.
-* Interactive stereographic star finder plot of celestial bodies at a given location and time
-* Observation planning by listing all observable bodies (i.e. meeting user-specified altitude and azimuth constraints) during morning and evening nautical twilight and at any time of the day with their respective GHA, declination, azimuth, true altitude, apparent altitude, and semi-diameter
-* Sight reduction of sextant observations of any of those celestial bodies to Lines of Position (LOPs)
-* Running fix calculations through translation of lines of position by a certain distance on a given bearing
-* Plotting of LOPs on a Cartesian plot from which a fix can easily be deduced
-* Determination of the index correction of a sextant from two simple observations of the Sun (useful when no horizon is visible)
+* Astronomical
+  * Ephemerides of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the usual 58 stars used in celestial navication
+  * Delta T, equation of time, obliquity of the ecliptic, etc.
+  * Rise and set times of the Sun and all other celestial bodies, civil and nautical twilight times
+  * Semi-diameter of the planets and the Moon
+  * Moon phase
+  * Centroid corrections for the partial illumination of Venus and Mars
+  * Interactive stereographic projection of the sky (aka star finder plot) at a given location and time
+
+* Navigation
+  * Observation planning by listing all observable bodies (i.e. meeting user-specified altitude and azimuth constraints) during morning and evening nautical twilight and at any time of the day with their respective GHA, declination, azimuth, true altitude, apparent altitude, and semi-diameter
+  * Sight reduction of sextant observations of any of those celestial bodies to Lines of Position (LOPs)
+  * Running fix calculations through translation of lines of position by a certain distance on a given bearing
+  * Plotting of LOPs on a Cartesian plot from which a fix can easily be deduced
+  * Determination of the index correction of a sextant from two simple observations of the Sun
 
 <img alt="Sample LOP plot" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png" valign="top">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Sample LOP plot" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/starfinder.png" valign="top">
 
@@ -25,7 +33,7 @@ For an excellent textbook on celestial navigation and the process of sight reduc
   * [Prerequisites](prerequisites)
     * [Downloading this repository](downloading-this-repository)
     * [*HP Connectivity Kit* and *HP Prime Virtual Calculator*](#hp-connectivity-kit-and-hp-prime-virtual-calculator)
-  * [Installing from Binaries](#installing-from-binaries)
+  * [Installing from Binaries](#installing-from-binaries-recommended)
   * [Installing from Source Files](#installing-from-source-files)
   * [Confirming that Everything Works](#confirming-that-everything-works)
     
@@ -43,8 +51,8 @@ For an excellent textbook on celestial navigation and the process of sight reduc
   * [Ephemerides](#ephemerides)
   * [Star Finder](#star-finder)
   * [Setting Default Index Correction](#setting-default-index-correction)
-    *[Direct Entry](#direct-entry)
-	*[Calculation from Sun diameter measurement][(#calculation-from-sun-diameter-measurement)
+    * [Direct Entry](#direct-entry)
+	* [Calculation from Sun diameter measurement](#calculation-from-sun-diameter-measurement)
 
 # Installing the Program
 The program can be installed on an HP Prime calculator or on a PC or Mac running the [HP Prime Virtual Calculator](https://www.hpcalc.org/details/8939) from the source files in the */src* folder of this repository or from the binary files in the */bin* folder.
@@ -97,9 +105,9 @@ To confirm that the installation was successful, perform the following verificat
 
 1. On the calculator, open the Programs page using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle"> keys. Select the **Sight Reduction** program using the arrows, press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key, select **RESET_SIGHTS** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. This will initialize all the necessary variables for the program to work.
 2. Select the **Sight Reduction** program <ins>using the arrows (the big round button) on the calculator</ins> (see note below), press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key on the screen, select **EPHEMERIDES** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. Fill out the form with a date, time, and location following the conventions in the next section and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. If everything was installed properly, the requested ephemerides will be displayed and you can scroll through them using the touchscreen. Check the values against an Almanac for accuracy.
-3. If anything fails, double-check that all the programs are installed, open each one of them using the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key and the <img alt="Check" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/check.png" valign="middle">  soft key per Step 9 in the *Installing from Source* section. If all else fails, contact the author at the address at the bottom of this document.
+3. If anything fails, double-check that all the programs are installed. Open each one of them using the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key. Validate that the file is not empty and push the <img alt="Check" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/check.png" valign="middle"> soft key per Step 12 in the *Installing from Source* section. If the file is empty, try reinstalling the binary file. If that fails, install it from source following the instructions in the previous section. If you're stuck here, contact the author at the address at the bottom of this document.
 
-> **NOTE**: if you inadvertently click on a program name on the touchscreen or press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> while a program name is highlighted, you will enter the source code view where you can edit the program. Press the **ESC** key to leave the source code view. IF YOU OPEN THE **SIGHT REDUCTION** PROGRAM FOR EDITING, IT WILL CLEAR ALL YOUR SIGHTS. Avoid touching the screen on the **Sight Reduction** program or pressing **Enter** while the **Sight Reduction** program is highlighted -- THIS WILL ERASE ALL YOUR SIGHTS. Use the arrows to navigate to a program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key to launch it.
+> **IMPORTANT**: if you inadvertently click on a program name on the touchscreen or press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> while a program name is highlighted, you will enter the source code view where you can edit the program. Press the **ESC** key to leave the source code view. IF YOU OPEN THE **SIGHT REDUCTION** PROGRAM FOR EDITING, IT WILL CLEAR ALL YOUR SIGHTS. Instead, use the arrows to navigate to a program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key to launch it.
 
 # Using the Program
 
@@ -299,7 +307,7 @@ When selecting the Direct soft key, the following input screen appears. Enter th
 
 ![Direct Entry](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/index_correction_input.png)
 
-## Calculating Index Correction from Sun diameter
+### Calculation from Sun Diameter Measurement
 
 Calculating the index correction from a measurement of the diameter of the Sun is accomplished by following the procedure described in [this document](https://www.starpath.com/online/celestial/solar_ic.pdf). The procedure assumes that the index correction is small enough such that the top measurement is on-scale and the bottom measurement is off-scale. The program briefly describes the measurements that need to be taken:
 
