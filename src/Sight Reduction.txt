@@ -1750,7 +1750,13 @@ BEGIN
   
   LOCAL c:=GET_SOFTKEY({"","","","Solar","Direct","Cancel"});
   
-  IF c==4 THEN RETURN SOLAR_IC(); END;
+  IF c==4 THEN 
+    LOCAL result:=SOLAR_IC();
+	PRINT();
+	PRINT(result);
+	PRINT(" ");
+	PRINT("Press ESC to continue.");
+  END;
   IF c==5 THEN
     IF TYPE(IC_min)=0 THEN RESET_SIGHTS(); END;   
     LOCAL ic:=IC_min(1);
@@ -1800,7 +1806,12 @@ BEGIN
   
   IF NOT c THEN RETURN("Canceled."); END;
   
-  off_scale:=60-off_scale;
+  // Check in case a negative value was entered for
+  // the Above reading despite the instructions
+  IF off_scale>0 THEN
+    off_scale:=60-off_scale;
+  END;
+  
   LOCAL ic:=ABS((on_scale-off_scale)/2);
   
   IF on_scale>off_scale THEN ic:=-1*ic; END;
@@ -1812,14 +1823,10 @@ BEGIN
   PRINT("Measured sun semi-diameter: "+STRING(sd,2,1)+"'");
   PRINT("Actual sun semi-diameter: "+STRING(d(4)/60,2,2)+"'");
   PRINT("Difference: "+STRING(sd-d(4)/60,2,2)+"'");
-  PRINT(" ");
-  PRINT("Press any key to continue...");
-  WAIT(-1);
   
-  CHOOSE(c,"Accept results?",
-         "Accept","Reject");
+  c:=GET_SOFTKEY({"","","","","Cancel","Accept"});
      
-  IF c==1 THEN
+  IF c==6 THEN
     APPLY_INDEX_CORRECTION(ic);
     RETURN "Index correction set.";
   END;
