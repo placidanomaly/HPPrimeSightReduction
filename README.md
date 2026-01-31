@@ -321,7 +321,7 @@ The program will display the calculated index correction result as well as the i
 
 ![Solar IC output](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_output.png)
 
-After pressing a key, the program prompts whether to accept or reject the calculated index correction.
+If the observed diameter of the Sun is close to the actual value, press the *Accept* soft key to apply the calculated index correction, or *Cancel* otherwise. It is recommended to run the procedure a few times to confirm the validity of the index correction. The mean value of several calculations can be entered using the [Direct Entry](#direct-entry) method.
 
 # Future Improvements
 The ephemeris calculations are usually accurate to within less than 0.1' of the values in the Almanac for the period 1800-2200 (subject to Delta T adjustments), but errors of up to 0.3' are sometimes seen. This is sufficient for most practical cases of celestial navigation but perfect precision would be better. The differences are still being investigated because the same program in Javascript from Henning Umland's web site seems to always output the exact same numbers as the Almanac. The possibility of a discrepancy in the code is one theory but a more likely one is that the lower number of significant digits in the calculator vs. a regular computer introduces rounding errors that add up in the lengthy calculations, but that has yet to be proven.
