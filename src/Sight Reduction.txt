@@ -1728,13 +1728,56 @@ BEGIN
           +T^3/38710000) MOD 360;
 END;
 
-EXPORT SOLAR_IC()
+LOCAL APPLY_INDEX_CORRECTION(ic)
+BEGIN
+  IF TYPE(IC_min)=0 THEN RESET_SIGHTS(); END;
+  LOCAL i;
+  FOR i FROM 1 TO 10 DO
+    IF HS_deg(i)==0 THEN IC_min(i):=ic; END;
+  END;
+END;
+
+EXPORT INDEX_CORRECTION()
+BEGIN
+  
+  PRINT();
+  LOCAL i;
+  FOR i FROM 1 TO 6 DO PRINT(" "); END;
+  
+  PRINT("Select between entering a direct index");  
+  PRINT("correction or performing a diameter");
+  PRINT("measurement of the Sun.");
+  
+  LOCAL c:=GET_SOFTKEY({"","","","Solar","Direct","Cancel"});
+  
+  IF c==4 THEN RETURN SOLAR_IC(); END;
+  IF c==5 THEN
+    IF TYPE(IC_min)=0 THEN RESET_SIGHTS(); END;   
+    LOCAL ic:=IC_min(1);
+    c:=INPUT({ic},
+	  "Sextant Default Index Correction",
+	  {"Correction:"},
+	  {"Index correction MM.m (-=On-scale/+=Off-scale)"}
+	  );
+
+    IF NOT c THEN RETURN "Canceled."; END;
+
+    APPLY_INDEX_CORRECTION(ic);
+	RETURN "Index correction applied.";	
+  END;
+  
+  RETURN "Canceled.";
+END;
+
+LOCAL SOLAR_IC()
 BEGIN
   LOCAL on_scale,off_scale;
   
   HAngle:=1;
   
   PRINT();
+  PRINT("INDEX CORRECTION FROM SUN DIAMETER");
+  PRINT(" ");
   PRINT("This will set the index correction to");
   PRINT("a value calculated from a measurement of");
   PRINT("the diameter of the sun. First, set the");
@@ -1745,15 +1788,15 @@ BEGIN
   PRINT("the top of the observed sun and record the");
   PRINT("direct sextant reading (no 60 minus) in the");
   PRINT("ABOVE value.");
-  PRINT(" ");
-  PRINT("Press any key to continue...");
-  WAIT(-1);
   
-  LOCAL c:=INPUT({on_scale,off_scale},
-    "Solar Index Correction Calc",
-  {"Below:","Above:"},
-  {"Reflected sun below in MM.m (positive) (')",
-   "Reflected sun above in MM.m (positive)  (')"});
+  LOCAL c:=GET_SOFTKEY({"","","","","Cancel","Ok"});
+  IF c==0 OR c==5 THEN RETURN "Canceled"; END;
+  
+  c:=INPUT({on_scale,off_scale},
+     "Solar Index Correction Calc",
+     {"Below:","Above:"},
+     {"Direct reading of reflected sun below MM.m (')",
+      "Direct reading of reflected sun above MM.m (')"});
   
   IF NOT c THEN RETURN("Canceled."); END;
   
@@ -1777,11 +1820,8 @@ BEGIN
          "Accept","Reject");
      
   IF c==1 THEN
-    LOCAL i;
-    FOR i FROM 1 TO 10 DO
-    IF IC_min(i)==0 THEN IC_min(i):=ic; END;
-  END;
-  RETURN "Index correction set.";
+    APPLY_INDEX_CORRECTION(ic);
+    RETURN "Index correction set.";
   END;
   RETURN "Canceled.";
 END;
@@ -1978,6 +2018,11 @@ BEGIN
   IF t>=24 THEN t:=t-24; END;
   
   RETURN →HMS(t);
+END;
+
+GET_SOFTKEY(keylist)
+BEGIN
+  RETURN GET_SOFTKEY(keylist,{0,0,0,0,0,0});
 END;
 
 GET_SOFTKEY(keylist,flags)
