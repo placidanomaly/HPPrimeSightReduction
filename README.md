@@ -48,6 +48,8 @@ For an excellent textbook on celestial navigation and the process of sight reduc
   * [Planning Observations](#planning-observations)
   * [Reducing Sights](#reducing-sights)
   * [Making a Fix](#making-a-fix)
+    * [Manual Fix](#manual-fix)
+    * [Computed Fix](#computed-fix)
   * [Ephemerides](#ephemerides)
   * [Star Finder](#star-finder)
   * [Setting Default Index Correction](#setting-default-index-correction)
