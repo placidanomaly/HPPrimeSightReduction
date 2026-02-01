@@ -16,6 +16,7 @@ LOCAL semiD, paralX;
 LOCAL obsDate;
 LOCAL rfDist_nm,rfBrg_deg;
 LOCAL starId,SHA_deg;
+LOCAL fixLat, fixLon;
 
 // Default values for subsequent sights
 LOCAL IC_default, DRlat_default:=45, DRlon_default:=-73,HE_default,artificial_default:=0;
@@ -287,13 +288,105 @@ BEGIN
   
   STARTAPP("Function");
   
-  // This doesn't work with a loop
-  // for some reason
   FOR i FROM 0 TO 9 DO    
-  IF a_nm(IFTE(i=0,10,i))<>0 THEN Function.CHECK(i); END;
+    IF a_nm(IFTE(i=0,10,i))<>0 THEN Function.CHECK(i); END;
   END;
   
-  STARTVIEW(1,1);  
+  STARTVIEW(1,1);
+  
+END;
+
+LOCAL INTERSECTION(f1,f2)
+BEGIN
+  LOCAL xx, yy;
+  
+  xx:=EXPR("CAS(\"solve(Function.F"+f1+"(x)=Function.F"+f2+"(x),x)(1)\")");
+  yy:=EXPR("CAS(\"Function.F"+f1+"("+xx+")\")");
+
+  RETURN {xx,yy};
+END;
+
+LOCAL LEMOINE(p1,p2,p3)
+BEGIN
+  // pn are triangle vertices {xn,yn}
+  
+  LOCAL x1 := p1(1), y1 := p1(1);
+  LOCAL x2 := p2(1), y2 := p2(2);
+  LOCAL x3 := p3(1), y3 := p3(2);
+  
+  LOCAL a2 := (x3-x2)^2 + (y3-y2)^2;
+  LOCAL b2 := (x3-x1)^2 + (y3-y1)^2;
+  LOCAL c2 := (x2-x1)^2 + (y2-y1)^2;
+  
+  LOCAL S := a2 + b2 + c2;
+  
+  LOCAL xl := (a2*x1 + b2*x2 + c2*x3) / S;
+  LOCAL yl := (a2*y1 + b2*y2 + c2*y3) / S;
+  
+  RETURN {xl, yl};
+END;
+
+EXPORT COMPUTE_FIX()
+BEGIN
+  LOCAL i,fix;
+  LOCAL lops={};
+  LOCAL msg:="";
+  
+  // Check that variables are initialized
+  IF TYPE(a_nm)=0 THEN RETURN "Variables not initialized."; END;
+  
+  // Determine which LOP registers
+  // contain an LOP
+  FOR i FROM 1 TO 10 DO
+    IF a_nm(i)<>0 THEN
+	  IF i==10 THEN
+	    lops:=CONCAT(lops,0);
+	  ELSE	 
+	    lops:=CONCAT(lops,i);
+	  END;
+	END;
+  END;
+
+  CASE
+    IF SIZE(lops)<2 THEN RETURN "At least 2 LOPs are required"; END;
+	
+	IF SIZE(lops)==2 THEN
+	  // 2 LOPs, we return the intersection of the 2
+	  fix:=INTERSECTION(lops(1),lops(2));
+	  msg:="Intersection of 2 LOPs";
+	END;
+	
+	IF SIZE(lops)==3 THEN
+	  // 3 LOPs: compute symmedian
+	  // center of triangle (Lemoine point)
+	  fix:=LEMOINE(
+	    INTERSECTION(lops(1),lops(2)),
+		INTERSECTION(lops(1),lops(3)),
+		INTERSECTION(lops(2),lops(3)));
+		
+	  msg:="Symmedian Center of 3 LOPs";
+	END;
+	
+	IF SIZE(lops)>3 THEN
+	  LOCAL vertices:={};
+	  LOCAL j;
+	  
+	  FOR i FROM 1 TO SIZE(lops)-1 DO
+	    FOR j FROM i+1 to SIZE(lops) DO
+		  vertices:=CONCAT(vertices,{INTERSECTION(lops(i),lops(j))});
+		END;
+      END;
+	  
+	  fix:=ΣLIST(vertices)/SIZE(vertices);
+	  
+	  msg:="Centroid of "+SIZE(vertices)+" LOP intersections";
+	END;	
+  END;
+  
+  fixLon:=fix(1);
+  fixLat:=fix(2);
+  
+  MSGBOX("Fix from "+msg+CHAR(10)+CHAR(10)+"Latitude: "+→DMD(fixLat)+CHAR(10)+"Longitude: "+→DMD(fixLon)+CHAR(10),1);
   
 END;
 
@@ -1282,8 +1375,8 @@ BEGIN
     r:=0;
     c:=INPUT({r,t},"Observation #"+i,
       {"HS:","Time:"},
-    {"Enter sextant reading (°), or 0 to end",
-     "UTC Time (HH°MM'SS\")"});
+      {"Enter sextant reading (°), or 0 to end",
+       "UTC Time (HH°MM'SS\")"});
 
     IF ((c=0) OR (r=0)) AND (i=1) THEN RETURN {}; END;
   

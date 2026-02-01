@@ -150,7 +150,7 @@ The color theme used by the calculator can be set to Light or Dark mode on page 
 The program keeps data about sights and lines of position in the calculator's memory, and that data is preserved when the calculator is turned off. Generally, you should clear the program's memory prior to any new fix. If you ever get an **Invalid Input** error, you likely inadvertently opened the **Sight Reduction** program for editing and need to clear the memory (see the **NOTE** in the [Confirming that Everything Works](#confirming-that-everything-works) section). To clear all program variables:
 
 1. Highlight the **Sight Reduction** program and press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key
-2. From the list of options, pick **RESET_SIGHTS** on the touchscreen or with the arrows and the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key, or press the `9` key. Click any key to dismiss the confirmation message.
+2. From the list of options, pick **RESET_SIGHTS** on the touchscreen or with the arrows and the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key. Click any key to dismiss the confirmation message.
 
 ![Resetting variables](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightreductionprograms.png)
 
@@ -257,9 +257,30 @@ Performing a sight reduction is a straightforward process:
 
 ## Making a Fix
 
-Once you've entered 2 or more sights in different LOP registers, you can make a fix from a graphical representation of the LOPs on a Cartesian plane. To do that, run the **Sight Reduction** program and select **PLOT LOPs**. This will open the calculator's Function app and a line of position will be plotted for each LOP defined in the **SIGHT** program. The calculator functions can then be used to calculate the intersection of LOPs, etc., and the cursor can be used to manually find the centroid or some other position in the "cocked hat" to make a fix. In order to determine which line color corresponds to which LOP, use the **Symb** key to view the color coding and the corresponding LOP equations, and use the **Plot** key to go back to the graph.
+Once 2 or more LOPs have been defined (i.e. 2 or more sights have been entered in separate LOP registers), a fix can be made either manually by visualizing the LOP plot or automatically by computing a center of LOP intersections.
+
+### Manual Fix
+
+A manual fix is made by visualizing the LOPs on a Cartesian plane with longitude as the horizontal axis and latitude the vertical axis. To do that, run the **Sight Reduction** program and select **PLOT LOPs**. This will open the calculator's Function app and a line of position will be plotted for each LOP defined in the **SIGHT** program. The calculator functions accessible through the soft keys can then be used to calculate the intersection of LOPs, etc., and the cursor can be used to manually find the centroid or some other position inside the "cocked hat" to make a fix. In order to determine which line color corresponds to which LOP, use the **Symb** key to view the color coding and the corresponding LOP equations, and use the **Plot** key to go back to the graph.
 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
+
+### Computed Fix
+
+Alternatively, the calculator can compute a fix based on LOPs. The computation varies depending on how many LOPs are defined:
+
+  * 2 LOPs: the intersection of the 2 LOPs is the fix
+  * 3 LOPs: the symmedian center, or Lemoine point, of the triangle formed by the 3 LOPs
+  * 4 or more LOPs: the centroid of all the intersections of the LOPs with one another, which is the mean value of longitude and latitude of all the intersections
+
+To compute a fix, run the **Sight Reduction** program and select **COMPUTE_FIX**. The output will indicate which method was used to compute the fix and the longitude and latitude of the fix. In the screen shots below, we computed a fix after two sights, then entered a third sight and computed the fix again, and entered a fourth sight and computed the fix again:
+
+![Fix with 2 sights](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/fix2.png)
+
+![Fix with 3 sights](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/fix3.png)
+
+![Fix with 4 sights](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/fix4.png)
+
 
 ## Ephemerides
 The program can show the Greenwich Hour Angle (GHA) and declination of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the 58 celestial navigation stars for any point in time between 1800 and 2200, as well as the corresponding azimuth and altitude from a specified geographical location. The semi-diameter of certain bodies will also be shown. A graphical representation of the ephemerides is available through the [Star Finder function](#star-finder) which is covered in the next section. To use this feature:
