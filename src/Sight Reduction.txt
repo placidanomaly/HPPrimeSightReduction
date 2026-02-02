@@ -368,18 +368,51 @@ BEGIN
 	END;
 	
 	IF SIZE(lops)>3 THEN
-	  LOCAL vertices:={};
-	  LOCAL j;
+	  // With more than 3 LOPs, we compute the
+	  // coordinate with the lowest mean square
+	  // error from all LOPs
 	  
-	  FOR i FROM 1 TO SIZE(lops)-1 DO
-	    FOR j FROM i+1 to SIZE(lops) DO
-		  vertices:=CONCAT(vertices,{INTERSECTION(lops(i),lops(j))});
-		END;
+      
+	  // Start by creating our mean square
+	  // function which is the sum of the
+	  // square distance of a point (x,y) from
+	  // all LOPs
+	  CAS("PURGE(x,y)");
+	  LOCAL eqn:="Fsq(x,y):=0";
+      FOR i FROM 1 TO SIZE(lops) DO
+        LOCAL m:=EXPR("CAS(\"diff(Function.F"+lops(i)+"(x),x)\")");
+        LOCAL b:=EXPR("CAS(\"Function.F"+lops(i)+"(0)\")");
+        EXPR("CAS(\"Fsq"+i+"(x,y):=("+m+"*x-y+"+b+")^2/("+m+"^2+1)\")");
+        eqn:=eqn+"+Fsq"+i+"(x,y)";
+      END;
+      EXPR("CAS(\""+eqn+"\")");
+	  
+	  // Find the minimum mean square by
+	  // differentiating the mean square function
+	  // along x and y and finding the coordinate(s)
+      // where the derivatives are both zero
+      fix:=CAS("solve({diff(Fsq(x,y),x)=0,diff(Fsq(x,y),y)=0},{x,y})");
+
+      // In case there are multiple minima,
+      // take the one with the lowest mean square value
+      LOCAL minimumValue:=0,minimumIndex;
+      FOR i FROM 1 TO SIZE(fix) DO
+        LOCAL value:=EXPR("Fsq("+fix(i,1)+","+fix(i,2)+")");
+        IF value<minimumValue OR i=1 THEN
+          minimumValue:=value;
+          minimumIndex:=i;
+        END;
       END;
 	  
-	  fix:=ΣLIST(vertices)/SIZE(vertices);
-	  
-	  msg:="Centroid of "+SIZE(vertices)+" LOP intersections";
+      // Cleanup
+      CAS("PURGE(Fsq)");
+      FOR i FROM 1 TO SIZE(lops) DO
+        EXPR("CAS(\"PURGE(Fsq"+i+")\")");
+      END;
+
+      fix:={fix(minimumIndex,1),fix(minimumIndex,2)};
+	  msg:="Minimizing Mean Squares of "+SIZE(lops)+" LOPs";
+
 	END;	
   END;
   
