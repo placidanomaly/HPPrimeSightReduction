@@ -273,7 +273,9 @@ Alternatively, the calculator can compute a fix based on LOPs. The computation v
 
   * 2 LOPs: the intersection of the 2 LOPs is the fix
   * 3 LOPs: the symmedian center, or Lemoine point, of the triangle formed by the 3 LOPs
-  * 4 or more LOPs: the coordinate that minimizes the square of the error with all LOPs. This is achieved using derivatives of a function which is the sum of the squares of the distance of the coordinate to each LOP.
+  * 4 or more LOPs: the coordinate that minimizes the square of the error with each LOP based on the distance between the calculated coordinate and the shortest path to each LOP. This is achieved using derivatives of a function which is the sum of the squares of the distance of the coordinate to each LOP.
+
+LOPs that were translated to a different LOP register are omitted from the calculation, but their translated destination registers are included.
 
 To compute a fix, run the **Sight Reduction** program and select **COMPUTE_FIX**. The output will indicate which method was used to compute the fix and the longitude and latitude of the fix. In the screen shots below, we computed a fix after two sights, then entered a third sight and computed the fix again, and entered a fourth sight and computed the fix again:
 

@@ -331,7 +331,10 @@ BEGIN
   LOCAL i,fix;
   LOCAL lops={};
   LOCAL msg:="";
-  
+
+  STARTAPP("Function");
+  STARTVIEW(-7,1);
+
   // Check that variables are initialized
   IF TYPE(a_nm)=0 THEN RETURN "Variables not initialized."; END;
   
@@ -472,19 +475,15 @@ BEGIN
   IF rv=0 THEN RETURN "Canceled."; END;
 
   fn:=c;
+
   // If register 10 is chosen, it
   // must be retrieved from Function F0
   IF fn==10 THEN fn:=0; END;
 
-  // This is probably only valid around the equator
-  LOCAL dx:=rfDist_nm(c)/60*SIN(rfBrg_deg(c));
-  LOCAL dy:=rfDist_nm(c)/60*COS(rfBrg_deg(c));
-  
-  // Let's redo this with better calc instead
   //@TODO: TEST ACCURACY!
   LOCAL newCoords:=atdz(DRlat_deg(c),DRlong_deg(c),rfDist_nm(c),rfBrg_deg(c));
-  dy:=newCoords(1)-DRlat_deg(c);
-  dx:=newCoords(2)-DRlong_deg(c);
+  LOCAL dy:=newCoords(1)-DRlat_deg(c);
+  LOCAL dx:=newCoords(2)-DRlong_deg(c);
   
   // Retrieve LOP formula and use x
   // instead of the reserved X (which always
@@ -509,6 +508,11 @@ BEGIN
   LOCAL d:=SELECT_LOP(c,"Select destination LOP register");
   IF d=0 THEN RETURN "Canceled."; END;
   IF d=10 THEN d:=0; END;
+
+  // Clear a_nm value for source LOP so
+  // it is no longer included in COMPUTE_FIX
+  // calculations or PLOT_FIX results
+  a_nm(c):=0;
 
   // Store LOP equation in destination
   // formula register
