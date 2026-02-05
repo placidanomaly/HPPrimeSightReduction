@@ -17,6 +17,7 @@ LOCAL obsDate;
 LOCAL rfDist_nm,rfBrg_deg;
 LOCAL starId,SHA_deg;
 LOCAL fixLat, fixLon;
+LOCAL actualLat:=→HMS(45.5134166667), actualLon:= →HMS(-73.3271388889);
 
 // Default values for subsequent sights
 LOCAL IC_default, DRlat_default:=45, DRlon_default:=-73,HE_default,artificial_default:=0;
@@ -32,6 +33,13 @@ LOCAL maxLOP:=9;
 LOCAL current;
 LOCAL nl:=CHAR(10);
 LOCAL progressFlag:=1;
+
+LOCAL bodiesList:=CONCAT({
+  "Sun Lower Limb", "Sun Upper Limb", "Sun with Almanac tables",
+  "Moon Lower Limb", "Moon Upper Limb", "Moon with Almanac tables",
+  "Mars", "Venus", "Jupiter", "Saturn", "Pre-calculated sight"
+  },CAS("col(navstar_,1)"));
+
 
 EXPORT SIGHT()
 BEGIN  
@@ -56,7 +64,7 @@ BEGIN
       // As the name implies, this is a pre-calculated
       // sight so no need to continue with the HC
       // and LOP calculations.
-      IF NOT c THEN RETURN "CANCELED"; ELSE RETURN; END;
+      IF NOT c THEN RETURN "CANCELED"; ELSE RETURN c; END;
     END;
   END;
   
@@ -269,11 +277,12 @@ BEGIN
         {"Distance from assumed position (nm)",
          "Azimuth to celestial body (°)"});
   
+  HS_deg(current):=1e-12;
+  
   IF NOT c THEN RETURN c; END;
 
-  LOP_EQUATION(current);
+  RETURN LOP_EQUATION(current);
   
-  RETURN c;
 END;
 
 EXPORT PLOT_LOPs()
@@ -339,7 +348,7 @@ BEGIN
   IF TYPE(a_nm)=0 THEN RETURN "Variables not initialized."; END;
   
   // Determine which LOP registers
-  // contain an LOP
+  // contain a non-translated LOP
   FOR i FROM 1 TO 10 DO
     IF a_nm(i)<>0 THEN
 	  IF i==10 THEN
@@ -422,7 +431,41 @@ BEGIN
   fixLon:=fix(1);
   fixLat:=fix(2);
   
-  MSGBOX("Fix from "+msg+CHAR(10)+CHAR(10)+"Latitude: "+→DMD(fixLat)+CHAR(10)+"Longitude: "+→DMD(fixLon)+CHAR(10),1);
+  PRINT();
+  
+  PRINT("Fix from "+msg+CHAR(10)+CHAR(10)
+    +"   Latitude: "+→DMD(fixLat)+CHAR(10)
+	+"   Longitude: "+→DMD(fixLon)+CHAR(10));
+  
+  i:=GET_SOFTKEY({"","","","","Check","Exit"});
+  
+  IF i==0 OR i==6 THEN 
+    PRINT(); 
+	PRINT("Press ESC to exit.");
+	RETURN "Done."; 
+  END;
+  
+  i:=INPUT({actualLat,actualLon},
+    "Actual Position",
+	{"Latitude","Longitude"},
+	{"Latitude of actual position (°)",
+     "Longitude of actual position (°)"});	
+    
+  IF i==0 THEN RETURN "Canceled."; END;
+
+  PRINT();
+  PRINT("COMPUTED FIX");
+  PRINT("  Lat: "+→DMD(fixLat));
+  PRINT("  Lon: "+→DMD(fixLon));
+  PRINT(" ");
+  PRINT("ACTUAL POSITION");
+  PRINT("  Lat: "+→DMD(actualLat));
+  PRINT("  Lon: "+→DMD(actualLon));
+  PRINT(" ");
+  PRINT("Distance between coordinates: "+STRING(ROUND(NM_DIST(fixLat,fixLon,actualLat,actualLon),1))+" nm");
+
+  PRINT(" ");
+  PRINT("Press ESC to exit.");
   
 END;
 
@@ -461,6 +504,8 @@ BEGIN
   LOCAL d_nm,brg_deg;
 
   HAngle:=1;
+  STARTAPP("Function");
+  STARTVIEW(-7,1);
 
   LOCAL c:=SELECT_LOP(current,"Select LOP to shift");  
   IF c=0 THEN RETURN "Canceled."; END;
@@ -501,7 +546,7 @@ BEGIN
   // Replace x with X using string
   // manipulation to ensure X is not
   // evaluated to its assigned value
-  index:=INSTRING(f,"x"); 
+  index:=INSTRING(f,"x");
   f:=LEFT(f,index-1)+"'X'"
      + MID(f,index+1);
 
@@ -512,18 +557,21 @@ BEGIN
   // Clear a_nm value for source LOP so
   // it is no longer included in COMPUTE_FIX
   // calculations or PLOT_FIX results
+  // Set destination bodies(d) to 
+  // source LOP ID for reference
   a_nm(c):=0;
+
+  // Set a_nm to a non-zero value in the destination
+  // LOP register so the shifted line will be displayed
+  // in PLOT_LOPs
+  a_nm(d):=1e-12;
+  bodyItem(d):=c;  
 
   // Store LOP equation in destination
   // formula register
   f:="Function.F"+STRING(d)+":="+f;
 
   EXPR(f);      
-
-  // Set a_nm to a non-zero value in the destination
-  // LOP register so the shifted line will be displayed
-  // in PLOT_LOPs
-  a_nm(d):=1e-12;
   
   RETURN "Shifted LOP #"+STRING(c)+" by "
          +→DMD(dy)+" lat. and "+→DMD(dx)+" lon."
@@ -574,8 +622,6 @@ BEGIN
     
     RETURN 1;
 END;
-
-EXPORT bodiesList;
 
 CALCULATE_BODIES(date,time,lat,lon,flags)
 BEGIN
@@ -1347,21 +1393,40 @@ BEGIN
   EXPR("Function.F"+i+":=f");
 END;
 
-SELECT_LOP(default,prompt,askProgress)
+LOCAL SELECT_LOP(default,prompt,askProgress)
 BEGIN
   LOCAL lop:=default,r;
-
+  LOCAL lopNames:={};
+  
+  FOR r FROM 1 TO 10 DO
+    lopNames(r):=STRING(r)+": ";
+	CASE
+	  IF HS_deg(r)==0 AND a_nm(r)==0 THEN
+	    lopNames(r):=lopNames(r)+"Empty";
+	  END;
+      IF a_nm(r)==1e-12 THEN
+        lopNames(r):=lopNames(r)+"Translated from LOP #"+STRING(bodyItem(r));
+      END;
+	  IF HS_deg(r)<>0 AND a_nm(r)==0 THEN
+	    lopNames(r):=lopNames(r)+"Translated ("+bodiesList(bodyItem(r))+")";
+	  END;
+	  IF HS_deg(r)<>0 AND ABS(a_nm(r))>1e-12 THEN
+	    lopNames(r):=lopNames(r)+bodiesList(bodyItem(r));
+	  END;
+	  DEFAULT
+	    lopNames(r):=lopNames(r)+"INTERNAL ERROR";
+	END;
+  END;
+  
   IF askProgress THEN
-    r:=INPUT({{lop,{"1","2","3","4","5",
-       "6","7","8","9","10"}},
+    r:=INPUT({{lop,lopNames},
        {progressFlag,1}},
        "LOP register",
        {"LOP:","Show progress"},
        {prompt,
         "Select to display calculation progress"});
   ELSE
-    r:=INPUT({{lop,{"1","2","3","4","5",
-       "6","7","8","9","10"}}},
+    r:=INPUT({{lop,lopNames}},
        "LOP register",
        {"LOP:"},
        {prompt});
@@ -1588,11 +1653,6 @@ BEGIN
   // default to not go through the observation
   // averaging process
   LOCAL avgReadings:=IFTE(HS_deg(current)=0,1,0);
-  LOCAL bodiesList:=CONCAT({
-    "Sun Lower Limb", "Sun Upper Limb", "Sun with Almanac tables",
-    "Moon Lower Limb", "Moon Upper Limb", "Moon with Almanac tables",
-    "Mars", "Venus", "Jupiter", "Saturn", "Pre-calculated sight"
-    },CAS("col(navstar_,1)"));
 
   c:=INPUT({tempDate,
     DRlat_deg(current),
@@ -1621,7 +1681,7 @@ BEGIN
       sightType(current):=4; 
       starId(current):=bodyItem(current)-6; 
     END;
-    IF bodyItem(current)=10 THEN sightType(current):=7; END;
+    IF bodyItem(current)=11 THEN sightType(current):=7; END;
     IF bodyItem(current)>11 THEN 
       sightType(current):=3; 
       starId(current):=bodyItem(current)-11; 
@@ -2078,6 +2138,30 @@ BEGIN
   RETURN "Reset complete";
 END; 
 
+
+LOCAL NM_DIST(lat1, lon1, lat2, lon2)
+BEGIN
+  LOCAL dLat, dLon, a, c, R;
+  
+  LOCAL oldHA:=HAngle;
+  HAngle:=1;
+  
+  // Earth's radius in Nautical Miles
+  R := 3440.065;
+    
+  // Differences
+  dLat := lat2 - lat1;
+  dLon := lon2 - lon1;
+  
+  // Haversine calculation
+  a := SIN(dLat/2)^2 + COS(lat1) * COS(lat2) * SIN(dLon/2)^2;
+  c := 2 * ATAN2(√(a), √(1-a)) * π/180;
+
+  HAngle:=oldHA;
+  
+  RETURN R * c;
+END;
+
 // Returns the coordinates {longitude, latitude} of
 // a point located d nautical miles from coordinates
 // (latitude y1, longitude x1) on bearing of z degrees
@@ -2123,7 +2207,7 @@ BEGIN
   LOCAL d:=HMS→(D);
 
   RETURN STRING(IP(d))+"°"
-     +STRING(ROUND(FP(ABS(d))*600)/10,2,1)+"'";
+     +STRING(ROUND(FP(ABS(d))*60,1))+"'";
 END;
 
 LOCAL PAD(n,d)
