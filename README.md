@@ -313,7 +313,7 @@ If you have access to your actual position using a GPS or some other means to ma
 
 Once your actual postiion is entered, the calculator will display the distance between the computed fix and the actual position:
 
-![Fix error output](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/fix4b.png)
+![Fix error output](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/fix5.png)
 
 ## Ephemerides
 The program can show the Greenwich Hour Angle (GHA) and declination of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the 58 celestial navigation stars for any point in time between 1800 and 2200, as well as the corresponding azimuth and altitude from a specified geographical location. The semi-diameter of certain bodies will also be shown. A graphical representation of the ephemerides is available through the [Star Finder function](#star-finder) which is covered in the next section. To use this feature:
