@@ -47,6 +47,7 @@ For an excellent textbook on celestial navigation and the process of sight reduc
   * [Initialization](#initialization)
   * [Planning Observations](#planning-observations)
   * [Reducing Sights](#reducing-sights)
+  * [Running Fixes](#running-fixes)
   * [Making a Fix](#making-a-fix)
     * [Manual Fix](#manual-fix)
     * [Computed Fix](#computed-fix)
@@ -204,7 +205,9 @@ Performing a sight reduction is a straightforward process:
 
 3. Enter a new observation: select **SIGHT** and press the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> soft key.
 
-4. The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by an LOP register number from 1 to 10. Select an LOP register for this observation, let's say **1** for this first one, and hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key. The **Show Progress** checkbox simply causes additional computing messages to be displayed during the calculation processes and changes nothing to the results.
+4. The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by an LOP register number from 1 to 10. Select an LOP register for this observation, let's say **1** for this first one, and hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key. LOP registers containing a translated LOP cannot be edited and, if selected for editing, will be treated as an empty sight that will overwrite the translated LOP. The source of a translated LOP can be edited but its corresponding translated LOP will not be updated. See [Running Fixes](#running-fixes).
+
+The **Show Progress** checkbox simply causes additional computing messages to be displayed during the calculation processes and changes nothing to the results.
 
 ![Observation register selection](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input1.png)
 
@@ -256,6 +259,25 @@ Performing a sight reduction is a straightforward process:
 14. Lastly, the calculator displays the equation for the line of position in a longitude (x) and latitude (y) Cartesian plane which can be used to plot it in a program. That equation is stored in the `F` register of the Function app of the calculator corresponding to the LOP register selected, e.g. LOP 1 will be stored in `F1`, which means they can be plotted using the calculator's Function app. (This step will be removed in a future version, it was originally used for debugging purposes.)
 
 ![LOP Equation](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output3.png)
+
+## Running Fixes
+
+In order to make a fix using two or more lines of position from observations taking at a different DR position, for example to make a fix based on a morning and an afternoon Sun sight while navigating, the earlier fixes need to be translated by the DR delta between those two positions. This is easily accomplished by running the **SHIFT_LOP** program. The first screen will prompt for the LOP that needs to be translated:
+
+![Running Fix - Source LOP](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/runningfix1.png)
+
+The next screen prompts to enter by what distance and bearing to shift the LOP. Enter the bearing in true degrees and the distance in nautical miles:
+
+![Running Fix - Delta](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/runningfix2.png)
+
+The next screen prompts for the LOP register in which to store the resulting translated LOP. You can select the same LOP as the source LOP, in which case it will be overwritten with the translated LOP and the original observation will be lost (which is usually fine), or another LOP register:
+
+![Running Fix - Destination](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/runningfix3.png)
+
+The calculator will output the magnitude of the translation in degrees of latitude and longitude.
+
+![Running Fix - Ouptut](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/runningfix4.png)
+
 
 ## Making a Fix
 
