@@ -58,7 +58,7 @@ For an excellent textbook on celestial navigation and the process of sight reduc
 	* [Calculation from Sun diameter measurement](#calculation-from-sun-diameter-measurement)
 
 # Installing the Program
-The program can be installed on an HP Prime calculator or on a PC or Mac running the [HP Prime Virtual Calculator](https://www.hpcalc.org/details/8939) from the source files in the */src* folder of this repository or from the binary files in the */bin* folder.
+The program can be installed on an HP Prime calculator or on a PC or Mac running the [HP Prime Virtual Calculator](https://www.hpcalc.org/details/8939) from the source files in the `/src` folder of this repository or from the binary files in the `/bin` folder. To prevent issues during the installation, such as memory limitations, variable or program name clashes, etc., it is STRONGLY recommended to perform the installation on a fresh calculator that just had a soft reset done. To reset your calculator, first save all your important programs using the Connectivity Kit [described below](#hp-connectivity-kit-and-hp-prime-virtual-calculator) and press the **On-Apps-ESC** keys simultaneously.
 
 ## Prerequisites
 
@@ -83,7 +83,7 @@ Follow these steps to download and install the *HP Connectivity Kit* and the *HP
 To install from the binaries, the *.hpprgm* files must be loaded into the Connectivity kit:
 
 1. Launch the *HP Connectivity Kit* program and ensure the **Content** window is displayed. If not, use the **Window->Content** menu to display it
-2. Drag all the *.hpprgm* files in the */bin* folder of the repository into the **Content** window of the *HP Connectivity Kit* program
+2. Drag all the `.hpprgm` files in the `/bin` folder of the repository into the **Content** window of the *HP Connectivity Kit* program
 3. Drag all the files in the **Content** window of the *HP Connectivity Kit* program onto the calculator icon in the **Calculators** window
 4. Leave the calculator alone for about 2 minutes while programs are being loaded
 
@@ -92,7 +92,7 @@ To install from the binaries, the *.hpprgm* files must be loaded into the Connec
 1. Expand the calculator and the **Programs** section of the calculator in the *HP Connectivity Kit* program
 5. Right-click on **Program** and select **New**
 6. Enter the name *Earth* and press Enter. An empty editor window will open
-7. Open the **earth.txt** file from this repository in a text editor on your computer
+7. Open the `src/earth.txt` file from this repository in a text editor on your computer
 8. Select all the text (Ctrl-A), copy it to the clipboard (Ctrl-C), and paste it into the editor window in the *HP Connectivity Kit* program (Ctrl-V)
 9. Save the file (Ctrl-S) and close the editor window
 10. Repeat steps 5-8 above for each text file in the repository
