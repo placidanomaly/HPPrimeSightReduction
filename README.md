@@ -3,7 +3,7 @@ This repository contains a set of programs written in Prime Programming Language
 
 The following functionality is provided:
 * Astronomical
-  * Ephemerides of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the usual 58 stars used in celestial navication
+  * Ephemerides of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the usual 58 stars used in celestial navigation including GHA, declination, azimuth, altitude, semi-diameter, and rise and set times
   * Delta T, equation of time, obliquity of the ecliptic, etc.
   * Rise and set times of the Sun and all other celestial bodies, civil and nautical twilight times
   * Semi-diameter of the planets and the Moon
@@ -16,6 +16,7 @@ The following functionality is provided:
   * Sight reduction of sextant observations of any of those celestial bodies to Lines of Position (LOPs)
   * Running fix calculations through translation of lines of position by a certain distance on a given bearing
   * Plotting of LOPs on a Cartesian plot from which a fix can easily be deduced
+  * Automatic computation of fixes based on the intersection of 2 LOPs, symmedian center of 3 LOPs, and minimization of the least squares of the distance to 4 or more LOPs
   * Determination of the index correction of a sextant from two simple observations of the Sun
 
 <img alt="Sample LOP plot" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png" valign="top">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Sample LOP plot" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/starfinder.png" valign="top">
