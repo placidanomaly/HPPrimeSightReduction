@@ -32,7 +32,7 @@ For an excellent textbook on celestial navigation and the process of sight reduc
 # Table of Contents
 * [**Installing the Program**](#installing_the_program)
   * [Prerequisites](prerequisites)
-    * [Downloading this repository](downloading-this-repository)
+    * [Downloading this repository](downloading-this-program)
     * [*HP Connectivity Kit* and *HP Prime Virtual Calculator*](#hp-connectivity-kit-and-hp-prime-virtual-calculator)
   * [Installing from Binaries](#installing-from-binaries-recommended)
   * [Installing from Source Files](#installing-from-source-files)
@@ -65,7 +65,7 @@ The program can be installed on an HP Prime calculator or on a PC or Mac running
 
 In order to use and install this program, you need to download this repository to your computer and you need to have the [*HP Connectivity Kit*](https://updates.moravia-consulting.com/) running on your computer and working with either an HP Prime calculator connected to your computer with a USB cable or with the [*HP Prime Virtual Calculator*](https://www.hpcalc.org/details/8939) program running on the same computer as the HP Connectivity Kit.
 
-### Downloading this Repository
+### Downloading this Program
 
 You can download a ZIP archive containing all the files in this repository from [this link](https://github.com/placidanomaly/HPPrimeSightReduction/archive/refs/heads/main.zip). Extract it to some folder on your computer. Alternatively, if you are familiar with *git*, you can clone the repository into your current folder in a command shell window with `git clone https://github.com/placidanomaly/HPPrimeSightReduction.git`, which will make getting updates easier (using `git pull` from the main folder of the repository).
 
@@ -108,7 +108,7 @@ When all is done, your *HP Connectivity Kit* screen should look like this:
 To confirm that the installation was successful, perform the following verification:
 
 1. On the calculator, open the Programs page using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle"> keys. Select the **Sight Reduction** program using the arrows, press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key, select **RESET_SIGHTS** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. This will initialize all the necessary variables for the program to work.
-2. Select the **Sight Reduction** program <ins>using the arrows (the big round button) on the calculator</ins> (see note below), press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key on the screen, select **EPHEMERIDES** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. Fill out the form with a date, time, and location following the conventions in the next section and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. If everything was installed properly, the requested ephemerides will be displayed and you can scroll through them using the touchscreen. Check the values against an Almanac for accuracy.
+2. Select the **Sight Reduction** program <ins>using the arrows (the big round button) on the calculator</ins> (see note below), press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key on the screen, select **EPHEMERIDES** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. Fill out the form with a date, time, and location following the conventions in the next section and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. If everything was installed properly, the calculator will process the requested ephemerides for about 16 seconds and display them in the Spreadsheet app. You can scroll through them using the touchscreen to check some of the values against an Almanac for accuracy.
 3. If anything fails, double-check that all the programs are installed. Open each one of them using the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key. Validate that the file is not empty and push the <img alt="Check" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/check.png" valign="middle"> soft key per Step 12 in the *Installing from Source* section. If the file is empty, try reinstalling the binary file. If that fails, install it from source following the instructions in the previous section. If you're stuck here, contact the author at the address at the bottom of this document.
 
 > **IMPORTANT**: if you inadvertently click on a program name on the touchscreen or press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> while a program name is highlighted, you will enter the source code view where you can edit the program. Press the **ESC** key to leave the source code view. IF YOU OPEN THE **SIGHT REDUCTION** PROGRAM FOR EDITING, IT WILL CLEAR ALL YOUR SIGHTS. Instead, use the arrows to navigate to a program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key to launch it.
@@ -164,8 +164,8 @@ The calculator has a pretty accurate internal clock that can be used to automati
 
 1. Run the **Sight Reduction** program and pick the **SET_TIME** function and set the calculator's local time clock and timezone:
 
-   * **Local time**: the local time to which to set the calculator. Enter a time a few seconds in the future and click the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key when your time source reads the time entered
-   * **UTC Offset**: the number of hours ahead of or behind UTC. Use a positive value for locations East of Greenwhich and negative for West (e.g. -5 for New York standard time). Keep in mind that this offset changes with Daylight Savings Time (DST)
+   * **Local time**: the local time to which to set the calculator's internal clock. Enter a time a few seconds in the future and click the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key when your time source reads the time entered
+   * **UTC Offset**: the number of hours the local time is ahead of or behind UTC. Use a positive value for locations East of Greenwhich and negative for West (e.g. -5 for New York standard time). Keep in mind that this offset changes with Daylight Savings Time (DST). Fractional offset values like the one used in Newfoundland (-3.5 in standard time) are supported.
 
 ![Setting the time and timezone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
 
@@ -177,15 +177,15 @@ It can be helpful to know which celestial bodies will be visible and where ahead
 ![Parameters for listing bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_input.png)
 
 2. Fill out the observation parameters and visibility criteria:
-   * **Date**: the date on which the observations will be made in YYYY.MMDD format
-   * **Time**: an arbitrary time at which to show the visible bodies, in HH°MM'SS" format
-   * **Latitude**: the latitude in degrees from which the observations will be made
-   * **Longitude**: the longitude in degrees from which the observations will be made
-   * **Altitude**: the minimum altitude in degrees of the celestial bodies to be included in the list
-   * **Azimuth from**: the true heading in degrees of the beginning of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
+   * **Date**: the date on which the observations will be made in *YYYY.MMDD* format
+   * **Time**: an arbitrary time at which to show the visible bodies, in *HH°MM'SS"* format
+   * **Latitude**: the latitude in degrees where the observations will be made. This will typically be your DR position at the time of the observations. 
+   * **Longitude**: the longitude in degrees where the observations will be made
+   * **Altitude**: the minimum altitude in degrees of the celestial bodies to be included in the list. This can be useful to hide bodies that would be obscured by a ship's superstructure, trees on a shoreline, etc.
+   * **Azimuth from**: the true heading in degrees of the beginning of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list. Same as for Altitude, this can be used to suppress bodies that would be obscured by a ship's superstructure or the land side of a shoreline
    * **Clockwise to**: the true heading in degrees of the end of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
 
-3. It will take about 1-2 minutes to compute all the ephemerides. You will be prompted to press a key to show the results at the end of the calculation. The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include, in clockwise order of azimuth within the prescribed arc:
+3. It will take about 50 seconds to compute all the ephemerides. You will be prompted to press a key to show the results at the end of the calculation. The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include, in clockwise order of azimuth within the prescribed arc:
 * Sunrise, sunset, civil twilight, and nautical twilight times
 * Local time of Meridian passage at the specified longitude
 * List of observable bodies (i.e. meeting azimuth and altitude constraints entered on the first screen) with, for each, the azimuth, true altitude (Hc), apparent altitude (Ha) (i.e. the one that a sextant with no index error and no dip would read), Greenwhich Hour Angle (GHA), declination (dec), semi-diameter in arc seconds of the body (if applicable), and rise and set times (if applicable), at 3 different times:
@@ -206,7 +206,7 @@ Performing a sight reduction is a straightforward process:
 
 3. Enter a new observation: select **SIGHT** and press the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> soft key.
 
-4. The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by an LOP register number from 1 to 10. Select an LOP register for this observation, let's say **1** for this first one, and hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key. LOP registers containing a translated LOP cannot be edited and, if selected for editing, will be treated as an empty sight that will overwrite the translated LOP. The source of a translated LOP can be edited but its corresponding translated LOP will not be updated. See [Running Fixes](#running-fixes).
+4. The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by an LOP register number from 1 to 10. Select an empty LOP register for this observation (they should all be empty if you ran **RESET_SIGHTS**), let's say **1** for this first one, and hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key. LOP registers containing a translated LOP cannot be edited and, if selected for editing, will be treated as an empty sight that will overwrite the translated LOP. The source of a translated LOP can be edited but its corresponding translated LOP will not be updated so the **SHIFT_LOP** program should be run against the updated values using the same destination register as before. See [Running Fixes](#running-fixes).
 
 The **Show Progress** checkbox simply causes additional computing messages to be displayed during the calculation processes and changes nothing to the results.
 
@@ -217,7 +217,7 @@ The **Show Progress** checkbox simply causes additional computing messages to be
    * **DR Lat**: the latitude of the dead-reckoning (DR) position in degrees at the time of the observation
    * **DR Lon**: the longitude of the DR position in degrees at the time of the observation
    * **Body**: a drop-down to select the celestial body being observed among a list of the Sun, Moon, 4 planets and 58 stars. For certain celestial bodies, the observed limb must also be selected. The **Pre-calculated sights** option allows entering the *Zn* (azimut) and *a* (distance) of the line of position directly instead of letting the calculator perform the sight reduction calculations (this is useful to plot lines of position that have been calculated some other way). The **Moon with tables** and **Sun with tables** options allow entering the values for declination and Greenwich Hour Angle manually based on the Almanac tables instead of using the built-in ephemerides.
-   * **Artificial**: check this box if the observation was made on an artificial horizon. If that's the case, the sextant reading values entered must be the actual reading on the sextant, i.e. double the actual body height. When this box is checked, the index correction will be applied before dividing the reading by half and no dip correction will be applied regardless of the eye height or dip short values entered
+   * **Artificial**: check this box if the observation is made on an artificial horizon. If that's the case, the sextant altitude values entered must be the actual reading on the sextant, i.e. double the actual body altitude. When this box is checked, the index correction will be applied before dividing the reading by half and no dip correction will be applied regardless of the eye height or dip short values entered
    * **Average**: check this box to perform the observation averaging process described in the next step. Note: this checkbox is unchecked by default if the LOP register contains a previously entered sextant altitude. Checking it will overwrite the previously entered sextant altitude. If no previous value was entered, the checkbox is checked by default.
 
 ![Basic observation data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input2.png)  ![Selecting celestial body](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input2b.png)
@@ -225,21 +225,21 @@ The **Show Progress** checkbox simply causes additional computing messages to be
 6. On the next screen, enter the observation conditions which will be used to compute sextant altitude corrections:
    * **IC**: the index correction of the sextant in arc minutes, negative values for "on-scale" correction and positive for "off-scale"
    * **HE**: eye height from the horizon in feet (for dip correction)
-   * **Dip short**: distance in nautical miles (nm) from observer where the horizon ends (e.g. the other side of a large lake), or zero if an infinite horizon is used as reference for the observation
+   * **Dip short**: distance in nautical miles (nm) from the observer where the horizon ends (e.g. the other side of a large lake), or zero if an infinite horizon is used as reference for the observation
    * **Temp**: the air temperature in degrees C (for refraction correction)
    * **Pressure**: the atmospheric pressure at sea level in millibars (for refraction correction)
 
 ![Observation correction data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input3.png)
 
-7. If the **Average** option was selected, the program will prompt the user to enter sextant observations as they are made. It will show a screen asking to press any key when an observation is made and pause there until a key is pressed. (It might be useful to extend the Auto-OFF delay of hte calculator by setting the value of the *TOff* system variable to a longer delay. See [this link](https://www.hpmuseum.org/forum/thread-5664.html)):
+7. If the **Average** option was selected, the program will prompt the user to enter sextant observations as they are made. It will show a screen displaying the time and asking to press any key when an observation is made. (It might be useful to extend the Auto-OFF delay of the calculator by setting the value of the *TOff* system variable to a longer delay. See [this link](https://www.hpmuseum.org/forum/thread-5664.html)):
 
 ![Press any key](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc1.png)
 
-8. As soon as you've aligned the observed body with the horizon, hit any key or touch the touchscreen. This will note the time of the observation (hence why it is important to run **SET_TIME** regularly) and a screen prompting to enter the sextant reading will appear. **IMPORTANT: do not halve observations made on an artificial horizon and do not apply any dip or index corrections to the sextant reading, these corrections will be entered later.**
+8. As soon as you've aligned the observed body with the horizon, hit any key or touch the touchscreen. This will note the time of the observation (hence why it is important to run **SET_TIME** regularly) and a screen prompting to enter the sextant reading will appear. **IMPORTANT: do not halve observations made on an artificial horizon and do not apply any dip or index corrections to the sextant reading, these corrections will be calculated based on the data input in step 6.**
 
 ![Enter sextant reading](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc2.png)
 
-9. The program will return to step 6 and allows entering as many observations of the same body as desired. When no more observations are needed, hit *Cancel* or enter `0` in the HS field and click *Ok*. If only one observation was entered, the program will skip directly to step 10 and use the time and sextant altitude values entered in Observation #1
+9. The program will return to step 8 and allows entering as many observations of the same body as desired. When no more observations are needed, hit *Cancel* or enter `0` in the HS field and click *Ok*. If only one observation was entered, the program will skip to step 11 and use the time and sextant altitude values entered in Observation #1
   
 10. If more than one observation was entered, the observations will be plotted on a Cartesian graph with time as the horizontal axis and sextant altitude as the vertical axis. The plot allows choosing among various best-fit curves using the soft keys at the bottom of the screen to pick the one most closely approximating the path of the celestial body in the sky: linear or quadratic regressions are available if 3 or fewer observations were made, and cubic or trigonometric regressions if 4 or more observations were entered. A red marker indicates a chosen value on the interpolated curve, which is at the midpoint of time range on the regression curve, unless an extremum exists within the time range, in which case that extremum is chosen. When done, hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key to confirm the selected interpolated point.
 
@@ -249,15 +249,15 @@ The **Show Progress** checkbox simply causes additional computing messages to be
 
 ![More input data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input4.png)
 
-12. The calculator will display the values for observed height *Ho*, Greenwhich Hour Angle *GHA*, declination *dec*, Local Hour Angle *LHA*, and the calculated height *Hc* of the body. Click **OK**
+12. The calculator will display the values for observed height *Ho*, Greenwhich Hour Angle *GHA*, declination *dec*, Local Hour Angle *LHA*, and the calculated height *Hc* of the body. Review them and click **OK**.
 
 ![Calculation results](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output1.png)
 
-13. The calculator will then display the usual 4 parameters of the line of position: LOP register, distance *a* from the LOP either *TOWARD* or *AWAY* from the body, azimuth *Zn* to the body, and the DR position latitude and longitude as entered (no correction of DR position to an assumed position is necessary here because the calculator can easily handle fractional LHA and Zn). These parameters enable plotting of the line of position.
+13. The calculator will then display the LOP register used and the usual 4 parameters of the line of position: distance *a* from the LOP either *TOWARD* or *AWAY* from the body, azimuth *Zn* to the body, and the DR position latitude and longitude as entered (no correction of DR position to an assumed position is necessary here because the calculator naturally handles fractional values of LHA and Zn). These parameters enable plotting of the line of position.
 
 ![LOP parameters](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output2.png)
 
-14. Lastly, the calculator displays the equation for the line of position in a longitude (x) and latitude (y) Cartesian plane which can be used to plot it in a program. That equation is stored in the `F` register of the Function app of the calculator corresponding to the LOP register selected, e.g. LOP 1 will be stored in `F1`, which means they can be plotted using the calculator's Function app. (This step will be removed in a future version, it was originally used for debugging purposes.)
+14. Lastly, the calculator displays the equation for the line of position in a longitude (x) and latitude (y) Cartesian plane which can be used to plot it in a program. That equation is stored in the `F` register of the Function app of the calculator corresponding to the LOP register selected, e.g. LOP 1 will be stored in `F1`, which means they can be plotted using the calculator's Function app.
 
 ![LOP Equation](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output3.png)
 
