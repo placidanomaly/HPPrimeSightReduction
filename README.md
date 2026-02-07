@@ -32,7 +32,7 @@ For an excellent textbook on celestial navigation and the process of sight reduc
 # Table of Contents
 * [**Installing the Program**](#installing_the_program)
   * [Prerequisites](prerequisites)
-    * [Downloading this repository](downloading-this-program)
+    * [Downloading this Program](#downloading-this-program)
     * [*HP Connectivity Kit* and *HP Prime Virtual Calculator*](#hp-connectivity-kit-and-hp-prime-virtual-calculator)
   * [Installing from Binaries](#installing-from-binaries-recommended)
   * [Installing from Source Files](#installing-from-source-files)
