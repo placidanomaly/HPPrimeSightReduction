@@ -1815,8 +1815,6 @@ BEGIN
   
   altCorr_min(index):=-refr(index)-limb(index)*semiD(index)+paralX(index);
   
-LOCAL test:=16+0.3*COS(0.9856*(DoY(obsDate(index))-4));
-debug();
   HO_deg(index):=HA_deg(index)+altCorr_min(index)/60;
   
   RETURN HO_deg;
