@@ -102,11 +102,11 @@ To install from the binaries, the *.hpprgm* files must be loaded into the Connec
 12. Open each program and hit <img alt="Check" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/check.png" valign="middle"> to confirm that there are no syntax errors
 
 ## Confirming that Everything Works
-When all is done, your *HP Connectivity Kit* screen should look like this:
+When the installation is completed, whether from binaries or from source, confirm that all the programs appear under the **Programs** section of the calculator in the *HP Connectivity Kit*. If the programs are not all present, re-do the installation procedure.
 
 ![Connectivity Kit screen shot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/connectivity.png)
 
-To confirm that the installation was successful, perform the following verification:
+If all programs are listed, confirm that the installation was successful by performing the following verification:
 
 1. On the calculator, open the Programs page using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle"> keys. Select the **Sight Reduction** program using the arrows, press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key, select **RESET_SIGHTS** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. This will initialize all the necessary variables for the program to work.
 2. Select the **Sight Reduction** program <ins>using the arrows (the big round button) on the calculator</ins> (see note below), press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key on the screen, select **EPHEMERIDES** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. Fill out the form with a date, time, and location following the conventions in the next section and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. If everything was installed properly, the calculator will process the requested ephemerides for about 16 seconds (on a V2 calculator) and display them in the Spreadsheet app. You can scroll through them using the touchscreen to check some of the values against an Almanac for accuracy.
