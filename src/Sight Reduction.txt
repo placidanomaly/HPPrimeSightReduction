@@ -1,3 +1,5 @@
+#pragma mode(separator(.,;))
+
 // Observation and calculated values
 LOCAL sightType,bodyItem;
 LOCAL dip_min, HE_ft, IC_min;
@@ -34,12 +36,7 @@ LOCAL current;
 LOCAL nl:=CHAR(10);
 LOCAL progressFlag:=1;
 
-LOCAL bodiesList:=CONCAT({
-  "Sun Lower Limb", "Sun Upper Limb", "Sun with Almanac tables",
-  "Moon Lower Limb", "Moon Upper Limb", "Moon with Almanac tables",
-  "Mars", "Venus", "Jupiter", "Saturn", "Pre-calculated sight"
-  },CAS("col(navstar_,1)"));
-
+LOCAL bodiesList;
 
 EXPORT SIGHT()
 BEGIN  
@@ -82,8 +79,6 @@ LOCAL SUN_SIGHT()
 BEGIN
   HAngle:=1;
 
-  HO_CALC_SUN(current);
-  
   IF progressFlag THEN
     PRINT();
     PRINT("Calculating heliocentric Earth ephemeris...");
@@ -93,6 +88,8 @@ BEGIN
   
   dec_deg(current):=sunData(2);
   GHA_deg(current):=sunData(1);
+
+  HO_CALC_SUN(current,sunData(4));
   
   RETURN 1;
 END;
@@ -190,7 +187,7 @@ LOCAL SUN_SIGHT_WITH_TABLES()
 BEGIN
   LOCAL hr,hrp1,nl,fn,f,xx,c;
  
-  HO_CALC_SUN(current);
+  HO_CALC_SUN(current,16+0.3*COS(0.9856*(DoY(obsDate(index))-4)));
 
   hr:=" at "+STRING(IP(obs_UTC(current)))+":00:";
   hrp1:=" at "+STRING(IP(obs_UTC(current)+1))+":00:";
@@ -341,6 +338,8 @@ BEGIN
   LOCAL lops={};
   LOCAL msg:="";
 
+  HAngle:=1;
+  
   STARTAPP("Function");
   STARTVIEW(-7,1);
 
@@ -810,7 +809,7 @@ BEGIN
   STARTAPP("Spreadsheet");
   LOCAL sunTimes:=SunRiseSetTimes(ephLat,ephLon,date_);
   Spreadsheet.ClearCell();
-  Spreadsheet.A1:="**ALL TIMES UTC"+IFTE(timeZone<0,"-","+")+ABS(timeZone)+"**";
+  Spreadsheet.A1:="ALL TIMES LOCAL (UTC"+IFTE(timeZone<0,"-","+")+ABS(timeZone)+")";
   Spreadsheet.B1:="Begin";
   Spreadsheet.C1:="End";
   Spreadsheet.Cell(1,2,7):=IFTE(Theme(1)==1,16753920,#500000);
@@ -1806,11 +1805,11 @@ BEGIN
   RETURN REFRACTION(P,T,a);  
 END;
 
-HO_CALC_SUN(index)
+HO_CALC_SUN(index,semiDiameter)
 BEGIN
 
-  limb(index):=(limbSign(index)-1)*2-1;
-  semiD(index):=16+0.3*COS(0.9856*(DoY(obsDate(index))-4));
+  limb(index):=(limbSign(index)-1)*2-1;  
+  semiD(index):=semiDiameter;
   refr(index):=REFRACTION(index);
   paralX(index):=0.15*COS(HA_deg(index));
   
@@ -1915,20 +1914,6 @@ BEGIN
   ELSE
     RETURN IP(30.6*M+1.6)+D-34;
   END;
-END;
-
-// Returns the GHA of Aries for a given date and time
-// See the AstroCalc program for a more accurate formula
-// taking into account nutation of longitude
-LOCAL GHAAriesApprox(date,time)
-BEGIN
-  LOCAL J:=jdt(date,time)-2451545;
-  LOCAL T:=J/36525;
-  
-  RETURN (280.46061837
-          +360.98564736629*J
-          +0.000387933*T^2
-          +T^3/38710000) MOD 360;
 END;
 
 LOCAL APPLY_INDEX_CORRECTION(ic)
@@ -2063,6 +2048,12 @@ BEGIN
   LOCAL init1:={1,1,1,1,1,1,1,1,1,1};
   HAngle:=1;
   current           := 1;
+  
+  bodiesList:=CONCAT({
+  "Sun Lower Limb", "Sun Upper Limb", "Sun with Almanac tables",
+  "Moon Lower Limb", "Moon Upper Limb", "Moon with Almanac tables",
+  "Mars", "Venus", "Jupiter", "Saturn", "Pre-calculated sight"
+  },CAS("col(navstar_,1)"));
   
   dip_min           := init;
   horShort_nm       := init;
