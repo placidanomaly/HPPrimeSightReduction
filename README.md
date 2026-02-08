@@ -87,6 +87,7 @@ To install from the binaries, the *.hpprgm* files must be loaded into the Connec
 2. Drag all the `.hpprgm` files in the `/bin` folder of the repository into the **Content** window of the *HP Connectivity Kit* program
 3. Drag all the files in the **Content** window of the *HP Connectivity Kit* program onto the calculator icon in the **Calculators** window
 4. Leave the calculator alone for about 2 minutes while programs are being loaded
+5. Skip the next section and go to [Confirming that Everything Works](#confirming-that-everything-works)
 
 ## Installing from Source Files
 
