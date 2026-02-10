@@ -171,7 +171,11 @@ The calculator has a pretty accurate internal clock that can be used to automati
 ![Setting the time and timezone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
 
 ## Planning Observations
-It can be helpful to know which celestial bodies will be visible and where ahead of an observation session with the sextant so that the bodies to be observed can be selected ahead of time based on whether they meet certain a criteria for visibility based on their altitude and azimuth. The program shows, for a given date, all the bodies that meet the visibility criteria at morning and evening nautical twilight, as well as at a specified time during that day. Here's how it works:
+It can be helpful to know which celestial bodies will be visible and where ahead of an observation session with the sextant so that the bodies to be observed can be selected ahead of time based on whether they meet certain a criteria for visibility based on their altitude and azimuth. The program shows, for a given date, all the bodies that meet the visibility criteria at morning and evening nautical twilight, as well as at a specified time during that day. 
+
+The ephemerides of the selected celestial bodies will be displayed in the calculator's Spreadsheet app, which will be automatically opened at the end of the computation. You can easily switch back and forth between the program and the ephemerides to review your planning and then record a sight. To go back to the programs from the Spreadsheet app, click <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle">. To return to the ephemerides in the Spreadsheet, click the Apps button and then touch the Spreadsheet icon.
+
+Here's how it works:
 
 1. From the programs screen of the calculator, select the **Sight Reduction** program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key and click on the **SIGHT_PLANNING** function. An input screen will appear:
 
@@ -186,7 +190,7 @@ It can be helpful to know which celestial bodies will be visible and where ahead
    * **Azimuth from**: the true heading in degrees of the beginning of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list. Same as for Altitude, this can be used to suppress bodies that would be obscured by a ship's superstructure or the land side of a shoreline
    * **Clockwise to**: the true heading in degrees of the end of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
 
-3. It will take about 50 seconds to compute all the ephemerides. You will be prompted to press a key to show the results at the end of the calculation. The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include, in clockwise order of azimuth within the prescribed arc:
+3. It will take about 50 seconds on an HP Prime V2 to compute all the ephemerides. You will be prompted to press a key to show the results at the end of the calculation. The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include, in clockwise order of azimuth within the prescribed arc:
 * Sunrise, sunset, civil twilight, and nautical twilight times
 * Local time of Meridian passage at the specified longitude
 * List of observable bodies (i.e. meeting azimuth and altitude constraints entered on the first screen) with, for each, the azimuth, true altitude (Hc), apparent altitude (Ha) (i.e. the one that a sextant with no index error and no dip would read), Greenwhich Hour Angle (GHA), declination (dec), semi-diameter in arc seconds of the body (if applicable), and rise and set times (if applicable), at 3 different times:
@@ -318,7 +322,13 @@ Once your actual position is entered, the calculator will display the distance b
 ![Fix error output](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/fix5.png)
 
 ## Ephemerides
-The program can show the Greenwich Hour Angle (GHA) and declination of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the 58 celestial navigation stars for any point in time between 1800 and 2200, as well as the corresponding azimuth and altitude from a specified geographical location. The semi-diameter of certain bodies will also be shown. A graphical representation of the ephemerides is available through the [Star Finder function](#star-finder) which is covered in the next section. To use this feature:
+The program can show the ephemerides of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the 58 celestial navigation stars for any point in time between 1800 and 2200, as well as the corresponding azimuth and altitude from a specified geographical location. The semi-diameter of certain bodies will also be shown. A graphical representation of the ephemerides is available through the [Star Finder function](#star-finder) which is covered in the next section.
+
+This function is similar to the **SIGHT_PLANNING** function but without the overhead of calculating the morning and evening twilight ephemerides, and it also provides additional astronomical parameters such as obliquity of the ecliptic, moon phase, etc. The bodies are ordered by type and name instead of by azimuth and none are filtered out.
+
+Similar to the **SIGHT_PLANNING** function, the ephemerides will be displayed in the calculator's Spreadsheet app, which will be automatically opened at the end of the computation. You can easily switch back and forth between the program and the ephemerides: to go back to the programs from the Spreadsheet app, click <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle">. To return to the ephemerides in the Spreadsheet, click the Apps button and then touch the Spreadsheet icon.
+
+To use this feature:
 
 1. From the programs screen of the calculator, select the **Sight Reduction** program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key and click on the **EPHEMERIDES** function. An input screen will appear:
 
