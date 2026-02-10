@@ -91,12 +91,15 @@ To install from the binaries, the *.hpprgm* files must be loaded into the Connec
 
 ## Installing from Source Files
 
-1. Expand the calculator and the **Programs** section of the calculator in the *HP Connectivity Kit* program
-5. Right-click on **Program** and select **New**
-6. Enter the name *Earth* and press Enter. An empty editor window will open
-7. Open the `src/earth.txt` file from this repository in a text editor on your computer
-8. Select all the text (Ctrl-A), copy it to the clipboard (Ctrl-C), and paste it into the editor window in the *HP Connectivity Kit* program (Ctrl-V)
-9. Save the file (Ctrl-S) and close the editor window
+If you are experiencing issues during the installation of the binaries, you can use this alternate procedure which consists of loading the source code of the programs onto the calculator to let the calculator compile them.
+
+1. In the *HP Connectivity Kit* program, expand the calculator and the **Programs** folder under the calculator
+2. If some programs are already installed, either clear the entire calculator memory by pressing the **On-Apps-ESC** keys simultaneously on the calculator (you may need to unplug and plug the calculator back into the computer after that), or right-click each one of the programs in the *HP Connectivity Kit* and select **Delete**
+3. Right-click on **Program** and select **New**
+4. Enter the name *Earth* and press Enter. An empty editor window will open
+5. Open the `src/earth.txt` file from this repository in a text editor on your computer
+6. Select all the text (Ctrl-A), copy it to the clipboard (Ctrl-C), and paste it into the editor window in the *HP Connectivity Kit* program (Ctrl-V)
+7. Save the file (Ctrl-S) and close the editor window
 10. Repeat steps 5-8 above for each text file in the repository
 11. On the calculator, go to the **Programs** page with <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle"> and confirm that all the programs are loaded
 12. Open each program and hit <img alt="Check" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/check.png" valign="middle"> to confirm that there are no syntax errors
