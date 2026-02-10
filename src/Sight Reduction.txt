@@ -1,3 +1,20 @@
+// Sight Reduction
+// Copyright (C) 2026 by Charles Vaillancourt
+//
+// This program and the accompanying AstroCalc program provide
+// functionality to turn an HP Prime calculator into a feature-
+// rich celestial navigation computer.
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the Creative Commons Attribution-NonCommercial-
+// ShareAlike 4.0 International License (CC BY-NC-SA 4.0).
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+// License for more details.
+
 #pragma mode(separator(.,;))
 
 // This program depends on the global variable
@@ -6,12 +23,12 @@
 // being erased if this program is opened for
 // editing by mistake (which is very easy to do).
 
-// The sights variable contains a list of 10 LOP
+// The "sights" variable contains a list of 10 LOP
 // registers, each one a list containing a list
-// of the values of the sight and LOP for this
-// register. The i_* variables below represent
-// the indices in that list of the various LOP
-// data elements
+// of the values of the sight and LOP. The 
+// "i_*" variables below represent
+// the indices in that list of the various sight and LOP
+// elements
 
 LOCAL i_date                     :=1;
 LOCAL i_time                     :=2;

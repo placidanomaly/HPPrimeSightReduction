@@ -1,3 +1,29 @@
+// AstroCalc
+//
+// Charles Vaillancourt (charles.vaillancourt@gmail.com), 2026
+//
+// This program perform astronomical calculations for the ephemerides
+// of the sun, 4 planets and 58 stars used in celestial navigation.
+// It is derived from the AstroCalc106 program by by Henning Umland and 
+// Heiner Müller-Krumbhaar, which is licensed under the GNU General
+// Public License. As such, these derived programs are also licensed
+// under the GPL. More about these programs can be found on
+// http://wwww.celnav.de .
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// A copy of the GNU General Public License is included in the LICENSE
+// file in the main folder of the original repository. It can also
+// be found here: https://www.gnu.org/licenses/.
+
 // Global variables (part 1)
 LOCAL date_:=2026.0101, time_:=12, recalc:=1;
 LOCAL year_, month_, day_, hour_;
