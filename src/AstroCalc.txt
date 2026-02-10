@@ -105,6 +105,17 @@ EXPORT navstar_ := {
     {"Zubenelgenubi", 14.8479758330, -16.0417833330, -0.7340, -6.6800, 0.0490}
   };
 
+// Defining variables for Sight Reduction
+// program here so they don't get erased by
+// when the Sight reduction program is edited
+// by mistake
+EXPORT sights;
+EXPORT bodiesList:=CONCAT({
+  "Sun Lower Limb", "Sun Upper Limb",
+  "Moon Lower Limb", "Moon Upper Limb",
+  "Mars", "Venus", "Jupiter", "Saturn", "Pre-calculated sight"
+  },CAS("col(navstar_,1)"));
+
 //Aberration
 LOCAL kappa_,pi0_,e_;
 
