@@ -72,7 +72,7 @@ LOCAL actualLat:=→HMS(45.5134166667), actualLon:= →HMS(-73.3271388889);
 
 // Default values for subsequent sights
 LOCAL IC_default, DRlat_default:=45, DRlon_default:=-73,HE_default,artificial_default:=0;
-LOCAL date_default,temp_default,press_default;
+LOCAL temp_default,press_default;
 
 // Utility variables
 LOCAL timeZone:=-5;
@@ -81,7 +81,73 @@ LOCAL current;
 LOCAL nl:=CHAR(10);
 LOCAL progressFlag:=1;
 
-EXPORT SIGHT()
+
+
+EXPORT MENU()
+BEGIN
+  LOCAL r;
+  REPEAT
+    r:=TILEMENU({
+	  "1. Navigation",
+	  "2. Astronomy",
+	  "",
+	  "0. Setup"},
+	  4,1,{"","","","","","Exit"});
+	CASE
+	  IF r==1 THEN
+	    REPEAT
+		  r:=TILEMENU({
+		    "1. Sights",
+			"2. Running fix",
+			"3. Lines of position",
+			"4. Compute Fix",
+			"5. Clear Sights"},
+			4,2,{"","","","","","Go back"});
+		  CASE
+		    IF r==1 THEN SIGHT(); END;
+			IF r==2 THEN SHIFT_LOP(); END;
+			IF r==3 THEN IF PLOT_LOPs()==0 THEN RETURN "Switching to Plotting App. Go back to Program menu (Shift-1) to resume program when done."; END; END;
+			IF r==4 THEN COMPUTE_FIX(); END;
+			IF r==5 THEN RESET_SIGHTS(); MSGBOX("Sights cleared."); END;
+		  END;		  
+		UNTIL r==0 or r==-6;
+		r:=1;
+	  END;
+	  IF r==2 THEN
+	    REPEAT
+		  r:=TILEMENU({
+		    "1. Sight Planning",
+			"2. Ephemerides",
+			"3. Star Finder"},			
+			4,1,{"","","","","","Go back"});
+		  CASE
+		    IF r==1 THEN RETURN SIGHT_PLANNING(); END;
+			IF r==2 THEN RETURN EPHEMERIDES(); END;
+			IF r==3 THEN STARFINDER(); END;			
+		  END;		  
+		UNTIL r==0 or r==-6;
+		r:=1;
+	  END;
+	  IF r==4 THEN
+	    REPEAT
+		  r:=TILEMENU({
+		    "1. Sextant Index Correction",
+			"2. Time set"},
+			4,1,{"","","","","","Go back"});
+		  CASE
+		    IF r==1 THEN INDEX_CORRECTION(); END;
+			IF r==2 THEN SET_TIME(); END;
+		  END;		  
+		UNTIL r==0 or r==-6;
+		r:=1;
+	  END;
+	END;
+  UNTIL r==0 OR r==-6;   
+END;
+
+
+
+LOCAL SIGHT()
 BEGIN  
   HAngle:=1;
 
@@ -241,9 +307,29 @@ BEGIN
   
 END;
 
-EXPORT PLOT_LOPs()
+LOCAL CHECK_LOP_EXISTS()
+BEGIN
+  // Check that our variables are initialized
+  IF TYPE(sights)=0 THEN RESET_SIGHTS(); END;
+
+  // Check that we have at least one LOP defined
+  LOCAL c;
+  FOR c FROM 1 TO 10 DO
+    IF sights(c,i_HS)<>0 AND sights(c,i_a_nm)<>0 THEN
+	  c:=15;
+	  BREAK;
+	END;
+  END;
+  
+  RETURN c==15;
+END;
+
+
+LOCAL PLOT_LOPs()
 BEGIN
   HAngle:=1;
+
+  IF NOT CHECK_LOP_EXISTS() THEN MSGBOX("No LOPs available"); RETURN -1; END;
 
   Function.Xmin:=-180;
   Function.Xmax:=180;
@@ -259,6 +345,7 @@ BEGIN
   
   STARTVIEW(1,1);
   
+  RETURN 0;
 END;
 
 LOCAL INTERSECTION(f1,f2)
@@ -291,7 +378,7 @@ BEGIN
   RETURN {xl, yl};
 END;
 
-EXPORT COMPUTE_FIX()
+LOCAL COMPUTE_FIX()
 BEGIN
   LOCAL i,fix;
   LOCAL lops={};
@@ -456,10 +543,12 @@ BEGIN
   
 END;
 
-EXPORT SHIFT_LOP()
+LOCAL SHIFT_LOP()
 BEGIN
   LOCAL f,index,fn;
   LOCAL d_nm,brg_deg;
+
+  IF NOT CHECK_LOP_EXISTS() THEN MSGBOX("No LOPs available"); RETURN -1; END;
 
   HAngle:=1;
   STARTAPP("Function");
@@ -729,7 +818,7 @@ BEGIN
   RETURN lin;
 END;
 
-EXPORT SIGHT_PLANNING()
+LOCAL SIGHT_PLANNING()
 BEGIN
   LOCAL date_,time_;
   LOCAL i,d;
@@ -874,12 +963,12 @@ BEGIN
   FOR i FROM 2 TO 8 DO Spreadsheet.ColWidth(i):=55; END;
   Spreadsheet.Cursor:={1,1};
 
-  PRINT("PRESS ANY KEY FOR RESULTS...");
+  PRINT("PRESS Num OR ESC KEYS TO GO TO SPREADSHEET");
   STARTVIEW(2,1);
 
 END;
 
-EXPORT EPHEMERIDES()
+LOCAL EPHEMERIDES()
 BEGIN
   LOCAL date_,time_;
   LOCAL i,h,c;
@@ -966,7 +1055,7 @@ BEGIN
   FOR i FROM 2 TO 9 DO Spreadsheet.ColWidth(i):=55; END;
   Spreadsheet.Cursor:={1,1};
 
-  PRINT("PRESS ANY KEY FOR RESULTS...");
+  PRINT("PRESS Num OR ESC KEYS TO GO TO SPREADSHEET");
   STARTVIEW(2,1);
 
 END;
@@ -1292,7 +1381,7 @@ END;
 // Set defaults and remember last requested star finder parameters
 LOCAL starFinderAz:=0,starFinderAlt:=40,starFinderFov:=100;
 
-EXPORT STARFINDER()
+LOCAL STARFINDER()
 BEGIN
   LOCAL date_,time_;
   LOCAL i,h,c;
@@ -1592,11 +1681,13 @@ BEGIN
   current:=c;
 
   // OBSERVATION PARAMETERS
-
   LOCAL tempTime:=sights(current,i_time);
   LOCAL tempDate:=sights(current,i_date);
 
-  IF tempDate=0 THEN tempDate:=date_default; END;
+  IF tempDate==0 THEN 
+	  tempDate:=Date; 
+  END;
+	  
   IF tempTime=0 THEN 
     tempTime:=GET_UTC_TIME();
     IF tempTime>24 THEN 
@@ -1655,8 +1746,7 @@ BEGIN
   END;
 
   sights(current,i_DRlon):=NORMALIZE_LONGITUDE(sights(current,i_DRlon));
-  sights(current,i_date):=tempDate;
-  date_default:=sights(current,i_date);
+  sights(current,i_date):=tempDate;  
   DRlat_default:=sights(current,i_DRlat);
   DRlon_default:=sights(current,i_DRlon);
   artificial_default:=sights(current,i_artificialFlag);
@@ -1725,8 +1815,6 @@ BEGIN
   );
   
   IF c==0 OR sights(current,i_HS)==0 THEN RETURN 0; END;
-  
-  date_default:=sights(current,i_date);
   
   HA_CALC(current);  
   RETURN c;
@@ -1895,7 +1983,7 @@ BEGIN
   END;
 END;
 
-EXPORT INDEX_CORRECTION()
+LOCAL INDEX_CORRECTION()
 BEGIN
   
   PRINT();
@@ -1910,13 +1998,13 @@ BEGIN
   
   IF c==4 THEN 
     LOCAL result:=SOLAR_IC();
-	PRINT();
-	PRINT(result);
-	PRINT(" ");
-	PRINT("Press ESC to continue.");
   END;
   IF c==5 THEN
     IF SIZE(sights)=0 THEN RESET_SIGHTS(); END;   
+	
+	// Check that our variables are initialized
+    IF TYPE(sights)=0 THEN RESET_SIGHTS(); END;
+
     LOCAL ic:=sights(1,i_indexCorrection_min);
     c:=INPUT({ic},
 	  "Sextant Default Index Correction",
@@ -1991,7 +2079,7 @@ BEGIN
   RETURN "Canceled.";
 END;
 
-EXPORT SET_TIME()
+LOCAL SET_TIME()
 BEGIN
   LOCAL time:=Time;
   LOCAL c;
@@ -2012,7 +2100,7 @@ BEGIN
   RETURN "Local time:"+Time+" UTC Time:"+c;
 END;
 
-EXPORT RESET_SIGHTS()
+LOCAL RESET_SIGHTS()
 BEGIN
   HAngle:=1;
   
@@ -2031,17 +2119,6 @@ BEGIN
   FOR i FROM 1 TO 10 DO
     sights:=CONCAT(sights,{item});
   END;
-
-//@TODO: create GET_UTC_DATETIME() function that
-//will return the corrected date and time in a list
-  date_default:=Date;
-  IF GET_UTC_TIME()>24 THEN
-    date_default:=DATEADD(date_default,1);
-  ELSE 
-    IF GET_UTC_TIME()<0 THEN
-      date_default:=DATEADD(date_default,-1);
-    END;
-  END;  
 
   temp_default:=20;
   press_default:=1010;
@@ -2223,5 +2300,121 @@ BEGIN
         END;
       END;
     END;
+  END;
+END;
+
+
+// This function displays a menu of tiles
+// with possible soft keys at the bottom and
+// returns 0 if On or ESC was pressed, the index
+// in the options list of the tile pressed
+// or a the index of the softkeys list as a negative
+// number if a soft key was pressed
+//
+// Arguments:
+//     options       A list containing menu options
+//     rows,columns  The layout of the tiles on the screen
+//     softkeys      A list of softkeys. Empty 
+//                   list ({}) for no soft keys
+//
+// Example usage:
+// LOCAL c:=TILEMENU({
+//   "1. Sights",
+//	 "2. Running Fix",
+//	 "3. Plot LOPs"},
+//	 5,2,
+//	 {"","","","","","Go Back"});
+  
+LOCAL TILEMENU(options,rows,columns,softkeys)
+BEGIN
+  LOCAL padding:=2;
+  LOCAL height:=IFTE(SIZE(softkeys)<>0,220-padding,240);
+  LOCAL itemHeight:=IP(height/rows);
+  LOCAL width:=320;  
+  LOCAL tileBorder:=0;
+  LOCAL backgroundColor:=IFTE(Theme(1)==1,#FFFFFF,0);
+  LOCAL tileColor:=IFTE(Theme(1)==1,#141D5C,#4A0909);
+  LOCAL textColor:=#FFFFFF;
+  
+  LOCAL i:=1, j:=1, k:=1;
+  RECT_P(0,0,width,320,backgroundColor,backgroundColor);
+  
+  WHILE k<=SIZE(options) DO
+    LOCAL x0:=(i-1)*(width/columns)+padding;
+	LOCAL x1:=i*(width/columns)-padding;
+	LOCAL y0:=(j-1)*(itemHeight)+padding;
+	LOCAL y1:=j*itemHeight-padding;
+	IF options(k)<>"" THEN
+	  RECT_P(x0,y0,x1,y1,tileBorder,tileColor);
+	  TEXTOUT_P(options(k),x0+padding,y0+itemHeight/2-10,3,textColor,320,tileColor);
+	END;
+	k:=k+1;
+	j:=j+1;
+	IF j*itemHeight>height THEN
+	  j:=1;
+	  i:=i+1;
+	  IF i>columns THEN 
+	    k:=1e12;
+	  END;
+	END;
+  END;
+  
+  IF SIZE(softkeys)<>0 THEN
+    DRAWMENU(softkeys);
+  END;
+  
+  WHILE 1 DO
+	LOCAL r:=WAIT(-1);
+	// Check if we have a keyboard or
+	// mouse event
+	IF TYPE(r)=0 THEN
+	  // We have a keyboard event. Check if
+	  // either ESC or ON was pressed and
+	  // return 0 if so, and ignore any
+	  // other key
+	  IF r=4 OR r=46 THEN
+		RETURN 0;
+	  END;
+	  
+	  // Find if a key corresponding to a menu
+	  // options was pressed	  
+	  LOCAL key:=POS({47,42,43,44,37,38,39,32,33,34},r);	  
+	  IF key<>0 THEN
+	    key:=key-1;		
+		// Search for menu item starting with pressed number
+		LOCAL i,r:=0;
+		FOR i FROM 1 TO SIZE(options) DO		  
+		  IF LEFT(options(i),1)==CHAR(48+key) THEN RETURN i; END;
+		END;
+	  END;
+	ELSE 
+	  // We have a mouse event.
+	  // Check that we have a mouse 
+	  // click event
+	  
+	  IF r(1)=3 THEN
+	    IF SIZE(softkeys)<>0 THEN
+	      // If we have softkeys, check
+          // if a click was made on them
+          IF r(3)>220 THEN
+            // Check that the soft key
+            // has a label attached to
+            // it or do nothing
+            LOCAL key:=IP(r(2)/53)+1;
+            IF softkeys(key)<>"" THEN
+              RETURN -1*key;
+            END;
+          END;
+		END;
+	    // Calculate which menu item		
+		// was clicked
+		LOCAL col:=IP(r(2)/(width/columns));
+		LOCAL row:=IP(r(3)/(height/rows));
+		LOCAL item:=col*rows+row+1;
+		IF item<=SIZE(options) THEN
+		  RETURN item;
+		END;
+	  END;
+	END;
   END;
 END;
