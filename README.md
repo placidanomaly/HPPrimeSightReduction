@@ -2,7 +2,7 @@
 This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator G1 V2](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and requires no updates until the year 2200. **NOTE: The program works very well on the G1 V2 (Rev. C) but it is extremely slow on the newer and more powerful G2 (Rev. D) -- this is currently being investigated by the manufacturer.** It can also be used on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program. You may freely use and modify this program for non-commercial purposes under this [license](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/LICENSE)
 
 The following functionality is provided:
-* Astronomical
+* Astronomical Calculations:
   * Ephemerides of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the usual 58 stars used in celestial navigation including GHA, declination, azimuth, altitude, semi-diameter, and rise and set times
   * Delta T, equation of time, obliquity of the ecliptic, etc.
   * Rise and set times of the Sun and all other celestial bodies, civil and nautical twilight times
@@ -11,7 +11,7 @@ The following functionality is provided:
   * Centroid corrections for the partial illumination of Venus and Mars
   * Interactive stereographic projection of the sky (aka star finder plot) at a given location and time
 
-* Navigation
+* Celestial Navigation:
   * Observation planning by listing all observable bodies (i.e. meeting user-specified altitude and azimuth constraints) during morning and evening nautical twilight and at any time of the day with their respective GHA, declination, azimuth, true altitude, apparent altitude, and semi-diameter
   * Sight reduction of sextant observations of any of those celestial bodies to Lines of Position (LOPs)
   * Running fix calculations through translation of lines of position by a certain distance on a given bearing
