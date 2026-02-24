@@ -1,5 +1,5 @@
 # Ephemerides and Sight Reduction for the HP Prime Calculator
-This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator G1 V2](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and requires no updates until the year 2200. **NOTE: The program works very well on the G1 V2 (Rev. C) but it mysteriously runs extremely slowly on the G2 (Rev. D) -- this is currently being investigated.** It can also be used on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program. You may freely use and modify this program for non-commercial purposes under this [license](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/LICENSE)
+This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator G1 V2](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and requires no updates until the year 2200. **NOTE: The program works very well on the G1 V2 (Rev. C) but it is extremely slow on the newer and more powerful G2 (Rev. D) -- this is currently being investigated by the manufacturer.** It can also be used on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program. You may freely use and modify this program for non-commercial purposes under this [license](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/LICENSE)
 
 The following functionality is provided:
 * Astronomical
@@ -356,6 +356,7 @@ Upon submitting the form, the calculator will perform the ephemerides calculatio
    * **Up/Down Arrows**: tilt view up/down
    * **Left/Right Arrows**: pan view left/right
    * **Touchscreen drag**: you can drag the view using the touchscreen drag gesture
+   * **+ / - keys**: zoom in/out
    * **ESC** or **On**: exit the program
 
 ![Star Finder](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/starfinder.png)
