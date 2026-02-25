@@ -39,12 +39,14 @@ For an excellent textbook on celestial navigation and the process of sight reduc
   * [Confirming that Everything Works](#confirming-that-everything-works)
     
 * [**Using the Program**](#using-the-program)
+  * [Running the Program](#running-the-program)
   * [Units and Conventions](#units-and-conventions)
     * [Negative Numbers](#negative-numbers)
     * [Position and Angle Format](#position-and-angle-format)
     * [Date Format](#date-format)
     * [Time Format](#time-format)
     * [Dark Mode](#dark-mode)
+
   * [Initialization](#initialization)
   * [Planning Observations](#planning-observations)
   * [Reducing Sights](#reducing-sights)
@@ -111,15 +113,34 @@ When the installation is completed, whether from binaries or from source, confir
 
 If all programs are listed, confirm that the installation was successful by performing the following verification:
 
-1. On the calculator, open the Programs page using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle"> keys. Select the **Sight Reduction** program using the arrows, press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key, select **RESET_SIGHTS** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. This will initialize all the necessary variables for the program to work.
-2. Select the **Sight Reduction** program <ins>using the arrows (the big round button) on the calculator</ins> (see note below), press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key on the screen, select **EPHEMERIDES** using the arrows and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. Fill out the form with a date, time, and location following the conventions in the next section and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. If everything was installed properly, the calculator will process the requested ephemerides for about 16 seconds (on a G1 V2 (Rev. C) calculator) and display them in the Spreadsheet app. You can scroll through them using the touchscreen to check some of the values against a Nautical Almanac for accuracy.
-3. If anything fails, double-check that all the programs are installed. Open each one of them using the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key. Validate that the file is not empty and push the <img alt="Check" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/check.png" valign="middle"> soft key per Step 12 in the *Installing from Source* section. If the file is empty, try reinstalling the binary file. If that fails, install it from source following the instructions in the previous section. If you're stuck here, contact the author at the address at the bottom of this document.
+1. On the calculator, open the Programs page using the <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle"> keys.
+2. Select the **Sight Reduction** program <ins>using the arrows (the big round button) on the calculator</ins> (see note below), press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key on the screen
+3. Touch the **2. Astronomy** tile (or press the **2** key), then touch **2. Ephemerides**
+4. Fill out the form with a date, time, and location following the conventions in the next section (or leave the default values) and press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle">. If everything was installed properly, the calculator will process the requested ephemerides for about 16 seconds (on a G1 V2 (Rev. C) calculator) which will allow verifying that all programs are properly installed. The results will then be displayed in the Spreadsheet app. You can scroll through them using the touchscreen to check some of the values against a Nautical Almanac for accuracy.
+5. If anything fails, double-check that all the programs are installed. Open each one of them using the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key. Validate that the file is not empty and push the <img alt="Check" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/check.png" valign="middle"> soft key per Step 12 in the *Installing from Source* section. If the file is empty, try reinstalling the binary file. If that fails, install it from source following the instructions in the previous section. If you're stuck here, contact the author at the address at the bottom of this document.
 
 > **IMPORTANT**: if you inadvertently click on a program name on the touchscreen or press <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> while a program name is highlighted, you will enter the source code view where you can edit the program. Press the **ESC** key to leave the source code view. IF YOU OPEN THE **AstroCalc** PROGRAM FOR EDITING, IT WILL CLEAR ALL YOUR SIGHTS. Instead, use the arrows to navigate to a program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key to launch it.
 
 # Using the Program
 
 All the functionality is accessed through the **Sight Reduction** program. The other programs support astronomical calculations that are too voluminous to fit within a single program. Those programs need to be present for **Sight Reduction** to work, but they should not be invoked by the user under normal usage scenarios.
+
+## Running the Program
+The functionality of the program is accessed by the tile menu that is displayed when the program is run. To access the main menu:
+
+  1. Press <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle"> to access the **Program** view
+  2. Using the Up/Down arrow keys on the round control on the keyboard, highlight the **Sight Reduction** program
+  3. Press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key
+
+When the program starts, the main menu will be displayed. A menu option can be selecting by touching the screen on the tile of the desired option, or by pressing the number key that corresponds to the number of the desired option.
+
+![Main menu](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/main_menu.png)
+
+If you select an option that leads to a submenu, you can go back to the previous menu by touching the **Go Back** soft key:
+
+![Main menu](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/menu_1.png)
+
+To exit tthe program, press the **On** key.
 
 ## Units and Conventions
 
@@ -157,21 +178,26 @@ The color theme used by the calculator can be set to Light or Dark mode on page 
 
 The program keeps data about sights and lines of position in a global variable named "sights" which is preserved when the calculator is turned off. Generally, you should clear the program's memory prior to any new fix or if you ever get an **Invalid Input** error. To clear all program variables:
 
-1. Highlight the **Sight Reduction** program and press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key
-2. From the list of options, pick **RESET_SIGHTS** on the touchscreen or with the arrows and the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key. Click any key to dismiss the confirmation message.
+1. From the main menu, select **1. Navigation**
+2. From the navigation menu, seleck **5. Clear sights**
+2. Dismiss the confirmation message to return to the navigation menu
 
-![Resetting variables](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightreductionprograms.png)
+![Resetting variables](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/menu_1.png)
 
 ### Setting the Time and Time Zone
 
 The calculator has a pretty accurate internal clock that can be used to automatically record the time of observations. It should be set to a reliable external time source from time to time to ensure it is accurate. To set the calculator's internal clock and timezone:
 
-1. Run the **Sight Reduction** program and pick the **SET_TIME** function and set the calculator's local time clock and timezone:
-
-   * **Local time**: the local time to which to set the calculator's internal clock. Enter a time a few seconds in the future and click the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key when your time source reads the time entered
-   * **UTC Offset**: the number of hours the local time is ahead of or behind UTC. Use a positive value for locations East of Greenwhich and negative for West (e.g. -5 for New York standard time). Keep in mind that this offset changes with Daylight Savings Time (DST). Fractional offset values like the one used in Newfoundland (-3.5 in standard time) are supported.
+1. From the main menu, select **0. Setup** and **2. Time set**:
 
 ![Setting the time and timezone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
+
+2. Fill in the required information:
+   * **Local date**: the local date to which to set the calculator's internal clock
+   * **UTC Offset**: the number of hours the local time is ahead of or behind UTC. Use a positive value for locations East of Greenwhich and negative for West (e.g. -5 for New York standard time). Keep in mind that this offset changes with Daylight Savings Time (DST). Fractional offset values like the one used in Newfoundland (-3.5 in standard time) are supported.
+   * **Local time**: the local time to which to set the calculator's internal clock 
+
+3. Make sure to enter a time a few seconds in the future in the **Local time** field and click the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key when your time source reads the time entered
 
 ## Planning Observations
 It can be helpful to know which celestial bodies will be visible and where ahead of an observation session with the sextant so that the bodies to be observed can be selected ahead of time based on whether they meet certain a criteria for visibility based on their altitude and azimuth. The program shows, for a given date, all the bodies that meet the visibility criteria at morning and evening nautical twilight, as well as at a specified time during that day. 
@@ -180,7 +206,7 @@ The ephemerides of the selected celestial bodies will be displayed in the calcul
 
 Here's how it works:
 
-1. From the programs screen of the calculator, select the **Sight Reduction** program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key and click on the **SIGHT_PLANNING** function. An input screen will appear:
+1. From the main menu, select **2. Astronomy** and **1. Sight Planning**. An input screen will appear:
 
 ![Parameters for listing bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_input.png)
 
@@ -206,13 +232,13 @@ Here's how it works:
 ## Reducing Sights
 Performing a sight reduction is a straightforward process: 
 
-1. Go to the Programs screen, highlight the **Sight Reduction** program and press the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key.
+1. From the main menu, select **1. Navigation**
 
-2. Reset all previous observations and calculations by running **RESET_SIGHTS** in the **Sight Reduction** program.
+2. If needed, reset all previous observations and calculations by selecting the **5. Clear sights** menu option
 
-![Sight Reduction programs](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightreductionprograms.png)
+![Navigation menu](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/menu_1.png)
 
-3. Enter a new observation: select **SIGHT** and press the <img alt="Enter" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/enter.png" valign="middle"> key.
+3. Enter a new observation: select the **1. Sight** menu option.
 
 4. The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by an LOP register number from 1 to 10. Select an empty LOP register for this observation (they should all be empty if you ran **RESET_SIGHTS**), let's say **1** for this first one, and hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key. LOP registers containing a translated LOP cannot be edited and, if selected for editing, will be treated as an empty sight that will overwrite the translated LOP. The source of a translated LOP can be edited but its corresponding translated LOP will not be updated so the **SHIFT_LOP** program should be run against the updated values using the same destination register as before. See [Running Fixes](#running-fixes).
 
@@ -271,15 +297,19 @@ The **Show Progress** checkbox simply causes additional computing messages to be
 
 ## Running Fixes
 
-In order to make a fix using two or more lines of position from observations taking at a different DR position, for example to make a fix based on a morning and an afternoon Sun sight while navigating, the earlier fixes need to be translated by the DR delta between those two positions. This is easily accomplished by running the **SHIFT_LOP** program. The first screen will prompt for the LOP that needs to be translated:
+In order to make a fix using two or more lines of position from observations taking at a different DR position, for example to make a fix based on a morning and an afternoon Sun sight while navigating, the earlier fixes need to be translated by the DR delta between those two positions. Here is the procedure:
+
+  1. From the main menu, selection **1. Navigation**, then **2. Running fix**.
+  
+  2. From the LOP selection menu, select the LOP that is to be translated:
 
 ![Running Fix - Source LOP](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/runningfix1.png)
 
-The next screen prompts to enter by what distance and bearing to shift the LOP. Enter the bearing in true degrees and the distance in nautical miles:
+  3. Enter the distance and bearing by which to translate the LOP. Enter the bearing in true degrees and the distance in nautical miles:
 
 ![Running Fix - Delta](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/runningfix2.png)
 
-The next screen prompts for the LOP register in which to store the resulting translated LOP. You can select the same LOP as the source LOP, in which case it will be overwritten with the translated LOP and the original observation will be lost (which is usually fine), or another LOP register:
+  4. Specify the LOP register in which to store the resulting translated LOP. You can select the same LOP as the source LOP, in which case it will be overwritten with the translated LOP and the original observation will be lost (which is usually fine), or any other LOP register:
 
 ![Running Fix - Destination](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/runningfix3.png)
 
@@ -294,9 +324,11 @@ Once 2 or more LOPs have been defined (i.e. 2 or more sights have been entered i
 
 ### Manual Fix
 
-A manual fix is made by visualizing the LOPs on a Cartesian plane with longitude as the horizontal axis and latitude the vertical axis. To do that, run the **Sight Reduction** program and select **PLOT LOPs**. This will open the calculator's Function app and a line of position will be plotted for each LOP defined in the **SIGHT** program. The calculator functions accessible through the soft keys can then be used to calculate the intersection of LOPs, etc., and the cursor can be used to manually find the centroid or some other position inside the "cocked hat" to make a fix. In order to determine which line color corresponds to which LOP, use the **Symb** key to view the color coding and the corresponding LOP equations, and use the **Plot** key to go back to the graph.
+A manual fix is made by visualizing the LOPs on a Cartesian plane with longitude as the horizontal axis and latitude the vertical axis. To do that, run the **Sight Reduction** program and select **1. Navigation** then **3. Lines of position**. This will open the calculator's Function app and a line of position will be plotted for each LOP defined. The calculator functions accessible through the soft keys can then be used to calculate the intersection of LOPs, etc., and the cursor can be used to manually find the centroid or some other position inside the "cocked hat" to make a fix. In order to determine which line color corresponds to which LOP, use the **Symb** key to view the color coding and the corresponding LOP equations, and use the **Plot** key to go back to the graph.
 
 ![Sample LOP plot](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/plot_lop.png)
+
+When done, you can return to the program by restarting it. See [Running the Program](#running-the-program).
 
 ### Computed Fix
 
@@ -327,13 +359,13 @@ Once your actual position is entered, the calculator will display the distance b
 ## Ephemerides
 The program can show the ephemerides of the Sun, Moon, Mars, Venus, Jupiter, Saturn, and the 58 celestial navigation stars for any point in time between 1800 and 2200, as well as the corresponding azimuth and altitude from a specified geographical location. The semi-diameter of certain bodies will also be shown. A graphical representation of the ephemerides is available through the [Star Finder function](#star-finder) which is covered in the next section.
 
-This function is similar to the **SIGHT_PLANNING** function but without the overhead of calculating the morning and evening twilight ephemerides, and it also provides additional astronomical parameters such as obliquity of the ecliptic, moon phase, etc. The bodies are ordered by type and name instead of by azimuth and none are filtered out.
+This function is similar to the [Sight Planning](#sight-planning) function but without the overhead of calculating the morning and evening twilight ephemerides, and it also provides additional astronomical parameters such as obliquity of the ecliptic, moon phase, etc. The bodies are ordered by type and name instead of by azimuth and none are filtered out.
 
-Similar to the **SIGHT_PLANNING** function, the ephemerides will be displayed in the calculator's Spreadsheet app, which will be automatically opened at the end of the computation. You can easily switch back and forth between the program and the ephemerides: to go back to the programs from the Spreadsheet app, click <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle">. To return to the ephemerides in the Spreadsheet, click the Apps button and then touch the Spreadsheet icon.
+Similar to the [Sight Planning](#sight-planning) function, the ephemerides will be displayed in the calculator's Spreadsheet app, which will be automatically opened at the end of the computation. You can easily switch back and forth between the program and the ephemerides: to go back to the programs from the Spreadsheet app, click <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle">. To return to the ephemerides in the Spreadsheet, click the Apps button and then touch the Spreadsheet icon, or click the **Num** button if the app is already active.
 
 To use this feature:
 
-1. From the programs screen of the calculator, select the **Sight Reduction** program and click the <img alt="Run" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/run.png" valign="middle"> soft key and click on the **EPHEMERIDES** function. An input screen will appear:
+1. From the main menu, select **2. Astronomy** and then **2. Ephemerides**. An input screen will appear:
 
 ![Ephemerides input screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_input.png)
   
@@ -348,7 +380,7 @@ To use this feature:
 ![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Ephemerides output screen](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/ephemerides_output2.png)
 
 ## Star Finder
-A plot of the sky with the 58 celestial bodies based on their ephemerides can be displayed by using the **STARFINDER** function of the **Sight Reduction** program. The input screen is the same as for the [ephemerides function](#ephemerides), with additional fields to specify the observer's gaze: initial center of the star finder view in terms of azimuth and altitude, and the initial field of view (which is the inverse of a zoom level):
+A plot of the sky with the 58 celestial bodies based on their ephemerides can be displayed from the main menu by selecting **2. Astronomy** and then **3. Star Finder**. The input screen is the same as for the [ephemerides function](#ephemerides), with additional fields to specify the observer's gaze: the initial center of the star finder view in terms of azimuth and altitude in degrees, and the initial field of view in degrees (the inverse of a zoom level):
 
 ![Star Finder](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/starfinder_input.png)
 
@@ -365,9 +397,9 @@ While dragging or holding a key down, only the stars and planets will be redrawn
 
 ## Setting Default Index Correction
 
-Whenever a new sight is entered, a value for the index correction of the sextant must be specified. A default value for the index correction can be defined using the **INDEX_CORRECTION** program. The value of the default index correction can either be entered directly or it can be calculated based on a measurement of the diameter of the Sun.
+Whenever a new sight is entered, a value for the index correction of the sextant must be specified. A default value for the index correction can be defined, either by entered a value directly or by calculating it from on a measurement of the diameter of the Sun.
 
-Start by launching the **INDEX_CORRECTION** program and choose either the *Direct* or the *Solar* method using the soft keys. At the end of the procedure, the value of the index correction for all sights that have no sextant angle entered will be set to the new default index correction value (i.e. the index correction of existing sights will not be changed).
+From the main menu, select **0. Setup** then **1. Sextant Index Correction**. Then choose either the *Direct* or the *Solar* method using the soft keys. At the end of the procedure, the value of the index correction for all new sights will be set to the new default index correction value (i.e. the index correction of existing sights will not be changed).
 
 ![Index Correction options](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/index_correction.png)
 

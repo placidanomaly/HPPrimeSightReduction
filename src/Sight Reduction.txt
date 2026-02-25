@@ -88,60 +88,63 @@ BEGIN
   LOCAL r;
   REPEAT
     r:=TILEMENU({
-	  "1. Navigation",
-	  "2. Astronomy",
-	  "",
-	  "0. Setup"},
-	  4,1,{"","","","","","Exit"});
-	CASE
-	  IF r==1 THEN
-	    REPEAT
-		  r:=TILEMENU({
-		    "1. Sights",
-			"2. Running fix",
-			"3. Lines of position",
-			"4. Compute Fix",
-			"5. Clear Sights"},
-			4,2,{"","","","","","Go back"});
-		  CASE
-		    IF r==1 THEN SIGHT(); END;
-			IF r==2 THEN SHIFT_LOP(); END;
-			IF r==3 THEN IF PLOT_LOPs()==0 THEN RETURN "Switching to Plotting App. Go back to Program menu (Shift-1) to resume program when done."; END; END;
-			IF r==4 THEN COMPUTE_FIX(); END;
-			IF r==5 THEN RESET_SIGHTS(); MSGBOX("Sights cleared."); END;
-		  END;		  
-		UNTIL r==0 or r==-6;
-		r:=1;
-	  END;
-	  IF r==2 THEN
-	    REPEAT
-		  r:=TILEMENU({
-		    "1. Sight Planning",
-			"2. Ephemerides",
-			"3. Star Finder"},			
-			4,1,{"","","","","","Go back"});
-		  CASE
-		    IF r==1 THEN RETURN SIGHT_PLANNING(); END;
-			IF r==2 THEN RETURN EPHEMERIDES(); END;
-			IF r==3 THEN STARFINDER(); END;			
-		  END;		  
-		UNTIL r==0 or r==-6;
-		r:=1;
-	  END;
-	  IF r==4 THEN
-	    REPEAT
-		  r:=TILEMENU({
-		    "1. Sextant Index Correction",
-			"2. Time set"},
-			4,1,{"","","","","","Go back"});
-		  CASE
-		    IF r==1 THEN INDEX_CORRECTION(); END;
-			IF r==2 THEN SET_TIME(); END;
-		  END;		  
-		UNTIL r==0 or r==-6;
-		r:=1;
-	  END;
-	END;
+    "1. Navigation",
+    "2. Astronomy",
+    "",
+    "0. Setup"},
+    4,1,{"","","","","","Exit"});
+  CASE
+    IF r==1 THEN
+      REPEAT
+      r:=TILEMENU({
+        "1. Sights",
+      "2. Running fix",
+      "3. Lines of position",
+      "4. Compute Fix",
+      "5. Clear Sights"},
+      4,2,{"","","","","","Go back"});
+      CASE
+        IF r==1 THEN SIGHT(); END;
+      IF r==2 THEN 
+        LOCAL r:=SHIFT_LOP();
+        IF TYPE(r)==2 THEN MSGBOX(r); END;
+      END;
+      IF r==3 THEN IF PLOT_LOPs()==0 THEN MSGBOX("Switching to Plotting App. Press ESC and (Shift-1) to return to program when done."); STARTVIEW(1,1); RETURN; END; END;
+      IF r==4 THEN COMPUTE_FIX(); END;
+      IF r==5 THEN RESET_SIGHTS(); MSGBOX("Sights cleared. Press OK to continue."); END;
+      END;      
+    UNTIL r==0 or r==-6;
+    r:=1;
+    END;
+    IF r==2 THEN
+      REPEAT
+      r:=TILEMENU({
+        "1. Sight Planning",
+        "2. Ephemerides",
+        "3. Star Finder"},      
+        4,1,{"","","","","","Go back"});
+      CASE
+        IF r==1 THEN IF SIGHT_PLANNING()==1 THEN RETURN; END; END;
+        IF r==2 THEN IF EPHEMERIDES()==1 THEN RETURN; END; END;
+        IF r==3 THEN STARFINDER(); END;      
+      END;      
+    UNTIL r==0 or r==-6;
+    r:=1;
+    END;
+    IF r==4 THEN
+      REPEAT
+      r:=TILEMENU({
+        "1. Sextant Index Correction",
+      "2. Time set"},
+      4,1,{"","","","","","Go back"});
+      CASE
+        IF r==1 THEN INDEX_CORRECTION(); END;
+      IF r==2 THEN SET_TIME(); END;
+      END;      
+    UNTIL r==0 or r==-6;
+    r:=1;
+    END;
+  END;
   UNTIL r==0 OR r==-6;   
 END;
 
@@ -315,10 +318,10 @@ BEGIN
   // Check that we have at least one LOP defined
   LOCAL c;
   FOR c FROM 1 TO 10 DO
-    IF sights(c,i_HS)<>0 AND sights(c,i_a_nm)<>0 THEN
-	  c:=15;
-	  BREAK;
-	END;
+    IF sights(c,i_a_nm)<>0 THEN
+      c:=15;
+      BREAK;
+    END;
   END;
   
   RETURN c==15;
@@ -396,46 +399,46 @@ BEGIN
   // contain a non-translated LOP
   FOR i FROM 1 TO 10 DO
     IF sights(i,i_a_nm)<>0 THEN
-	  IF i==10 THEN
-	    lops:=CONCAT(lops,0);
-	  ELSE	 
-	    lops:=CONCAT(lops,i);
-	  END;
-	END;
+    IF i==10 THEN
+      lops:=CONCAT(lops,0);
+    ELSE   
+      lops:=CONCAT(lops,i);
+    END;
+  END;
   END;
 
   CASE
-    IF SIZE(lops)<2 THEN RETURN "At least 2 LOPs are required"; END;
-	
-	IF SIZE(lops)==2 THEN
-	  // 2 LOPs, we return the intersection of the 2
-	  fix:=INTERSECTION(lops(1),lops(2));
-	  msg:="Intersection of 2 LOPs";
-	END;
-	
-	IF SIZE(lops)==3 THEN
-	  // 3 LOPs: compute symmedian
-	  // center of triangle (Lemoine point)
-	  fix:=LEMOINE(
-	    INTERSECTION(lops(1),lops(2)),
-		INTERSECTION(lops(1),lops(3)),
-		INTERSECTION(lops(2),lops(3)));
-		
-	  msg:="Symmedian Center of 3 LOPs";
-	END;
-	
-	IF SIZE(lops)>3 THEN
-	  // With more than 3 LOPs, we compute the
-	  // coordinate with the lowest mean square
-	  // error from all LOPs
-	  
+    IF SIZE(lops)<2 THEN MSGBOX("At least 2 LOPs are required"); RETURN; END;
+  
+  IF SIZE(lops)==2 THEN
+    // 2 LOPs, we return the intersection of the 2
+    fix:=INTERSECTION(lops(1),lops(2));
+    msg:="Intersection of 2 LOPs";
+  END;
+  
+  IF SIZE(lops)==3 THEN
+    // 3 LOPs: compute symmedian
+    // center of triangle (Lemoine point)
+    fix:=LEMOINE(
+      INTERSECTION(lops(1),lops(2)),
+    INTERSECTION(lops(1),lops(3)),
+    INTERSECTION(lops(2),lops(3)));
+    
+    msg:="Symmedian Center of 3 LOPs";
+  END;
+  
+  IF SIZE(lops)>3 THEN
+    // With more than 3 LOPs, we compute the
+    // coordinate with the lowest mean square
+    // error from all LOPs
+    
       
-	  // Start by creating our mean square
-	  // function which is the sum of the
-	  // square distance of a point (x,y) from
-	  // all LOPs
-	  CAS("PURGE(x,y)");
-	  LOCAL eqn:="Fsq(x,y):=0";
+    // Start by creating our mean square
+    // function which is the sum of the
+    // square distance of a point (x,y) from
+    // all LOPs
+    CAS("PURGE(x,y)");
+    LOCAL eqn:="Fsq(x,y):=0";
       FOR i FROM 1 TO SIZE(lops) DO
         LOCAL m:=EXPR("CAS(\"diff(Function.F"+lops(i)+"(x),x)\")");
         LOCAL b:=EXPR("CAS(\"Function.F"+lops(i)+"(0)\")");
@@ -443,10 +446,10 @@ BEGIN
         eqn:=eqn+"+Fsq"+i+"(x,y)";
       END;
       EXPR("CAS(\""+eqn+"\")");
-	  
-	  // Find the minimum mean square by
-	  // differentiating the mean square function
-	  // along x and y and finding the coordinate(s)
+    
+    // Find the minimum mean square by
+    // differentiating the mean square function
+    // along x and y and finding the coordinate(s)
       // where the derivatives are both zero
       fix:=CAS("solve({diff(Fsq(x,y),x)=0,diff(Fsq(x,y),y)=0},{x,y})");
 
@@ -460,7 +463,7 @@ BEGIN
           minimumIndex:=i;
         END;
       END;
-	  
+    
       // Cleanup
       CAS("PURGE(Fsq)");
       FOR i FROM 1 TO SIZE(lops) DO
@@ -468,9 +471,9 @@ BEGIN
       END;
 
       fix:={fix(minimumIndex,1),fix(minimumIndex,2)};
-	  msg:="Minimizing Mean Squares of "+SIZE(lops)+" LOPs";
+    msg:="Minimizing Mean Squares of "+SIZE(lops)+" LOPs";
 
-	END;	
+  END;  
   END;
   
   fixLon:=fix(1);
@@ -480,21 +483,21 @@ BEGIN
   
   PRINT("Fix from "+msg+CHAR(10)+CHAR(10)
     +"   Latitude: "+→DMD(fixLat)+CHAR(10)
-	+"   Longitude: "+→DMD(fixLon)+CHAR(10));
+  +"   Longitude: "+→DMD(fixLon)+CHAR(10));
   
   i:=GET_SOFTKEY({"","","","","Check","Exit"});
   
   IF i==0 OR i==6 THEN 
     PRINT(); 
-	PRINT("Press ESC to exit.");
-	RETURN "Done."; 
+  PRINT("Press ESC to exit.");
+  RETURN "Done."; 
   END;
   
   i:=INPUT({actualLat,actualLon},
     "Actual Position",
-	{"Latitude","Longitude"},
-	{"Latitude of actual position (°)",
-     "Longitude of actual position (°)"});	
+  {"Latitude","Longitude"},
+  {"Latitude of actual position (°)",
+     "Longitude of actual position (°)"});  
     
   IF i==0 THEN RETURN "Canceled."; END;
 
@@ -510,8 +513,8 @@ BEGIN
   PRINT("Distance between coordinates: "+STRING(ROUND(NM_DIST(fixLat,fixLon,actualLat,actualLon),1))+" nm");
 
   PRINT(" ");
-  PRINT("Press ESC to exit.");
-  
+  PRINT("Press any key to continue.");
+  WAIT(-1);
 END;
 
 VIEW_LOP_PARAMETERS()
@@ -555,7 +558,7 @@ BEGIN
   STARTVIEW(-7,1);
 
   LOCAL c:=SELECT_LOP(current,"Select LOP to shift");  
-  IF c=0 THEN RETURN "Canceled."; END;
+  IF NOT c THEN RETURN c; END;
  
   LOCAL rv:=INPUT({sights(c,i_translationBearing),
          sights(c,i_translationDistance_nm)},
@@ -564,7 +567,7 @@ BEGIN
     {"Bearing direction for shift (°)",
      "Distance of shift (nm)"
      });
-  IF rv=0 THEN RETURN "Canceled."; END;
+  IF NOT rv THEN RETURN rv; END;
 
   fn:=c;
 
@@ -598,7 +601,7 @@ BEGIN
      + MID(f,index+1);
 
   LOCAL d:=SELECT_LOP(c,"Select destination LOP register");
-  IF d=0 THEN RETURN "Canceled."; END;
+  IF NOT d THEN RETURN d; END;
   IF d=10 THEN d:=0; END;
 
   // Clear a_nm value for source LOP so
@@ -845,7 +848,7 @@ BEGIN
      "Start of azimuth arc (°)",
      "End of azimuth arc (°)"});
    
-  IF NOT c THEN RETURN "Canceled."; END;
+  IF NOT c THEN RETURN c; END;
 
   ephLon:=NORMALIZE_LONGITUDE(ephLon);
   
@@ -966,6 +969,7 @@ BEGIN
   PRINT("PRESS Num OR ESC KEYS TO GO TO SPREADSHEET");
   STARTVIEW(2,1);
 
+  RETURN 1;
 END;
 
 LOCAL EPHEMERIDES()
@@ -998,7 +1002,7 @@ BEGIN
      "UTC Time (HH°MM'DD\")",
      "Latitude (°)","Longitude (°)"});
    
-  IF NOT c THEN RETURN "Canceled."; END;
+  IF NOT c THEN RETURN c; END;
 
   ephLon:=NORMALIZE_LONGITUDE(ephLon);
   
@@ -1057,7 +1061,7 @@ BEGIN
 
   PRINT("PRESS Num OR ESC KEYS TO GO TO SPREADSHEET");
   STARTVIEW(2,1);
-
+  RETURN 1;
 END;
 
 LOCAL prevViewAz:=9999,prevViewAlt:=9999,COSviewAz,SINviewAz,COSviewAlt,SINviewAlt;
@@ -1446,22 +1450,22 @@ BEGIN
   
   FOR r FROM 1 TO 10 DO
     lopNames(r):=STRING(r)+": ";
-	CASE
-	  IF sights(r,i_HS)==0 AND sights(r,i_a_nm)==0 THEN
-	    lopNames(r):=lopNames(r)+"Empty";
-	  END;
+  CASE
+    IF sights(r,i_HS)==0 AND sights(r,i_a_nm)==0 THEN
+      lopNames(r):=lopNames(r)+"Empty";
+    END;
       IF sights(r,i_a_nm)==1e-12 THEN
         lopNames(r):=lopNames(r)+"Translated from LOP #"+STRING(sights(r,i_bodyIndex));
       END;
-	  IF sights(r,i_HS)<>0 AND sights(r,i_a_nm)==0 THEN
-	    lopNames(r):=lopNames(r)+"Translated ("+bodiesList(sights(r,i_bodyIndex))+")";
-	  END;
-	  IF sights(r,i_HS)<>0 AND ABS(sights(r,i_a_nm))>1e-12 THEN
-	    lopNames(r):=lopNames(r)+bodiesList(sights(r,i_bodyIndex));
-	  END;
-	  DEFAULT
-	    lopNames(r):=lopNames(r)+"INTERNAL ERROR";
-	END;
+    IF sights(r,i_HS)<>0 AND sights(r,i_a_nm)==0 THEN
+      lopNames(r):=lopNames(r)+"Translated ("+bodiesList(sights(r,i_bodyIndex))+")";
+    END;
+    IF sights(r,i_HS)<>0 AND ABS(sights(r,i_a_nm))>1e-12 THEN
+      lopNames(r):=lopNames(r)+bodiesList(sights(r,i_bodyIndex));
+    END;
+    DEFAULT
+      lopNames(r):=lopNames(r)+"INTERNAL ERROR";
+  END;
   END;
   
   IF askProgress THEN
@@ -1510,15 +1514,15 @@ BEGIN
     // skips seconds
     LOCAL startTicks:=TICKS();
     LOCAL startTime:=GET_UTC_TIME();
-	
-	IF startTime<0 THEN
-	  startTime:=startTime+24;
-	ELSE
-	  IF startTime>24 THEN
-	    startTime:=startTime-24;
-	  END;
-	END;
-	
+  
+  IF startTime<0 THEN
+    startTime:=startTime+24;
+  ELSE
+    IF startTime>24 THEN
+      startTime:=startTime-24;
+    END;
+  END;
+  
     REPEAT
       TEXTOUT_P(HMS(startTime+(TICKS()-startTicks)/3600000),120,80,7,#FFFFFF,320,0);
       WAIT(0.5);  
@@ -1528,7 +1532,7 @@ BEGIN
 
     t:=GET_UTC_TIME();
     t:=t+deltaUTCTime;
-	  
+    
     r:=0;
     c:=INPUT({r,t},"Observation #"+i,
       {"HS:","Time:"},
@@ -1685,9 +1689,9 @@ BEGIN
   LOCAL tempDate:=sights(current,i_date);
 
   IF tempDate==0 THEN 
-	  tempDate:=Date; 
+    tempDate:=Date; 
   END;
-	  
+    
   IF tempTime=0 THEN 
     tempTime:=GET_UTC_TIME();
     IF tempTime>24 THEN 
@@ -2001,21 +2005,21 @@ BEGIN
   END;
   IF c==5 THEN
     IF SIZE(sights)=0 THEN RESET_SIGHTS(); END;   
-	
-	// Check that our variables are initialized
+  
+  // Check that our variables are initialized
     IF TYPE(sights)=0 THEN RESET_SIGHTS(); END;
 
     LOCAL ic:=sights(1,i_indexCorrection_min);
     c:=INPUT({ic},
-	  "Sextant Default Index Correction",
-	  {"Correction:"},
-	  {"Index correction MM.m (-=On-scale/+=Off-scale)"}
-	  );
+    "Sextant Default Index Correction",
+    {"Correction:"},
+    {"Index correction MM.m (-=On-scale/+=Off-scale)"}
+    );
 
     IF NOT c THEN RETURN "Canceled."; END;
 
     IC_default:=ic;
-	RETURN "Default index correction set.";	
+  RETURN "Default index correction set.";  
   END;
   
   RETURN "Canceled.";
@@ -2320,10 +2324,10 @@ END;
 // Example usage:
 // LOCAL c:=TILEMENU({
 //   "1. Sights",
-//	 "2. Running Fix",
-//	 "3. Plot LOPs"},
-//	 5,2,
-//	 {"","","","","","Go Back"});
+//   "2. Running Fix",
+//   "3. Plot LOPs"},
+//   5,2,
+//   {"","","","","","Go Back"});
   
 LOCAL TILEMENU(options,rows,columns,softkeys)
 BEGIN
@@ -2341,22 +2345,22 @@ BEGIN
   
   WHILE k<=SIZE(options) DO
     LOCAL x0:=(i-1)*(width/columns)+padding;
-	LOCAL x1:=i*(width/columns)-padding;
-	LOCAL y0:=(j-1)*(itemHeight)+padding;
-	LOCAL y1:=j*itemHeight-padding;
-	IF options(k)<>"" THEN
-	  RECT_P(x0,y0,x1,y1,tileBorder,tileColor);
-	  TEXTOUT_P(options(k),x0+padding,y0+itemHeight/2-10,3,textColor,320,tileColor);
-	END;
-	k:=k+1;
-	j:=j+1;
-	IF j*itemHeight>height THEN
-	  j:=1;
-	  i:=i+1;
-	  IF i>columns THEN 
-	    k:=1e12;
-	  END;
-	END;
+  LOCAL x1:=i*(width/columns)-padding;
+  LOCAL y0:=(j-1)*(itemHeight)+padding;
+  LOCAL y1:=j*itemHeight-padding;
+  IF options(k)<>"" THEN
+    RECT_P(x0,y0,x1,y1,tileBorder,tileColor);
+    TEXTOUT_P(options(k),x0+padding,y0+itemHeight/2-10,3,textColor,320,tileColor);
+  END;
+  k:=k+1;
+  j:=j+1;
+  IF j*itemHeight>height THEN
+    j:=1;
+    i:=i+1;
+    IF i>columns THEN 
+      k:=1e12;
+    END;
+  END;
   END;
   
   IF SIZE(softkeys)<>0 THEN
@@ -2364,37 +2368,37 @@ BEGIN
   END;
   
   WHILE 1 DO
-	LOCAL r:=WAIT(-1);
-	// Check if we have a keyboard or
-	// mouse event
-	IF TYPE(r)=0 THEN
-	  // We have a keyboard event. Check if
-	  // either ESC or ON was pressed and
-	  // return 0 if so, and ignore any
-	  // other key
-	  IF r=4 OR r=46 THEN
-		RETURN 0;
-	  END;
-	  
-	  // Find if a key corresponding to a menu
-	  // options was pressed	  
-	  LOCAL key:=POS({47,42,43,44,37,38,39,32,33,34},r);	  
-	  IF key<>0 THEN
-	    key:=key-1;		
-		// Search for menu item starting with pressed number
-		LOCAL i,r:=0;
-		FOR i FROM 1 TO SIZE(options) DO		  
-		  IF LEFT(options(i),1)==CHAR(48+key) THEN RETURN i; END;
-		END;
-	  END;
-	ELSE 
-	  // We have a mouse event.
-	  // Check that we have a mouse 
-	  // click event
-	  
-	  IF r(1)=3 THEN
-	    IF SIZE(softkeys)<>0 THEN
-	      // If we have softkeys, check
+  LOCAL r:=WAIT(-1);
+  // Check if we have a keyboard or
+  // mouse event
+  IF TYPE(r)=0 THEN
+    // We have a keyboard event. Check if
+    // either ESC or ON was pressed and
+    // return 0 if so, and ignore any
+    // other key
+    IF r=4 OR r=46 THEN
+    RETURN 0;
+    END;
+    
+    // Find if a key corresponding to a menu
+    // options was pressed    
+    LOCAL key:=POS({47,42,43,44,37,38,39,32,33,34},r);    
+    IF key<>0 THEN
+      key:=key-1;    
+    // Search for menu item starting with pressed number
+    LOCAL i,r:=0;
+    FOR i FROM 1 TO SIZE(options) DO      
+      IF LEFT(options(i),1)==CHAR(48+key) THEN RETURN i; END;
+    END;
+    END;
+  ELSE 
+    // We have a mouse event.
+    // Check that we have a mouse 
+    // click event
+    
+    IF r(1)=3 THEN
+      IF SIZE(softkeys)<>0 THEN
+        // If we have softkeys, check
           // if a click was made on them
           IF r(3)>220 THEN
             // Check that the soft key
@@ -2405,16 +2409,16 @@ BEGIN
               RETURN -1*key;
             END;
           END;
-		END;
-	    // Calculate which menu item		
-		// was clicked
-		LOCAL col:=IP(r(2)/(width/columns));
-		LOCAL row:=IP(r(3)/(height/rows));
-		LOCAL item:=col*rows+row+1;
-		IF item<=SIZE(options) THEN
-		  RETURN item;
-		END;
-	  END;
-	END;
+    END;
+      // Calculate which menu item    
+    // was clicked
+    LOCAL col:=IP(r(2)/(width/columns));
+    LOCAL row:=IP(r(3)/(height/rows));
+    LOCAL item:=col*rows+row+1;
+    IF item<=SIZE(options) THEN
+      RETURN item;
+    END;
+    END;
+  END;
   END;
 END;
