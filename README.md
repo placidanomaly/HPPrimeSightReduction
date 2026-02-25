@@ -140,7 +140,7 @@ If you select an option that leads to a submenu, you can go back to the previous
 
 ![Main menu](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/menu_1.png)
 
-To exit tthe program, press the **On** key.
+To exit the program, press the **On** key.
 
 ## Units and Conventions
 
