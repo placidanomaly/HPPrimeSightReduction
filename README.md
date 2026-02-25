@@ -1,5 +1,5 @@
 # Ephemerides and Sight Reduction for the HP Prime Calculator
-This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator G1 V2](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and requires no updates until the year 2200. **NOTE: The program works very well on the G1 V2 (Rev. C) but it is extremely slow on the newer and more powerful G2 (Rev. D) -- this is currently being investigated by the manufacturer.** It can also be used on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program. You may freely use and modify this program for non-commercial purposes under this [license](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/LICENSE)
+This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and requires no updates until the year 2200. **NOTE: The program works very well on the G1 V2 (Rev. C) but it is extremely slow on the newer and more powerful G2 (Rev. D) -- this is currently being investigated by the manufacturer.** It can also be used on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program. You may freely use and modify this program for non-commercial purposes under this [license](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/LICENSE)
 
 The following functionality is provided:
 * Astronomical Calculations:
@@ -134,7 +134,7 @@ The functionality of the program is accessed by the tile menu that is displayed 
 
 When the program starts, the main menu will be displayed. A menu option can be selecting by touching the screen on the tile of the desired option, or by pressing the number key that corresponds to the number of the desired option.
 
-![Main menu](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/main_menu.png)
+![Main menu](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/menu_main.png)
 
 If you select an option that leads to a submenu, you can go back to the previous menu by touching the **Go Back** soft key:
 
@@ -179,10 +179,11 @@ The color theme used by the calculator can be set to Light or Dark mode on page 
 The program keeps data about sights and lines of position in a global variable named "sights" which is preserved when the calculator is turned off. Generally, you should clear the program's memory prior to any new fix or if you ever get an **Invalid Input** error. To clear all program variables:
 
 1. From the main menu, select **1. Navigation**
-2. From the navigation menu, seleck **5. Clear sights**
-2. Dismiss the confirmation message to return to the navigation menu
 
 ![Resetting variables](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/menu_1.png)
+
+2. From the Navigation menu, seleck **5. Clear sights**
+2. Dismiss the confirmation message to return to the navigation menu
 
 ### Setting the Time and Time Zone
 
@@ -206,11 +207,15 @@ The ephemerides of the selected celestial bodies will be displayed in the calcul
 
 Here's how it works:
 
-1. From the main menu, select **2. Astronomy** and **1. Sight Planning**. An input screen will appear:
+1. From the main menu, select **2. Astronomy**
+
+![Astronomy menu](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/menu_2.png)
+ 
+2. From the Astronomy menu, select **1. Sight Planning**. An input screen will appear:
 
 ![Parameters for listing bodies](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/listbodies_input.png)
 
-2. Fill out the observation parameters and visibility criteria:
+3. Fill out the observation parameters and visibility criteria:
    * **Date**: the date on which the observations will be made in *YYYY.MMDD* format
    * **Time**: an arbitrary time at which to show the visible bodies, in *HH°MM'SS"* format
    * **Latitude**: the latitude in degrees where the observations will be made. This will typically be your DR position at the time of the observations. 
@@ -219,7 +224,7 @@ Here's how it works:
    * **Azimuth from**: the true heading in degrees of the beginning of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list. Same as for Altitude, this can be used to suppress bodies that would be obscured by a ship's superstructure or the land side of a shoreline
    * **Clockwise to**: the true heading in degrees of the end of a clockwise arc within which the azimuth of bodies must lie in order to be included in the list
 
-3. It will take about 50 seconds on an HP Prime V2 to compute all the ephemerides. You will be prompted to press a key to show the results at the end of the calculation. The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include, in clockwise order of azimuth within the prescribed arc:
+4. It will take about 50 seconds on an HP Prime V2 to compute all the ephemerides. You will be prompted to press a key to show the results at the end of the calculation. The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include, in clockwise order of azimuth within the prescribed arc:
 * Sunrise, sunset, civil twilight, and nautical twilight times
 * Local time of Meridian passage at the specified longitude
 * List of observable bodies (i.e. meeting azimuth and altitude constraints entered on the first screen) with, for each, the azimuth, true altitude (Hc), apparent altitude (Ha) (i.e. the one that a sextant with no index error and no dip would read), Greenwhich Hour Angle (GHA), declination (dec), semi-diameter in arc seconds of the body (if applicable), and rise and set times (if applicable), at 3 different times:
@@ -234,11 +239,13 @@ Performing a sight reduction is a straightforward process:
 
 1. From the main menu, select **1. Navigation**
 
-2. If needed, reset all previous observations and calculations by selecting the **5. Clear sights** menu option
+![Navigation menu](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/menu_1.png)
+
+3. If needed, reset all previous observations and calculations by selecting the **5. Clear sights** menu option
 
 ![Navigation menu](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/menu_1.png)
 
-3. Enter a new observation: select the **1. Sight** menu option.
+3. To enter a new observation, select the **1. Sight** menu option from the Navigation menu.
 
 4. The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by an LOP register number from 1 to 10. Select an empty LOP register for this observation (they should all be empty if you ran **RESET_SIGHTS**), let's say **1** for this first one, and hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key. LOP registers containing a translated LOP cannot be edited and, if selected for editing, will be treated as an empty sight that will overwrite the translated LOP. The source of a translated LOP can be edited but its corresponding translated LOP will not be updated so the **SHIFT_LOP** program should be run against the updated values using the same destination register as before. See [Running Fixes](#running-fixes).
 
