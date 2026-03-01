@@ -245,9 +245,9 @@ Performing a sight reduction is a straightforward process:
 
 ![Navigation menu](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/menu_1.png)
 
-3. To enter a new observation, select the **1. Sight** menu option from the Navigation menu.
+3. To enter a new observation, select the **1. Sights** menu option from the Navigation menu.
 
-4. The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by an LOP register number from 1 to 10. Select an empty LOP register for this observation (they should all be empty if you ran **RESET_SIGHTS**), let's say **1** for this first one, and hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key. LOP registers containing a translated LOP cannot be edited and, if selected for editing, will be treated as an empty sight that will overwrite the translated LOP. The source of a translated LOP can be edited but its corresponding translated LOP will not be updated so the **SHIFT_LOP** program should be run against the updated values using the same destination register as before. See [Running Fixes](#running-fixes).
+4. The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by an LOP register number from 1 to 10. Select any empty LOP register for this observation (they should all be empty if you ran **5. Clear sights**), and hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key. If you ran the [Running fix](#running-fixes) function, some LOP registers will contain translated LOPs which cannot be edited and, if selected for editing, will be treated as an empty sight that will overwrite the translated LOP. The source of a translated LOP can be edited but its corresponding translated LOP will not be updated so the [Running fix](#running-fixes) functuon should be re-run against the updated values using the same translation values and stored into the same destination register as before.
 
 The **Show Progress** checkbox simply causes additional computing messages to be displayed during the calculation processes and changes nothing to the results.
 
@@ -276,7 +276,7 @@ The **Show Progress** checkbox simply causes additional computing messages to be
 
 ![Press any key](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc1.png)
 
-8. As soon as you've aligned the observed body with the horizon, hit any key or touch the touchscreen. This will note the time of the observation (hence why it is important to run **SET_TIME** regularly) and a screen prompting to enter the sextant reading will appear. **IMPORTANT: do not halve observations made on an artificial horizon and do not apply any dip or index corrections to the sextant reading, these corrections will be calculated based on the data input in step 6.**
+8. As soon as you've aligned the observed body with the horizon, hit any key or touch the touchscreen. This will note the time of the observation (hence why it is important to [reset the calculator's internal clock](#setting-the-time-and-time-zone) regularly) and a screen prompting to enter the sextant reading will appear. **IMPORTANT: do not halve observations made on an artificial horizon and do not apply any dip or index corrections to the sextant reading, these corrections will be calculated based on the data input in step 6.**
 
 ![Enter sextant reading](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/avgproc2.png)
 
@@ -347,7 +347,7 @@ Alternatively, the calculator can compute a fix based on LOPs. The computation v
 
 LOPs that were translated to a different LOP register are omitted from the calculation, but their translated destination registers are included.
 
-To compute a fix, run the **Sight Reduction** program and select **COMPUTE_FIX**. The output will indicate which method was used to compute the fix and the longitude and latitude of the fix. In the screen shots below, we computed a fix after two sights, then entered a third sight and computed the fix again, and entered a fourth sight and computed the fix again:
+To compute a fix, enter the **1. Navigation** menu and select **4. Compute fix**. The output will indicate which method was used to compute the fix and the longitude and latitude of the fix. In the screen shots below, we computed a fix after two sights, then entered a third sight and computed the fix again, and entered a fourth sight and computed the fix again:
 
 ![Fix with 2 sights](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/fix2.png)
 
@@ -422,7 +422,9 @@ Calculating the index correction from a measurement of the diameter of the Sun i
 
 ![Solar IC intro](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_intro.png)
 
-Values for the *Below* and *Above* observations as read on the sextant, in decimal arc minutes (*MM.m*), can be entered in the input form. **Do NOT correct the off scale *Below* reading by subtracting it from 60, the program will do that for you. Use the value directly read on the instrument.**
+Values for the *Below* and *Above* observations as read on the sextant, in decimal arc minutes (*MM.m*), can be entered in the input form. **Do NOT correct the off scale *Below* reading by subtracting it from 60 or by entering a negative number, the program will do that for you. Use the positive value directly read off of the instrument.**
+
+The order in which the *Below* and *Above* values are measured should match the direction in which you align celestial bodies with the horizon during a sight. You can easily see why by performing the procedure in one direction first (e.g. measuring the *Below* and *Above* values in that order while raising the reflected view), and then in the opposite direction (e.g. measuring the *Above* and *Below* values in that order while lowering the reflected view): you will likely get two very different values of index correction. So if you typically bring the reflected celestial bodies DOWN to the horizon when making a sight, do this procedure by moving the sextant down, i.e. start with the reflected sun above the actual sun and bring it down to read the *Above* value first, and then down again to read the *Below* value. If you do it the other way around, i.e. you bring the reflected celestial bodies UP to the horizon, do the procedure from the bottom to the top instead. This is also true if you get your index correction from a sight of the reflected horizon against the horizon.
 
 ![Solar IC input](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/solaric_input.png)
 
