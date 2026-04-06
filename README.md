@@ -102,9 +102,12 @@ If you are experiencing issues during the installation of the binaries, you can 
 5. Open the `src/earth.txt` file from this repository in a text editor on your computer
 6. Select all the text (Ctrl-A), copy it to the clipboard (Ctrl-C), and paste it into the editor window in the *HP Connectivity Kit* program (Ctrl-V)
 7. Save the file (Ctrl-S) and close the editor window
-10. Repeat steps 5-8 above for each text file in the repository
-11. On the calculator, go to the **Programs** page with <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle"> and confirm that all the programs are loaded
-12. Open each program and hit <img alt="Check" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/check.png" valign="middle"> to confirm that there are no syntax errors
+8. Repeat steps 3 to 7 above for each text file in the repository
+9. On the calculator, go to the **Programs** page with <img alt="Shift" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/shift.png" valign="middle">-<img alt="1" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/1.png" valign="middle"> and confirm that all the programs are loaded
+12. **Starting with the AstroCalc program**, open each program for editing by highlighting it and pressing **Enter**.
+13. Once in the program editor, hit <img alt="Check" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/check.png" valign="middle"> to confirm that there are no syntax errors.
+14. Press **ESC** to compile the program and go back to the list of programs
+15. Repeat steps 12 to 14 above for each one of the programs
 
 ## Confirming that Everything Works
 When the installation is completed, whether from binaries or from source, confirm that all the programs appear under the **Programs** section of the calculator in the *HP Connectivity Kit*. If the programs are not all present, re-do the installation procedure.
