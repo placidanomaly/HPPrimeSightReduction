@@ -138,8 +138,8 @@ EXPORT navstar_ := {
 EXPORT sights;
 EXPORT bodiesList:=CONCAT({
   "Sun Lower Limb", "Sun Upper Limb",
-  "Moon Lower Limb", "Moon Upper Limb",
-  "Mars", "Venus", "Jupiter", "Saturn", "Pre-calculated sight"
+  "Moon Lower Limb", "Moon Upper Limb" },
+  planets_, {"Pre-calculated sight"
   },CAS("col(navstar_,1)"));
 
 //Aberration

@@ -17,7 +17,7 @@
 
 #pragma mode(separator(.,;))
 
-// This program depends on the global variable
+// This program depends on the global variables
 // sights and bodiesList which are declared in
 // the AstroCalc program to prevent them from
 // being erased if this program is opened for
