@@ -2034,17 +2034,16 @@ BEGIN
   PRINT();
   PRINT("INDEX CORRECTION FROM SUN DIAMETER");
   PRINT(" ");
-  PRINT("This will set the index correction to");
-  PRINT("a value calculated from a measurement of");
-  PRINT("the diameter of the sun. First, set the");
-  PRINT("reflected sun so its top touches the bottom");
-  PRINT("of the observed sun and record that in the");
-  PRINT("BELOW field. Then continue to move the");
-  PRINT("reflected sun up until its bottom touches");
-  PRINT("the top of the observed sun and record the");
-  PRINT("direct sextant reading (no 60 minus) in the");
-  PRINT("ABOVE value.");
-  
+  PRINT("Position the reflected Sun ABOVE and BELOW");
+  PRINT("the actual Sun and enter the positive values");
+  PRINT("from the minute dial in the ABOVE and BELOW");
+  PRINT("fields (no degrees, no 60-minus subtraction,");
+  PRINT("no negative numbers for off scale values).");
+  PRINT(" ");
+  PRINT("If you bring bodies down to the horizon in");
+  PRINT("a sight, start with ABOVE value then BELOW,");
+  PRINT("and vice-versa.");
+
   LOCAL c:=GET_SOFTKEY({"","","","","Cancel","Ok"});
   IF c==0 OR c==5 THEN RETURN "Canceled"; END;
   
