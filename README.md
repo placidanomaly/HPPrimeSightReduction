@@ -1,7 +1,7 @@
 **NOTE: This program works very well on the HP Prime Rev. C with firmware revision 15515 (the latest at the time of this writing) but it is extremely slow on the newer and more powerful G2 (Rev. D). This was confirmed to be a bug with the Rev. D calculator which is currently being investigated by the manufacturer. See the video here for an illustration of the issue: https://youtu.be/rulDU8oZpCI**
 
 # Ephemerides and Sight Reduction for the HP Prime Calculator
-This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and requires no updates until the year 2200. It can also be used on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program. You may freely use and modify this program for non-commercial purposes under this [license](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/LICENSE)
+This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and won't require any updates until the year 2200. It can also be used on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program. You may freely use and modify this program for non-commercial purposes under this [license](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/LICENSE)
 
 The following functionality is provided:
 * Astronomical Calculations:
