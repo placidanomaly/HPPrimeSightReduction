@@ -1831,7 +1831,7 @@ BEGIN
   // If a horizon distance is specified,
   // use dip short formula
   IF sights(index,i_dipShort_nm) > 0 THEN
-    sights(index,i_dip_min):=(0.0416*sights(index,i_dipShort_nm))+(0.566*sights(index,i_eyeHeight_ft)/sights(index,i_dipShort_nm));
+    sights(index,i_dip_min):=(0.04158*sights(index,i_dipShort_nm))+(0.5658s*sights(index,i_eyeHeight_ft)/sights(index,i_dipShort_nm));
   ELSE
     sights(index,i_dip_min):=0.97*√(sights(index,i_eyeHeight_ft));
   END;
