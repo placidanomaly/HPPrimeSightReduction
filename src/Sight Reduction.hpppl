@@ -105,13 +105,30 @@ BEGIN
       4,2,{"","","","","","Go back"});
       CASE
         IF r==1 THEN SIGHT(); END;
-      IF r==2 THEN 
-        LOCAL r:=SHIFT_LOP();
-        IF TYPE(r)==2 THEN MSGBOX(r); END;
-      END;
-      IF r==3 THEN IF PLOT_LOPs()==0 THEN MSGBOX("Switching to Plotting App. Press ESC and (Shift-1) to return to program when done."); STARTVIEW(1,1); RETURN; END; END;
-      IF r==4 THEN COMPUTE_FIX(); END;
-      IF r==5 THEN RESET_SIGHTS(); MSGBOX("Sights cleared. Press OK to continue."); END;
+        IF r==2 THEN 
+          LOCAL r:=SHIFT_LOP();
+          IF TYPE(r)==2 THEN MSGBOX(r); END;
+        END;
+        IF r==3 THEN IF PLOT_LOPs()==0 THEN MSGBOX("Switching to Plotting App. Press ESC and (Shift-1) to return to program when done."); STARTVIEW(1,1); RETURN; END; END;
+        IF r==4 THEN COMPUTE_FIX(); END;
+        IF r==5 THEN 
+          PRINT();
+          PRINT("");
+          PRINT("");
+          PRINT("");
+          PRINT("");
+          PRINT("");
+          PRINT("CLEARING ALL SIGHTS. ARE YOU SURE?");
+          LOCAL c:=GET_SOFTKEY({"YES","","","","","NO"});
+          CASE
+            IF c=1 THEN
+              RESET_SIGHTS();
+              MSGBOX("Sights cleared. Press OK to continue."); 
+            END;
+            DEFAULT
+              MSGBOX("Canceled. Press OK to continue.");            
+          END;
+        END;
       END;      
     UNTIL r==0 or r==-6;
     r:=1;
@@ -146,6 +163,7 @@ BEGIN
     END;
   END;
   UNTIL r==0 OR r==-6;   
+  RETURN "Program Terminated.";
 END;
 
 
@@ -1684,6 +1702,42 @@ BEGIN
 
   current:=c;
 
+  // If the sextant height contains an observation, confirm
+  // editing and offer to erase it
+  IF sights(current,i_HS)>0 THEN
+    PRINT();
+    PRINT("LOP #"+STRING(current)+" Existing Observation");
+    PRINT("");
+    PRINT("Body: "+bodiesList(sights(current,i_bodyIndex)));
+    PRINT("Date: "+sights(current,i_date));
+    PRINT("UTC Time: "+sights(current,i_time));
+    PRINT("Hc: "+→DMD(sights(current,i_HC)));
+    PRINT("Ho: "+→DMD(sights(current,i_HO)));
+    PRINT("a (nm): "+IFTE(ABS(sights(current,i_a_nm))<0.05,"0.0"
+                        ,STRING(HMS→(ABS(sights(current,i_a_nm))),2,1)
+                      +IFTE(sights(current,i_a_nm)≤0," AWAY"," TOWARD")));
+    PRINT("Zn (°): "+STRING(sights(current,i_Zn),2,1));
+    c:=GET_SOFTKEY({"","","Erase","","Edit","Cancel"});
+    CASE
+      IF c==3 THEN
+        PRINT(nl + "DELETING THIS SIGHT. ARE YOU SURE?");
+        LOCAL cc:=GET_SOFTKEY({"YES","","","","","NO"});
+        IF cc==1 THEN
+          LOCAL i,item:={};
+          FOR i FROM 1 TO 36 DO
+            item:=CONCAT(item,{0});
+          END;
+          sights(current):=item;
+          MSGBOX("Sight deleted. Press OK to continue.");
+        ELSE
+          MSGBOX("Deletion canceled. Press OK to continue.");
+        END;
+        RETURN 0;
+      END;
+      IF c==6 THEN RETURN 0; END;
+    END;
+  END;
+
   // OBSERVATION PARAMETERS
   LOCAL tempTime:=sights(current,i_time);
   LOCAL tempDate:=sights(current,i_date);
@@ -1692,7 +1746,7 @@ BEGIN
     tempDate:=Date; 
   END;
     
-  IF tempTime=0 THEN 
+  IF tempTime==0 THEN 
     tempTime:=GET_UTC_TIME();
     IF tempTime>24 THEN 
       tempTime:=tempTime-24;
@@ -1706,25 +1760,24 @@ BEGIN
     END;
   END;
 
-  IF sights(current,i_DRlat)=0 THEN sights(current,i_DRlat):=DRlat_default; END;
-  IF sights(current,i_DRlon)=0 THEN sights(current,i_DRlon):=DRlon_default; END;  
-  IF sights(current,i_HS)=0 THEN sights(current,i_artificialFlag):=artificial_default; END;
+  IF sights(current,i_DRlat)==0 THEN sights(current,i_DRlat):=DRlat_default; END;
+  IF sights(current,i_DRlon)==0 THEN sights(current,i_DRlon):=DRlon_default; END;  
+  IF sights(current,i_HS)==0 THEN sights(current,i_artificialFlag):=artificial_default; END;
 
   // If we already have a value for HS, set
   // default to not go through the observation
   // averaging process
-  LOCAL avgReadings:=IFTE(sights(current,i_HS)=0,1,0);
+  LOCAL avgReadings:=IFTE(sights(current,i_HS)==0,1,0);
 
-  c:=INPUT({tempDate,
+  c:=INPUT({
     sights(current,i_DRlat),
     sights(current,i_DRlon),         
     {sights(current,i_bodyIndex),bodiesList},
     {sights(current,i_artificialFlag),1},
     {avgReadings,1}},
     "LOP #"+STRING(current)+" Observation Parameters",
-    {"UTC Date:","DR Lat:","DR Lon:","Body:","Artificial:","Average:"},
-    {"UTC Date (YYYY.MMDD) (UTC Time: "+GET_UTC_TIME()+")",
-     "DR Latitude ° (N=+ S=-)",
+    {"DR Lat:","DR Lon:","Body:","Artificial:","Average:"},
+    {"DR Latitude ° (N=+ S=-)",
      "DR Longitude ° (N=+ S=-)",     
      "Observed body and limb",
      "Check if using an artificial horizon",
@@ -1732,15 +1785,15 @@ BEGIN
   IF NOT c THEN RETURN c; END;
 
   CASE
-    IF sights(current,i_bodyIndex)=1 THEN sights(current,i_sightType):=1; sights(current,i_limbSign):=1; END;
-    IF sights(current,i_bodyIndex)=2 THEN sights(current,i_sightType):=1; sights(current,i_limbSign):=2; END;
-    IF sights(current,i_bodyIndex)=3 THEN sights(current,i_sightType):=2; sights(current,i_limbSign):=1; END;
-    IF sights(current,i_bodyIndex)=4 THEN sights(current,i_sightType):=2; sights(current,i_limbSign):=2; END;
+    IF sights(current,i_bodyIndex)==1 THEN sights(current,i_sightType):=1; sights(current,i_limbSign):=1; END;
+    IF sights(current,i_bodyIndex)==2 THEN sights(current,i_sightType):=1; sights(current,i_limbSign):=2; END;
+    IF sights(current,i_bodyIndex)==3 THEN sights(current,i_sightType):=2; sights(current,i_limbSign):=1; END;
+    IF sights(current,i_bodyIndex)==4 THEN sights(current,i_sightType):=2; sights(current,i_limbSign):=2; END;
     IF (sights(current,i_bodyIndex)>=5) AND (sights(current,i_bodyIndex)<=8) THEN 
       sights(current,i_sightType):=4; 
       sights(current,i_subBodyIndex):=sights(current,i_bodyIndex)-4; 
     END;
-    IF sights(current,i_bodyIndex)=9 THEN sights(current,i_sightType):=7; END;
+    IF sights(current,i_bodyIndex)==9 THEN sights(current,i_sightType):=7; END;
     IF sights(current,i_bodyIndex)>9 THEN 
       sights(current,i_sightType):=3; 
       sights(current,i_subBodyIndex):=sights(current,i_bodyIndex)-9; 
@@ -1761,10 +1814,10 @@ BEGIN
 
   // OBSERVATION CORRECTIONS
 
-  IF sights(current,i_indexCorrection_min)=0 THEN sights(current,i_indexCorrection_min):=IC_default; END;
-  IF sights(current,i_eyeHeight_ft)=0 THEN sights(current,i_eyeHeight_ft):=HE_default; END;
-  IF sights(current,i_temperature_C)=0 THEN sights(current,i_temperature_C):=temp_default; END;
-  IF sights(current,i_pressure_mb)=0 THEN sights(current,i_pressure_mb):=press_default; END;
+  IF sights(current,i_indexCorrection_min)==0 THEN sights(current,i_indexCorrection_min):=IC_default; END;
+  IF sights(current,i_eyeHeight_ft)==0 THEN sights(current,i_eyeHeight_ft):=HE_default; END;
+  IF sights(current,i_temperature_C)==0 THEN sights(current,i_temperature_C):=temp_default; END;
+  IF sights(current,i_pressure_mb)==0 THEN sights(current,i_pressure_mb):=press_default; END;
   
   c:=INPUT(
     {sights(current,i_indexCorrection_min),
@@ -1789,7 +1842,7 @@ BEGIN
 
   // OBSERVATION READINGS
 
-  IF avgReadings=1 THEN
+  IF avgReadings==1 THEN
     c:=AVERAGE_READINGS(deltaUTCTime);
     IF SIZE(c)>0 THEN
       tempTime:=c(1);
@@ -1805,7 +1858,7 @@ BEGIN
     END;
   END;
 
-  IF sights(current,i_time)=0 THEN sights(current,i_time):=tempTime; END;
+  IF sights(current,i_time)==0 THEN sights(current,i_time):=tempTime; END;
 
   c:=INPUT({
     sights(current,i_date),
@@ -1828,16 +1881,21 @@ END;
 HA_CALC(index)
 BEGIN
 
-  // If a horizon distance is specified,
-  // use dip short formula
   IF sights(index,i_dipShort_nm) > 0 THEN
-    sights(index,i_dip_min):=(0.04158*sights(index,i_dipShort_nm))+(0.5658s*sights(index,i_eyeHeight_ft)/sights(index,i_dipShort_nm));
+    // If a horizon distance is specified,
+    // use dip short formula
+    sights(index,i_dip_min):=(0.04158*sights(index,i_dipShort_nm))+(0.5658*sights(index,i_eyeHeight_ft)/sights(index,i_dipShort_nm));
   ELSE
+    // Otherwise use the standard dip formula
     sights(index,i_dip_min):=0.97*√(sights(index,i_eyeHeight_ft));
   END;
+
   IF sights(index,i_artificialFlag)==1 THEN
+    // If an artificial horizon is used, halve the sextant
+    // height after applying index correction, and ignore dip
     sights(index,i_HA):=(sights(index,i_HS)+sights(index,i_indexCorrection_min)/60)/2;
   ELSE
+    // Otherwise just apply the index and dip corrections
     sights(index,i_HA):=sights(index,i_HS)+(sights(index,i_indexCorrection_min)-sights(index,i_dip_min))/60;
   END;
 
