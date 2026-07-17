@@ -383,7 +383,7 @@ LOCAL LEMOINE(p1,p2,p3)
 BEGIN
   // pn are triangle vertices {xn,yn}
   
-  LOCAL x1 := p1(1), y1 := p1(1);
+  LOCAL x1 := p1(1), y1 := p1(2);
   LOCAL x2 := p2(1), y2 := p2(2);
   LOCAL x3 := p3(1), y3 := p3(2);
   
@@ -1183,19 +1183,17 @@ BEGIN
   //Find out the first visible altitude line to
   //determine where azimuth labels will be
   //printed
-  LOCAL altLabels:=-90,coords;
+  LOCAL altLabels:=-90,coords,screenX,screenY,prevX:=-1,prevY:=-1,labelPrinted;
+
   REPEAT
     altLabels:=altLabels+altStep;
     coords:=AZALT2SCREENSPACE(start+azStep,altLabels,viewAz,viewAlt,fov);
-  UNTIL coords(1)<>-1 OR altLabels>=90;
-
-  LOCAL coords,screenX,screenY,prevX:=-1,prevY:=-1,labelPrinted;
+  UNTIL coords(1)<>-1 OR altLabels>=90;  
  
   // Plot lines of constant azimuth
   FOR i FROM 0 TO 179 STEP azStep DO
     prevX:=-1; prevY:=-1;
-    FOR j FROM 0 to 360+density STEP density DO
-      LOCAL coords,screenX,screenY;
+    FOR j FROM 0 to 360+density STEP density DO      
       coords:=AZALT2SCREENSPACE(i,j,viewAz,viewAlt,fov);
       screenX:=coords(1);
       screenY:=coords(2);
@@ -1461,7 +1459,7 @@ BEGIN
   EXPR("Function.F"+i+":=f");
 END;
 
-LOCAL SELECT_LOP(default,prompt,askProgress)
+SELECT_LOP(default,prompt,askProgress)
 BEGIN
   LOCAL lop:=default,r;
   LOCAL lopNames:={};
@@ -1557,7 +1555,7 @@ BEGIN
       {"Enter sextant reading (°), or 0 to end",
        "UTC Time (HH°MM'SS\")"});
 
-    IF ((c=0) OR (r=0)) AND (i=1) THEN RETURN {}; END;
+    IF ((c==0) OR (r==0)) AND (i==1) THEN RETURN {}; END;
   
     IF r>0 THEN
       more:=1;
@@ -1576,15 +1574,13 @@ BEGIN
   
   // If only one observation was entered,
   // we return that value
-  
-  IF i=1 THEN     
+  IF i==1 THEN     
     RETURN {hs(1,1)/scalingFactor+hourOffset,hs(1,2)};
   END;
   
   // Otherwise we perform a regression
   // and interpolate a value on a regression
   // curve, and display the results
-  
   STARTAPP("Statistics_2Var");
   Statistics_2Var.C1:={};
   Statistics_2Var.C2:={};
@@ -2187,8 +2183,7 @@ BEGIN
   minElevAngle_deg:=15;
   minAz_deg:=0;
   maxAz_deg:=360;
-  
-  LOCAL i;
+    
   FOR i FROM 0 TO 9 DO
     EXPR("Function.F"+i+":=\"\"");
   Function.UNCHECK(i);
