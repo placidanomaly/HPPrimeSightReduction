@@ -117,8 +117,9 @@ BEGIN
           PRINT("");
           PRINT("");
           PRINT("");
+          PRINT("ALL EXISTING SIGHTS WILL BE LOST");
           PRINT("");
-          PRINT("CLEARING ALL SIGHTS. ARE YOU SURE?");
+          PRINT("ARE YOU SURE?");
           LOCAL c:=GET_SOFTKEY({"YES","","","","","NO"});
           CASE
             IF c=1 THEN
