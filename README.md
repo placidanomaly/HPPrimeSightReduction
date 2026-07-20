@@ -1,7 +1,7 @@
 **NOTE: This program works very well on the HP Prime Rev. C with firmware revision 15515 (the latest at the time of this writing) but it is extremely slow on the newer and more powerful G2 (Rev. D). This was confirmed to be a bug with the Rev. D calculator which is currently being investigated by the manufacturer. See the video here for an illustration of the issue: https://youtu.be/rulDU8oZpCI**
 
 # Ephemerides and Sight Reduction for the HP Prime Calculator
-This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and won't require any updates until the year 2200. It can also be used on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program. You may freely use and modify this program for non-commercial purposes under this [license](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/LICENSE)
+This repository contains a set of programs written in Prime Programming Language (PPL) for the [HP Prime calculator](https://www.hpcc.org/calculators/hpprime.html) to turn it into a reliable, low-cost celestial navigation computer that can live in a chart table and won't require any updates until the year 2200. It can also be used on any PC or Mac running the [*HP Prime Virtual Calculator*](https://updates.moravia-consulting.com/) program. You may freely use and modify this program for non-commercial purposes under this [license](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/LICENSE).
 
 The following functionality is provided:
 * Astronomical Calculations:
@@ -101,7 +101,7 @@ If you are experiencing issues during the installation of the binaries, you can 
 2. If some programs are already installed, either clear the entire calculator memory by pressing the **On-Apps-ESC** keys simultaneously on the calculator (you may need to unplug and plug the calculator back into the computer after that), or right-click each one of the programs in the *HP Connectivity Kit* and select **Delete**
 3. Right-click on **Program** and select **New**
 4. Enter the name *Earth* and press Enter. An empty editor window will open
-5. Open the `src/earth.txt` file from this repository in a text editor on your computer
+5. Open the `src/earth.hpppl` file from this repository in a text editor on your computer
 6. Select all the text (Ctrl-A), copy it to the clipboard (Ctrl-C), and paste it into the editor window in the *HP Connectivity Kit* program (Ctrl-V)
 7. Save the file (Ctrl-S) and close the editor window
 8. Repeat steps 3 to 7 above for each text file in the repository
@@ -187,20 +187,22 @@ The program keeps data about sights and lines of position in a global variable n
 
 ![Resetting variables](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/menu_1.png)
 
-2. From the Navigation menu, seleck **5. Clear sights**
-2. Dismiss the confirmation message to return to the navigation menu
+2. From the Navigation menu, select **5. Clear sights**
+3. The program will ask for confirmation. Note that all existing sights will be lost. Click YES to confirm, NO to cancel.
+![Confirm deletion](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/clearconfirm.png)
+4. Dismiss the confirmation message to return to the navigation menu
 
 ### Setting the Time and Time Zone
 
-The calculator has a pretty accurate internal clock that can be used to automatically record the time of observations. It should be set to a reliable external time source from time to time to ensure it is accurate. To set the calculator's internal clock and timezone:
+The calculator has a pretty accurate internal clock that can be used to automatically record the time of observations. It should be set to a reliable external time source from time to time to ensure it is accurate. To set the calculator's internal clock and time zone:
 
 1. From the main menu, select **0. Setup** and **2. Time set**:
 
-![Setting the time and timezone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
+![Setting the time and time zone](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/settime.png)
 
 2. Fill in the required information:
    * **Local date**: the local date to which to set the calculator's internal clock
-   * **UTC Offset**: the number of hours the local time is ahead of or behind UTC. Use a positive value for locations East of Greenwhich and negative for West (e.g. -5 for New York standard time). Keep in mind that this offset changes with Daylight Savings Time (DST). Fractional offset values like the one used in Newfoundland (-3.5 in standard time) are supported.
+   * **UTC Offset**: the number of hours the local time is ahead of or behind UTC. Use a positive value for locations East of Greenwich and negative for West (e.g. -5 for New York standard time). Keep in mind that this offset changes with Daylight Savings Time (DST). Fractional offset values like the one used in Newfoundland (-3.5 in standard time) are supported.
    * **Local time**: the local time to which to set the calculator's internal clock 
 
 3. Make sure to enter a time a few seconds in the future in the **Local time** field and click the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key when your time source reads the time entered
@@ -232,7 +234,7 @@ Here's how it works:
 4. It will take about 50 seconds on an HP Prime V2 to compute all the ephemerides. You will be prompted to press a key to show the results at the end of the calculation. The output will be shown in the Spreadsheet app with all times in local time (assuming **SET_TIME** was run to specify the time zone). It will include, in clockwise order of azimuth within the prescribed arc:
 * Sunrise, sunset, civil twilight, and nautical twilight times
 * Local time of Meridian passage at the specified longitude
-* List of observable bodies (i.e. meeting azimuth and altitude constraints entered on the first screen) with, for each, the azimuth, true altitude (Hc), apparent altitude (Ha) (i.e. the one that a sextant with no index error and no dip would read), Greenwhich Hour Angle (GHA), declination (dec), semi-diameter in arc seconds of the body (if applicable), and rise and set times (if applicable), at 3 different times:
+* List of observable bodies (i.e. meeting azimuth and altitude constraints entered on the first screen) with, for each, the azimuth, true altitude (Hc), apparent altitude (Ha) (i.e. the one that a sextant with no index error and no dip would read), Greenwich Hour Angle (GHA), declination (dec), semi-diameter in arc seconds of the body (if applicable), and rise and set times (if applicable), at 3 different times:
   * Morning nautical twilight: from morning Nautical Twilight Time to Civil Twilight Time (if there is a sunrise at that location), with body positions calculated at the midpoint of the twilight period, shown in parentheses
   * Evening nautical twilight: from evening Civil Twilight Time to Nautical Twilight Time (if there is a sunset at that location), with body positions calculated at the midpoint of the twilight period, shown in parentheses
   * The time specified in the input form
@@ -252,9 +254,15 @@ Performing a sight reduction is a straightforward process:
 
 3. To enter a new observation, select the **1. Sights** menu option from the Navigation menu.
 
-4. The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by an LOP register number from 1 to 10. Select any empty LOP register for this observation (they should all be empty if you ran **5. Clear sights**), and hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key. If you ran the [Running fix](#running-fixes) function, some LOP registers will contain translated LOPs which cannot be edited and, if selected for editing, will be treated as an empty sight that will overwrite the translated LOP. The source of a translated LOP can be edited but its corresponding translated LOP will not be updated so the [Running fix](#running-fixes) functuon should be re-run against the updated values using the same translation values and stored into the same destination register as before.
+4. The program can store up to 10 different observations, each resulting in a line of position, and they are accessed by an LOP register number from 1 to 10. Select any empty LOP register for a new observation (they should all be empty if you ran **5. Clear sights**), and hit the <img alt="Ok" src="https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/keys/ok.png" valign="middle"> soft key.
 
-The **Show Progress** checkbox simply causes additional computing messages to be displayed during the calculation processes and changes nothing to the results.
+If you select a register that already contains an observation, the program will display a summary of the observation and will offer 3 options: **Erase** to clear the observation, **Edit** to modify the parameters of the observation, or **Cancel** to go back:
+
+![Sight edit](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sightedit.png)
+
+If you ran the [Running fix](#running-fixes) function, some LOP registers will contain translated LOPs which cannot be edited and, if selected for editing, will be treated as an empty sight that will overwrite the translated LOP. The source of a translated LOP can be edited but its corresponding translated LOP will not be updated so the [Running fix](#running-fixes) function should be re-run against the updated values using the same translation values and stored into the same destination register as before.
+
+The **Show Progress** checkbox simply causes additional log messages to be displayed during the computations and changes nothing to the results.
 
 ![Observation register selection](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input1.png)
 
@@ -262,7 +270,7 @@ The **Show Progress** checkbox simply causes additional computing messages to be
    * **UTC Date**: the UTC date of the observation in HP Prime date format (*YYYY.MMDD*). The hint at the bottom of the window displays the current UTC time to help determine if the UTC date is different from the local date. The default value is the current UTC date, which can differ from your local date (e.g. if your time zone is UTC-5 and it is past 19:00, the date will be one day later than your local date).
    * **DR Lat**: the latitude of the dead-reckoning (DR) position in degrees at the time of the observation
    * **DR Lon**: the longitude of the DR position in degrees at the time of the observation
-   * **Body**: a drop-down to select the celestial body being observed among a list of the Sun, Moon, 4 planets and 58 stars. For certain celestial bodies, the observed limb must also be selected. The **Pre-calculated sights** option allows entering the *Zn* (azimut) and *a* (distance) of the line of position directly instead of letting the calculator perform the sight reduction calculations. This is useful to plot lines of position that have been calculated manually or some other way to compare them with the calculator-generated LOPs.
+   * **Body**: a drop-down to select the celestial body being observed among a list of the Sun, Moon, 4 planets and 58 stars. For certain celestial bodies, the observed limb must also be selected. The **Pre-calculated sights** option allows entering the *Zn* (azimuth) and *a* (distance) of the line of position directly instead of letting the calculator perform the sight reduction calculations. This is useful to plot lines of position that have been calculated manually or some other way to compare them with the calculator-generated LOPs.
    * **Artificial**: check this box if the observation is made on an artificial horizon. If that's the case, the sextant altitude values entered must be the actual reading on the sextant, i.e. double the actual body altitude. When this box is checked, the index correction will be applied before dividing the reading by half and no dip correction will be applied regardless of the eye height or dip short values entered
    * **Average**: check this box to perform the observation averaging process described in the next step. Note: this checkbox is unchecked by default if the LOP register contains a previously entered sextant altitude. Checking it will overwrite the previously entered sextant altitude. If no previous value was entered, the checkbox is checked by default.
 
@@ -295,7 +303,7 @@ The **Show Progress** checkbox simply causes additional computing messages to be
 
 ![More input data](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_input4.png)
 
-12. The calculator will display the values for observed height *Ho*, Greenwhich Hour Angle *GHA*, declination *dec*, Local Hour Angle *LHA*, and the calculated height *Hc* of the body. Review them and click **OK**.
+12. The calculator will display the values for observed height *Ho*, Greenwich Hour Angle *GHA*, declination *dec*, Local Hour Angle *LHA*, and the calculated height *Hc* of the body. Review them and click **OK**.
 
 ![Calculation results](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/sr_output1.png)
 
