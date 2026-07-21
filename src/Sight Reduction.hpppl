@@ -520,6 +520,8 @@ BEGIN
     
   IF i==0 THEN RETURN "Canceled."; END;
 
+  LOCAL distanceAzimuth = DISTANCE_BETWEEN(fixLat,fixLon,actualLat,actualLon);
+
   PRINT();
   PRINT("COMPUTED FIX");
   PRINT("  Lat: "+→DMD(fixLat));
@@ -529,7 +531,8 @@ BEGIN
   PRINT("  Lat: "+→DMD(actualLat));
   PRINT("  Lon: "+→DMD(actualLon));
   PRINT(" ");
-  PRINT("Distance between coordinates: "+STRING(ROUND(NM_DIST(fixLat,fixLon,actualLat,actualLon),1))+" nm");
+  PRINT("Actual position is "+STRING(ROUND(distanceAzimuth(1),1))+" nm away from");
+  PRINT("from computed fix on a bearing of "+STRING(ROUND(distanceAzimuth(2),0))+"°");
 
   PRINT(" ");
   PRINT("Press any key to continue.");
@@ -2194,9 +2197,9 @@ BEGIN
 END; 
 
 
-LOCAL NM_DIST(lat1, lon1, lat2, lon2)
+LOCAL DISTANCE_BETWEEN(lat1, lon1, lat2, lon2)
 BEGIN
-  LOCAL dLat, dLon, a, c, R;
+  LOCAL dLat, dLon, a, c, R, azimuth;
   
   LOCAL oldHA:=HAngle;
   HAngle:=1;
@@ -2208,13 +2211,16 @@ BEGIN
   dLat := lat2 - lat1;
   dLon := lon2 - lon1;
   
-  // Haversine calculation
+  // Haversine calculation of distance
   a := SIN(dLat/2)^2 + COS(lat1) * COS(lat2) * SIN(dLon/2)^2;
   c := 2 * ATAN2(√(a), √(1-a)) * π/180;
 
+  // Calculation of azimuth
+  azimuth := ATAN2(SIN(dLon)*COS(lat2),
+                   COS(lat1)*SIN(lat2)-SIN(lat1)*COS(lat2)*COS(dLon));
   HAngle:=oldHA;
   
-  RETURN R * c;
+  RETURN {R * c, azimuth};
 END;
 
 // Returns the coordinates {longitude, latitude} of
