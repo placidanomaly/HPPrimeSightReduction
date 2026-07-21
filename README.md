@@ -372,7 +372,7 @@ If you have access to your actual position using a GPS or some other means to ma
 
 ![Actual position input](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/fix4b.png)
 
-Once your actual position is entered, the calculator will display the distance between the computed fix and the actual position:
+Once your actual position is entered, the calculator will display the bearing and distance from the computed fix to the actual position:
 
 ![Fix error output](https://github.com/placidanomaly/HPPrimeSightReduction/blob/main/img/fix5.png)
 
