@@ -67,7 +67,9 @@ The program can be installed on an HP Prime calculator or on a PC or Mac running
 
 ## Prerequisites
 
-In order to use and install this program, you need to download this repository to your computer and you need to have the [*HP Connectivity Kit*](https://updates.moravia-consulting.com/) running on your computer and working with either an HP Prime V2 or G2 calculator (has not been tested on a V1) connected to your computer with a USB cable or with the [*HP Prime Virtual Calculator*](https://www.hpcalc.org/details/8939) program running on the same computer as the HP Connectivity Kit.
+In order to use and install this program, you need to download this repository to your computer and you need to have the [*HP Connectivity Kit*](https://updates.moravia-consulting.com/) running on your computer. You also need an HP Prime Rev. C calculator connected to your computer with a USB cable or the [*HP Prime Virtual Calculator*](https://www.hpcalc.org/details/8939) program running on the same computer as the HP Connectivity Kit. NOTE: the Rev. D calculator will work but will be painfully slow; earlier revisions have not been tested.
+
+You must also make sure your calculator is running firmware revision 15515 or later. To check which firmware is installed on the calculator, press the **Help** button, then the **Tree** soft key, then double tap the **About HP Prime** item at the top of the tree view. Look for the **Software revision** line. To upgrade the firmware, plug the calculator into a computer running the *HP Connectivity Kit* software and perform the firmware upgrade process.
 
 ### Downloading this Program
 
