@@ -34,6 +34,7 @@ For an excellent textbook on celestial navigation and the process of sight reduc
 # Table of Contents
 * [**Installing the Program**](#installing_the_program)
   * [Prerequisites](#prerequisites)
+    * [Calculator Firmware](#calculator-firmware)
     * [Downloading this Program](#downloading-this-program)
     * [*HP Connectivity Kit* and *HP Prime Virtual Calculator*](#hp-connectivity-kit-and-hp-prime-virtual-calculator)
   * [Installing from Binaries](#installing-from-binaries-recommended)
@@ -69,7 +70,9 @@ The program can be installed on an HP Prime calculator or on a PC or Mac running
 
 In order to use and install this program, you need to download this repository to your computer and you need to have the [*HP Connectivity Kit*](https://updates.moravia-consulting.com/) running on your computer. You also need an HP Prime Rev. C calculator connected to your computer with a USB cable or the [*HP Prime Virtual Calculator*](https://www.hpcalc.org/details/8939) program running on the same computer as the HP Connectivity Kit. NOTE: the Rev. D calculator will work but will be painfully slow; earlier revisions have not been tested.
 
-You must also make sure your calculator is running firmware revision 15515 or later. To check which firmware is installed on the calculator, press the **Help** button, then the **Tree** soft key, then double tap the **About HP Prime** item at the top of the tree view. Look for the **Software revision** line. To upgrade the firmware, plug the calculator into a computer running the *HP Connectivity Kit* software and perform the firmware upgrade process.
+### Calculator Firmware ###
+
+Your calculator must be running on firmware revision 15515 or later. To check which firmware is installed on your calculator, press the **Help** button, then the **Tree** soft key, then double tap the **About HP Prime** item at the top of the tree view. Look for the **Software revision** line. To upgrade the firmware, plug the calculator into a computer running the *HP Connectivity Kit* software and perform the firmware upgrade process.
 
 ### Downloading this Program
 
