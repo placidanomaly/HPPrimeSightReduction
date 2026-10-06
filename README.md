@@ -29,7 +29,7 @@ The astronomical calculations are derived from [the incredible work of Henning U
 
 The sight reduction formulas used in this program were derived from many sources that are usually provided in the comments within the source code.
 
-For an excellent textbook on celestial navigation and the process of sight reduction, refer to [*Celestial Navigation: A Complete Home Study Course*](https://starpath.com/catalog/books/1887.htm) by David Burch and Tobias Burch. The calculations in this program follow the sight reduction process described in the book.
+For an excellent textbook on celestial navigation and the process of sight reduction, refer to [*Celestial Navigation: A Complete Home Study Course*](https://starpath.com/catalog/books/1887.htm) by David Burch and Tobias Burch. The calculations in this program follow the sight reduction process described in the book. The only difference is that the program does not rely on any tables, all the values for corrections that are normally extracted from tables, such as refraction, dip, limb, centroid of partially illuminated planets, etc., are computed using mathematical formulations.
 
 # Table of Contents
 * [**Installing the Program**](#installing_the_program)
